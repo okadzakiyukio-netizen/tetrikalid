@@ -3192,14 +3192,34 @@
         });
       }
 
+      const AGENT_NAME_STORAGE_KEY = 'tetrika_onb_agent_name_v1';
+      if (varInputs.agent && varInputs.agent.el) {
+        try {
+          const savedAgent = localStorage.getItem(AGENT_NAME_STORAGE_KEY);
+          if (savedAgent !== null && savedAgent !== '') {
+            varInputs.agent.el.value = savedAgent;
+          }
+        } catch (e) {}
+      }
+
       Object.keys(varInputs).forEach((key) => {
         if (varInputs[key].el) {
           varInputs[key].el.addEventListener('input', () => {
+            if (key === 'agent') {
+              try {
+                localStorage.setItem(AGENT_NAME_STORAGE_KEY, varInputs[key].el.value.trim());
+              } catch (e) {}
+            }
             updateDynamicVars();
             updateCallDrawerSummary();
           });
         }
       });
+
+      setTimeout(() => {
+        updateDynamicVars();
+        if (typeof updateCallDrawerSummary === 'function') updateCallDrawerSummary();
+      }, 0);
 
       // Reliable Hover & Click Drawer Controller
       const callDrawer = document.getElementById('call-drawer');
@@ -4953,14 +4973,18 @@
         const hasParagraph = el.querySelector('p');
 
         // Check if text has title prefix like "1. Вопрос..."
-        const formatted = text.replace(/<Имя клиента>/g, '<span class="dyn-var" data-var="client"><Имя клиента></span>')
-                              .replace(/<Имя ребенка>/g, '<span class="dyn-var" data-var="child"><Имя ребенка></span>')
-                              .replace(/<ИМЯ РОДИТЕЛЯ>/g, '<span class="dyn-var" data-var="client"><Имя клиента></span>')
-                              .replace(/<ИМЯ ребёнка>/g, '<span class="dyn-var" data-var="child"><Имя ребенка></span>')
-                              .replace(/Юкио/g, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>');
+        const formatted = text
+          .replace(/<Имя менеджера>|&lt;Имя менеджера&gt;/gi, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>')
+          .replace(/<Имя клиента>|&lt;Имя клиента&gt;/gi, '<span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>')
+          .replace(/<Имя ребенка>|&lt;Имя ребенка&gt;/gi, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
+          .replace(/<Цель обучения>|&lt;Цель обучения&gt;/gi, '<span class="dyn-var" data-var="goal">&lt;Цель обучения&gt;</span>')
+          .replace(/<ИМЯ РОДИТЕЛЯ>/g, '<span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>')
+          .replace(/<ИМЯ ребёнка>/g, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
+          .replace(/Юкио/g, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>');
 
         // Render cleanly
         el.innerHTML = '<div class="leading-relaxed">' + formatted.replace(/\n/g, '<br>') + '</div>';
+        if (typeof updateDynamicVars === 'function') updateDynamicVars();
         attachEditButton(el, el.getAttribute('data-edit-id'));
         updateDynamicVars();
       }
@@ -7540,7 +7564,22 @@
             if (typeof applyCustomTabTitles === 'function') applyCustomTabTitles();
             if (typeof applySavedTabsOrder === 'function') applySavedTabsOrder();
 
-            // 6. Тема оформления
+            // 6. Имя менеджера и текстовые правки скриптов
+            const savedAgent = localStorage.getItem('tetrika_onb_agent_name_v1');
+            if (typeof varInputs !== 'undefined' && varInputs.agent && varInputs.agent.el && savedAgent !== null) {
+              varInputs.agent.el.value = savedAgent;
+            }
+            if (typeof loadScriptEdits === 'function' && typeof applySavedTextToElement === 'function') {
+              scriptEdits = loadScriptEdits();
+              Object.keys(scriptEdits).forEach((eid) => {
+                const targetEl = document.querySelector('[data-editable-id="' + eid + '"]');
+                if (targetEl) applySavedTextToElement(targetEl, scriptEdits[eid]);
+              });
+            }
+            if (typeof updateDynamicVars === 'function') updateDynamicVars();
+            if (typeof updateCallDrawerSummary === 'function') updateCallDrawerSummary();
+
+            // 7. Тема оформления
             const savedTheme = localStorage.getItem('tetrika_theme');
             if (savedTheme === 'dark') document.documentElement.classList.add('dark');
             else if (savedTheme === 'light') document.documentElement.classList.remove('dark');
