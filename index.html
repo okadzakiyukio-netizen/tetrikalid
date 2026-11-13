@@ -7467,14 +7467,26 @@
           }, 1500);
         }
 
-        // Немедленная синхронизация при сворачивании/закрытии вкладки, если есть отложенные правки
+        // Немедленная синхронизация при сворачивании/закрытии вкладки + автоподтяжка при возврате
         document.addEventListener('visibilitychange', () => {
           if (document.visibilityState === 'hidden' && syncTimer && sbClient && currentUser && !isApplyingCloudData) {
             clearTimeout(syncTimer);
             syncTimer = null;
             pushToCloud(true);
+          } else if (document.visibilityState === 'visible' && !syncTimer && sbClient && currentUser && !isApplyingCloudData) {
+            pullFromCloud(true, false);
           }
         });
+        window.addEventListener('focus', () => {
+          if (!syncTimer && sbClient && currentUser && !isApplyingCloudData) {
+            pullFromCloud(true, false);
+          }
+        });
+        setInterval(() => {
+          if (document.visibilityState === 'visible' && !syncTimer && sbClient && currentUser && !isApplyingCloudData) {
+            pullFromCloud(true, false);
+          }
+        }, 25000);
 
         // Перехват любых изменений localStorage для автоматической фоновой синхронизации
         const origSetItem = Storage.prototype.setItem;
@@ -7516,9 +7528,7 @@
             currentUser = data && data.session ? data.session.user : null;
             updateHeaderUI();
             if (currentUser) {
-              const alreadySyncedThisTab = sessionStorage.getItem('tetrika_sb_tab_pulled') === '1';
-              sessionStorage.setItem('tetrika_sb_tab_pulled', '1');
-              await pullFromCloud(!alreadySyncedThisTab, false);
+              await pullFromCloud(true, false);
             }
           } catch (e) {
             showBanner('Ошибка инициализации Supabase: ' + (e.message || e), 'error');
