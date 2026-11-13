@@ -7508,9 +7508,13 @@
             if (typeof renderCallbacks === 'function') renderCallbacks();
 
             // 2. График смен и норма часов
-            if (typeof loadScheduleData === 'function') shiftsData = loadScheduleData();
-            if (typeof loadNormHoursByMonth === 'function') normHoursByMonth = loadNormHoursByMonth();
-            if (typeof renderSchedule === 'function') renderSchedule();
+            if (typeof loadShiftsData === 'function') shiftsData = loadShiftsData();
+            try {
+              const normRaw = localStorage.getItem('tetrika_onb_norm_by_month_v1');
+              if (normRaw) normHoursByMonth = JSON.parse(normRaw);
+            } catch (e) {}
+            if (typeof renderScheduleCalendar === 'function') renderScheduleCalendar();
+            if (typeof renderWeeklyRecordsChart === 'function') renderWeeklyRecordsChart();
 
             // 3. План на месяц и KPI
             if (typeof loadPlanItems === 'function') planItems = loadPlanItems();
