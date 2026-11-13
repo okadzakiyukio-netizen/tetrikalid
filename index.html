@@ -7399,9 +7399,14 @@
             const nowStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             localStorage.setItem(LAST_SYNC_KEY, 'Синхр. в ' + nowStr);
             if (syncTimeEl) syncTimeEl.textContent = 'Синхр. в ' + nowStr;
+            if (headerDot) headerDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
+            if (headerLabel && currentUser) headerLabel.textContent = currentUser.email ? currentUser.email.split('@')[0] : 'В сети';
             if (!silent) showBanner('Данные успешно сохранены в облако!', 'success');
           } catch (err) {
-            if (!silent) showBanner('Ошибка сохранения: ' + (err.message || err), 'error');
+            const errMsg = 'Ошибка сохранения: ' + (err.message || err);
+            showBanner(errMsg, 'error');
+            if (headerLabel) headerLabel.textContent = '⚠️ Ошибка синхр.';
+            if (headerDot) headerDot.className = 'w-1.5 h-1.5 rounded-full bg-rose-500';
           }
         }
 
@@ -7430,6 +7435,16 @@
                 if (typeof cloudObj[k] === 'string' && isAppDataKey(k)) {
                   if (localStorage.getItem(k) !== cloudObj[k]) {
                     localStorage.setItem(k, cloudObj[k]);
+                    try {
+                      const parsedVal = JSON.parse(cloudObj[k]);
+                      if (typeof openAppIDB === 'function') {
+                        openAppIDB().then((db) => {
+                          if (!db) return;
+                          const tx = db.transaction(IDB_STORE, 'readwrite');
+                          tx.objectStore(IDB_STORE).put(parsedVal, k);
+                        }).catch(() => {});
+                      }
+                    } catch (e) {}
                     changed = true;
                   }
                 }
