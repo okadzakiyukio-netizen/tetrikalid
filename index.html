@@ -7319,7 +7319,7 @@
         let isApplyingCloudData = false;
 
         function isAppDataKey(k) {
-          return k && !k.startsWith('sb-') && k !== CFG_URL_KEY && k !== CFG_ANON_KEY && k !== LAST_SYNC_KEY && k !== LAST_UID_KEY;
+          return k && !k.startsWith('sb-') && k !== CFG_URL_KEY && k !== CFG_ANON_KEY && k !== LAST_SYNC_KEY && k !== LAST_UID_KEY && k !== 'tetrika_welcome_seen_v1' && k !== 'tetrika_onb_weather_cache_v1';
         }
 
         function getConfig() {
@@ -7454,8 +7454,24 @@
               const nowStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
               localStorage.setItem(LAST_SYNC_KEY, 'Синхр. в ' + nowStr);
               if (syncTimeEl) syncTimeEl.textContent = 'Синхр. в ' + nowStr;
-              if (changed && reloadOnUpdate) {
-                location.reload();
+              if (changed) {
+                if (reloadOnUpdate) {
+                  location.reload();
+                } else {
+                  try {
+                    if (typeof loadStorage === 'function') {
+                      if (typeof STORAGE_RECORDS_KEY !== 'undefined') records = loadStorage(STORAGE_RECORDS_KEY, []);
+                      if (typeof STORAGE_CALLBACKS_KEY !== 'undefined') callbacks = loadStorage(STORAGE_CALLBACKS_KEY, []);
+                    }
+                    if (typeof loadScheduleData === 'function') shiftsData = loadScheduleData();
+                    if (typeof loadPlanItems === 'function') planItems = loadPlanItems();
+                    if (typeof loadPlanKpiTargets === 'function') planKpiTargets = loadPlanKpiTargets();
+                    if (typeof renderTrackerAll === 'function') renderTrackerAll();
+                    if (typeof renderCallbacks === 'function') renderCallbacks();
+                    if (typeof renderSchedule === 'function') renderSchedule();
+                    if (typeof renderPlan === 'function') renderPlan();
+                  } catch (e) {}
+                }
               }
             } else {
               if (switchedUser) {
@@ -7489,17 +7505,17 @@
             syncTimer = null;
             pushToCloud(true);
           } else if (document.visibilityState === 'visible' && !syncTimer && sbClient && currentUser && !isApplyingCloudData) {
-            pullFromCloud(true, false);
+            pullFromCloud(false, false);
           }
         });
         window.addEventListener('focus', () => {
           if (!syncTimer && sbClient && currentUser && !isApplyingCloudData) {
-            pullFromCloud(true, false);
+            pullFromCloud(false, false);
           }
         });
         setInterval(() => {
           if (document.visibilityState === 'visible' && !syncTimer && sbClient && currentUser && !isApplyingCloudData) {
-            pullFromCloud(true, false);
+            pullFromCloud(false, false);
           }
         }, 25000);
 
@@ -7543,7 +7559,7 @@
             currentUser = data && data.session ? data.session.user : null;
             updateHeaderUI();
             if (currentUser) {
-              await pullFromCloud(true, false);
+              await pullFromCloud(false, false);
             }
           } catch (e) {
             showBanner('Ошибка инициализации Supabase: ' + (e.message || e), 'error');
