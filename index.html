@@ -382,6 +382,7 @@
 
     html { scroll-behavior: smooth; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200">
 
@@ -412,7 +413,7 @@
             <label for="add-obj-text" class="text-xs font-semibold text-slate-700 dark:text-slate-300">
               Скрипт отработки (реплика оператора):
             </label>
-            <span class="text-[11px] text-slate-400">Поддерживает &lt;Имя клиента&gt;, Юкио...</span>
+            <span class="text-[11px] text-slate-400">Поддерживает &lt;Имя клиента&gt;, &lt;Имя менеджера&gt;...</span>
           </div>
           <textarea id="add-obj-text" rows="5" placeholder="«Понимаю вас, именно поэтому... В каком классе сейчас ребенок?»" class="w-full p-3.5 rounded-xl text-xs sm:text-sm border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 leading-relaxed resize-y"></textarea>
         </div>
@@ -447,7 +448,7 @@
       <div class="space-y-1.5">
         <div class="flex items-center justify-between">
           <label for="edit-modal-textarea" class="text-xs font-semibold text-slate-700 dark:text-slate-300">Текст реплики или возражения:</label>
-          <span class="text-[11px] text-slate-400">Переменные: &lt;Имя клиента&gt;, &lt;Имя ребенка&gt;, Юкио...</span>
+          <span class="text-[11px] text-slate-400">Переменные: &lt;Имя клиента&gt;, &lt;Имя ребенка&gt;, &lt;Имя менеджера&gt;...</span>
         </div>
         <textarea id="edit-modal-textarea" rows="7" class="w-full p-3.5 rounded-xl text-sm border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-sans resize-y leading-relaxed"></textarea>
       </div>
@@ -646,6 +647,78 @@
     </div>
   </div>
 
+
+  <!-- Supabase Cloud Sync Modal -->
+  <div id="cloud-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overscroll-contain">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-5 py-4 bg-gradient-to-r from-sky-50/90 via-white to-indigo-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-sky-950/30 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center text-base shadow-sm shrink-0">☁️</span>
+          <div class="min-w-0">
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white leading-tight">Облачное сохранение</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">Синхронизация лидов, смен и скриптов (Supabase)</p>
+          </div>
+        </div>
+        <button id="close-cloud-modal" type="button" class="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition text-lg leading-none" title="Закрыть">✕</button>
+      </div>
+
+      <div class="p-4 sm:p-5 space-y-4 overflow-y-auto text-xs">
+        <div id="cloud-status-banner" class="hidden px-3 py-2 rounded-xl border text-[11px] font-semibold"></div>
+
+        <!-- Auth Form (shown when logged out) -->
+        <div id="cloud-auth-section" class="space-y-3">
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-2.5">
+            <div>
+              <label for="cloud-email-input" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Email:</label>
+              <input id="cloud-email-input" type="email" placeholder="manager@example.com" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500/40" />
+            </div>
+            <div>
+              <label for="cloud-password-input" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Пароль (от 6 символов):</label>
+              <input id="cloud-password-input" type="password" placeholder="••••••" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500/40" />
+            </div>
+            <div class="flex items-center gap-2 pt-1">
+              <button id="cloud-login-btn" type="button" class="flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold transition shadow-xs">Войти</button>
+              <button id="cloud-signup-btn" type="button" class="flex-1 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold transition">Регистрация</button>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Войдите в свой аккаунт, чтобы ваши лиды, перезвоны, смены, план и скрипты автоматически сохранялись в облаке и открывались с любого компьютера.</p>
+        </div>
+
+        <!-- Logged-in Account Section -->
+        <div id="cloud-account-section" class="hidden space-y-3">
+          <div class="p-3.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/70 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-300">Аккаунт подключён</span>
+              <span id="cloud-sync-time" class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">—</span>
+            </div>
+            <div id="cloud-user-email" class="text-sm font-extrabold text-slate-900 dark:text-white truncate">—</div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="cloud-sync-now-btn" type="button" class="flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold transition shadow-xs">🔄 Синхронизировать сейчас</button>
+            <button id="cloud-logout-btn" type="button" class="px-3.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800 font-bold transition">Выйти</button>
+          </div>
+        </div>
+
+        <!-- Project Credentials Settings -->
+        <details id="cloud-config-details" class="rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 p-3">
+          <summary class="cursor-pointer font-bold text-slate-700 dark:text-slate-300 select-none">⚙️ Настройки проекта Supabase (URL и Key)</summary>
+          <div class="mt-2.5 space-y-2">
+            <div>
+              <label for="cloud-url-input" class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Project URL:</label>
+              <input id="cloud-url-input" type="text" placeholder="https://xxxxxxxxxxxx.supabase.co" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono text-[11px]" />
+            </div>
+            <div>
+              <label for="cloud-key-input" class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Anon Public Key:</label>
+              <input id="cloud-key-input" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono text-[11px]" />
+            </div>
+            <button id="cloud-save-config-btn" type="button" class="w-full py-1.5 rounded-lg bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white font-bold text-[11px] transition">Сохранить подключение</button>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
   <!-- Reminders Modal -->
   <div id="reminders-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overscroll-contain">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
@@ -751,6 +824,11 @@
                 <button id="btn-open-reminders-modal" type="button" title="Напоминания со звуковым уведомлением" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-violet-50 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300 border border-violet-200/80 dark:border-violet-800/70 hover:bg-violet-100 dark:hover:bg-violet-900/60 transition cursor-pointer whitespace-nowrap">
                   <span>🔔</span><span>Напоминания</span>
                   <span id="reminders-count-badge" class="hidden px-1.5 py-0 rounded-full text-[10px] font-black bg-violet-600 text-white">0</span>
+                </button>
+                <button id="btn-open-cloud-modal" type="button" title="Облачная синхронизация через Supabase" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-200/80 dark:border-sky-800/70 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition cursor-pointer whitespace-nowrap">
+                  <span id="cloud-status-dot" class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                  <span>☁️</span>
+                  <span id="cloud-btn-label">Облако</span>
                 </button>
               </div>
             </div>
@@ -905,7 +983,7 @@
           <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
             <span class="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-indigo-600 text-white text-[11px] font-bold">👤</span>
             <span class="font-bold text-slate-900 dark:text-white">Панель звонка:</span>
-            <span id="call-drawer-summary" class="text-xs font-medium text-indigo-700 dark:text-indigo-300">Юкио</span>
+            <span id="call-drawer-summary" class="text-xs font-medium text-indigo-700 dark:text-indigo-300">Не указано</span>
             <span class="text-[11px] text-slate-400 hidden sm:inline">(нажмите, чтобы свернуть / развернуть)</span>
           </div>
           <div class="flex items-center gap-2">
@@ -927,7 +1005,7 @@
               <div class="flex flex-wrap items-center gap-3 sm:gap-4 flex-1">
                 <div class="flex items-center gap-2">
                   <span class="text-xs font-bold text-slate-400 uppercase tracking-wider text-[10px]">Менеджер</span>
-                  <input id="var-agent" type="text" value="Юкио" class="w-28 sm:w-32 px-2.5 py-1 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm" />
+                  <input id="var-agent" type="text" value="" placeholder="Ваше имя" class="w-28 sm:w-32 px-2.5 py-1 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm" />
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -1060,7 +1138,7 @@
           </div>
 
           <div id="shp-greeting-1" class="speech-bubble bg-indigo-50/60 dark:bg-indigo-950/30 p-4 rounded-xl text-sm sm:text-base leading-relaxed text-slate-800 dark:text-slate-100 cursor-pointer" title="Нажмите, чтобы скопировать">
-            «Здравствуйте, <span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>. Меня зовут <span class="dyn-var" data-var="agent">Юкио</span>, это онлайн-школа Тетрика - Учи.ру. Вы интересовались улучшением уровня знаний, приглашаю вас на бесплатный индивидуальный урок.»
+            «Здравствуйте, <span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>. Меня зовут <span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>, это онлайн-школа Тетрика - Учи.ру. Вы интересовались улучшением уровня знаний, приглашаю вас на бесплатный индивидуальный урок.»
           </div>
 
           <!-- Первичные сопротивления - частые -->
@@ -1543,7 +1621,7 @@
           </div>
 
           <div class="speech-bubble bg-indigo-50/60 dark:bg-indigo-950/30 p-4 rounded-xl text-sm sm:text-base leading-relaxed">
-            «Здравствуйте, <span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>. Меня зовут <span class="dyn-var" data-var="agent">Юкио</span>, это онлайн-школа Тетрика - Учи.ру. Вы интересовались улучшением уровня знаний, приглашаю вас на бесплатный индивидуальный урок.»
+            «Здравствуйте, <span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>. Меня зовут <span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>, это онлайн-школа Тетрика - Учи.ру. Вы интересовались улучшением уровня знаний, приглашаю вас на бесплатный индивидуальный урок.»
           </div>
 
           <details class="group rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-950/20 overflow-hidden">
@@ -1842,7 +1920,7 @@
           </div>
 
           <div class="speech-bubble bg-indigo-50/60 dark:bg-indigo-950/30 p-4 rounded-xl text-sm sm:text-base">
-            «Здравствуйте, <span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>. Меня зовут <span class="dyn-var" data-var="agent">Юкио</span>, это школа Лектариум. Вы интересовались обучением.»
+            «Здравствуйте, <span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>. Меня зовут <span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>, это школа Лектариум. Вы интересовались обучением.»
           </div>
 
           <details open class="group rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-950/20 overflow-hidden">
@@ -2159,7 +2237,7 @@
                 <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Фиксация записей
                 </h2>
-                <span id="tracker-operator-name" class="font-semibold text-slate-500 dark:text-slate-400 text-xs sm:text-sm">Окадзаки Юкио Рюевич</span>
+                <span id="tracker-operator-name" class="font-semibold text-slate-500 dark:text-slate-400 text-xs sm:text-sm">Менеджер</span>
               </div>
               <p class="text-xs text-slate-400">Учёт записей по предметам, расчёт средних показателей и таблица перезвонов</p>
             </div>
@@ -2986,7 +3064,7 @@
 
       // Variable Inputs
       const varInputs = {
-        agent: { el: document.getElementById('var-agent'), fallback: 'Юкио' },
+        agent: { el: document.getElementById('var-agent'), fallback: '<Имя менеджера>' },
         client: { el: document.getElementById('var-client'), fallback: '<Имя клиента>' },
         child: { el: document.getElementById('var-child'), fallback: '<Имя ребенка>' },
         goal: { el: document.getElementById('var-goal'), fallback: '<Цель обучения>' }
@@ -3111,7 +3189,7 @@
 
       function updateCallDrawerSummary() {
         if (!callDrawerSummary) return;
-        const agent = (varInputs.agent && varInputs.agent.el && varInputs.agent.el.value.trim()) || 'Юкио';
+        const agent = (varInputs.agent && varInputs.agent.el && varInputs.agent.el.value.trim()) || 'Не указано';
         const client = (varInputs.client && varInputs.client.el && varInputs.client.el.value.trim()) || '';
         const child = (varInputs.child && varInputs.child.el && varInputs.child.el.value.trim()) || '';
         const goal = (varInputs.goal && varInputs.goal.el && varInputs.goal.el.value.trim()) || '';
@@ -5881,7 +5959,7 @@
           appName: 'Tetrika Onboarding Complete Workspace Backup',
           version: '3.0',
           exportDate: new Date().toISOString(),
-          operator: 'Окадзаки Юкио Рюевич',
+          operator: 'Менеджер',
 
           // 1. Лиды и перезвоны
           records: records || [],
@@ -7026,7 +7104,7 @@
                               .replace(/<Имя ребенка>/g, '<span class="dyn-var" data-var="child"><Имя ребенка></span>')
                               .replace(/<ИМЯ РОДИТЕЛЯ>/g, '<span class="dyn-var" data-var="client"><Имя клиента></span>')
                               .replace(/<ИМЯ ребёнка>/g, '<span class="dyn-var" data-var="child"><Имя ребенка></span>')
-                              .replace(/Юкио/g, '<span class="dyn-var" data-var="agent">Юкио</span>');
+                              .replace(/Юкио/g, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>');
 
         // Render cleanly
         el.innerHTML = '<div class="leading-relaxed">' + formatted.replace(/\n/g, '<br>') + '</div>';
@@ -7190,7 +7268,7 @@
         const formatted = obj.text
           .replace(/<Имя клиента>/g, '<span class="dyn-var" data-var="client"><Имя клиента></span>')
           .replace(/<Имя ребенка>/g, '<span class="dyn-var" data-var="child"><Имя ребенка></span>')
-          .replace(/Юкио/g, '<span class="dyn-var" data-var="agent">Юкио</span>');
+          .replace(/Юкио/g, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>');
 
         card.innerHTML = 
           '<div class="flex items-center justify-between mb-1.5 pr-6">' +
@@ -9365,6 +9443,295 @@
       }
 
 
+
+      // ================= ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ SUPABASE =================
+      (function initSupabaseCloudSync() {
+        // Вставьте сюда ваши ключи из Supabase (Project Settings -> API), чтобы они работали сразу у всех сотрудников без настройки:
+        const DEFAULT_SUPABASE_URL = '';
+        const DEFAULT_SUPABASE_ANON_KEY = '';
+
+        const CFG_URL_KEY = 'tetrika_sb_url_v1';
+        const CFG_ANON_KEY = 'tetrika_sb_anon_v1';
+        const LAST_SYNC_KEY = 'tetrika_sb_last_sync_v1';
+
+        const openBtn = document.getElementById('btn-open-cloud-modal');
+        const closeBtn = document.getElementById('close-cloud-modal');
+        const modal = document.getElementById('cloud-modal');
+        const statusDot = document.getElementById('cloud-status-dot');
+        const btnLabel = document.getElementById('cloud-btn-label');
+        const banner = document.getElementById('cloud-status-banner');
+
+        const authSection = document.getElementById('cloud-auth-section');
+        const accountSection = document.getElementById('cloud-account-section');
+        const userEmailEl = document.getElementById('cloud-user-email');
+        const syncTimeEl = document.getElementById('cloud-sync-time');
+
+        const emailInput = document.getElementById('cloud-email-input');
+        const passInput = document.getElementById('cloud-password-input');
+        const loginBtn = document.getElementById('cloud-login-btn');
+        const signupBtn = document.getElementById('cloud-signup-btn');
+        const syncNowBtn = document.getElementById('cloud-sync-now-btn');
+        const logoutBtn = document.getElementById('cloud-logout-btn');
+
+        const cfgDetails = document.getElementById('cloud-config-details');
+        const urlInput = document.getElementById('cloud-url-input');
+        const keyInput = document.getElementById('cloud-key-input');
+        const saveCfgBtn = document.getElementById('cloud-save-config-btn');
+
+        let sbClient = null;
+        let currentUser = null;
+        let syncTimer = null;
+        let isApplyingCloudData = false;
+
+        function getConfig() {
+          const url = (localStorage.getItem(CFG_URL_KEY) || DEFAULT_SUPABASE_URL || '').trim();
+          const key = (localStorage.getItem(CFG_ANON_KEY) || DEFAULT_SUPABASE_ANON_KEY || '').trim();
+          return { url, key };
+        }
+
+        function showBanner(msg, type) {
+          if (!banner) return;
+          banner.textContent = msg;
+          banner.className = 'px-3 py-2 rounded-xl border text-[11px] font-semibold ' +
+            (type === 'error'
+              ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300'
+              : type === 'success'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
+              : 'bg-sky-50 dark:bg-sky-950/40 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300');
+          banner.classList.remove('hidden');
+        }
+
+        function hideBanner() {
+          if (banner) banner.classList.add('hidden');
+        }
+
+        function collectLocalSnapshot() {
+          const data = {};
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (!k) continue;
+            if (k.startsWith('sb-') || k === CFG_URL_KEY || k === CFG_ANON_KEY || k === LAST_SYNC_KEY) continue;
+            data[k] = localStorage.getItem(k);
+          }
+          return data;
+        }
+
+        function updateHeaderUI() {
+          if (currentUser) {
+            if (statusDot) statusDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
+            if (btnLabel) btnLabel.textContent = (currentUser.email || 'В сети').split('@')[0];
+            if (authSection) authSection.classList.add('hidden');
+            if (accountSection) accountSection.classList.remove('hidden');
+            if (userEmailEl) userEmailEl.textContent = currentUser.email || '—';
+            if (syncTimeEl) syncTimeEl.textContent = localStorage.getItem(LAST_SYNC_KEY) || 'Синхронизировано';
+          } else {
+            const cfg = getConfig();
+            if (statusDot) statusDot.className = 'w-1.5 h-1.5 rounded-full ' + (cfg.url && cfg.key ? 'bg-amber-400' : 'bg-slate-400');
+            if (btnLabel) btnLabel.textContent = 'Облако';
+            if (authSection) authSection.classList.remove('hidden');
+            if (accountSection) accountSection.classList.add('hidden');
+          }
+        }
+
+        async function pushToCloud(silent) {
+          if (!sbClient || !currentUser || isApplyingCloudData) return;
+          try {
+            const snapshot = collectLocalSnapshot();
+            const { error } = await sbClient
+              .from('user_workspace')
+              .upsert({
+                user_id: currentUser.id,
+                email: currentUser.email || '',
+                data_json: snapshot,
+                updated_at: new Date().toISOString()
+              }, { onConflict: 'user_id' });
+            if (error) throw error;
+            const nowStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            localStorage.setItem(LAST_SYNC_KEY, 'Синхр. в ' + nowStr);
+            if (syncTimeEl) syncTimeEl.textContent = 'Синхр. в ' + nowStr;
+            if (!silent) showBanner('Данные успешно сохранены в облако!', 'success');
+          } catch (err) {
+            if (!silent) showBanner('Ошибка сохранения: ' + (err.message || err), 'error');
+          }
+        }
+
+        async function pullFromCloud(reloadOnUpdate) {
+          if (!sbClient || !currentUser) return;
+          try {
+            const { data, error } = await sbClient
+              .from('user_workspace')
+              .select('data_json, updated_at')
+              .eq('user_id', currentUser.id)
+              .maybeSingle();
+
+            if (error) throw error;
+
+            if (data && data.data_json && Object.keys(data.data_json).length > 0) {
+              isApplyingCloudData = true;
+              const cloudObj = data.data_json;
+              let changed = false;
+              Object.keys(cloudObj).forEach((k) => {
+                if (localStorage.getItem(k) !== cloudObj[k]) {
+                  localStorage.setItem(k, cloudObj[k]);
+                  changed = true;
+                }
+              });
+              isApplyingCloudData = false;
+              const nowStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+              localStorage.setItem(LAST_SYNC_KEY, 'Синхр. в ' + nowStr);
+              if (syncTimeEl) syncTimeEl.textContent = 'Синхр. в ' + nowStr;
+              if (changed && reloadOnUpdate) {
+                location.reload();
+              }
+            } else {
+              // Облако пока пустое — загружаем текущие локальные данные в облако
+              await pushToCloud(true);
+            }
+          } catch (err) {
+            showBanner('Ошибка загрузки из облака: ' + (err.message || err), 'error');
+          }
+        }
+
+        function scheduleAutoPush() {
+          if (!sbClient || !currentUser || isApplyingCloudData) return;
+          clearTimeout(syncTimer);
+          syncTimer = setTimeout(() => pushToCloud(true), 1500);
+        }
+
+        // Перехват любых изменений localStorage для автоматической фоновой синхронизации
+        const origSetItem = Storage.prototype.setItem;
+        const origRemoveItem = Storage.prototype.removeItem;
+        Storage.prototype.setItem = function (k, v) {
+          origSetItem.apply(this, arguments);
+          if (this === localStorage && k && !k.startsWith('sb-') && k !== CFG_URL_KEY && k !== CFG_ANON_KEY && k !== LAST_SYNC_KEY) {
+            scheduleAutoPush();
+          }
+        };
+        Storage.prototype.removeItem = function (k) {
+          origRemoveItem.apply(this, arguments);
+          if (this === localStorage && k && !k.startsWith('sb-') && k !== CFG_URL_KEY && k !== CFG_ANON_KEY && k !== LAST_SYNC_KEY) {
+            scheduleAutoPush();
+          }
+        };
+
+        async function initClient() {
+          const cfg = getConfig();
+          if (urlInput) urlInput.value = cfg.url;
+          if (keyInput) keyInput.value = cfg.key;
+
+          if (!cfg.url || !cfg.key) {
+            sbClient = null;
+            currentUser = null;
+            if (cfgDetails) cfgDetails.open = true;
+            updateHeaderUI();
+            return;
+          }
+
+          if (!window.supabase || !window.supabase.createClient) {
+            showBanner('Библиотека Supabase не загрузилась (проверьте интернет).', 'error');
+            return;
+          }
+
+          try {
+            sbClient = window.supabase.createClient(cfg.url, cfg.key);
+            const { data } = await sbClient.auth.getSession();
+            currentUser = data && data.session ? data.session.user : null;
+            updateHeaderUI();
+            if (currentUser) {
+              await pullFromCloud(false);
+            }
+          } catch (e) {
+            showBanner('Ошибка инициализации Supabase: ' + (e.message || e), 'error');
+          }
+        }
+
+        if (openBtn && modal) {
+          openBtn.addEventListener('click', () => {
+            hideBanner();
+            const cfg = getConfig();
+            if (!cfg.url || !cfg.key) {
+              if (cfgDetails) cfgDetails.open = true;
+              showBanner('Сначала вставьте Project URL и Anon Key вашего проекта Supabase ниже.', 'info');
+            }
+            modal.classList.remove('hidden');
+          });
+        }
+        if (closeBtn && modal) {
+          closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        }
+
+        if (saveCfgBtn) {
+          saveCfgBtn.addEventListener('click', async () => {
+            const u = (urlInput ? urlInput.value : '').trim();
+            const k = (keyInput ? keyInput.value : '').trim();
+            if (!u || !k) {
+              showBanner('Заполните оба поля: Project URL и Anon Public Key.', 'error');
+              return;
+            }
+            localStorage.setItem(CFG_URL_KEY, u);
+            localStorage.setItem(CFG_ANON_KEY, k);
+            if (cfgDetails) cfgDetails.open = false;
+            showBanner('Подключение сохранено! Теперь можно войти или зарегистрироваться.', 'success');
+            await initClient();
+          });
+        }
+
+        if (loginBtn) {
+          loginBtn.addEventListener('click', async () => {
+            if (!sbClient) { showBanner('Сначала настройте Project URL и Anon Key ниже.', 'error'); return; }
+            const email = (emailInput ? emailInput.value : '').trim();
+            const password = passInput ? passInput.value : '';
+            if (!email || !password) { showBanner('Введите Email и пароль.', 'error'); return; }
+            loginBtn.disabled = true;
+            const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+            loginBtn.disabled = false;
+            if (error) { showBanner('Ошибка входа: ' + error.message, 'error'); return; }
+            currentUser = data.user;
+            updateHeaderUI();
+            showBanner('Вход выполнен! Синхронизируем данные...', 'success');
+            await pullFromCloud(true);
+          });
+        }
+
+        if (signupBtn) {
+          signupBtn.addEventListener('click', async () => {
+            if (!sbClient) { showBanner('Сначала настройте Project URL и Anon Key ниже.', 'error'); return; }
+            const email = (emailInput ? emailInput.value : '').trim();
+            const password = passInput ? passInput.value : '';
+            if (!email || password.length < 6) { showBanner('Введите Email и пароль (минимум 6 символов).', 'error'); return; }
+            signupBtn.disabled = true;
+            const { data, error } = await sbClient.auth.signUp({ email, password });
+            signupBtn.disabled = false;
+            if (error) { showBanner('Ошибка регистрации: ' + error.message, 'error'); return; }
+            if (data.session) {
+              currentUser = data.user;
+              updateHeaderUI();
+              await pushToCloud(true);
+              showBanner('Аккаунт создан и данные сохранены в облако!', 'success');
+            } else {
+              showBanner('Аккаунт создан! Если включено подтверждение почты — проверьте Email, или отключите Confirm Email в Supabase Auth.', 'info');
+            }
+          });
+        }
+
+        if (syncNowBtn) {
+          syncNowBtn.addEventListener('click', async () => {
+            await pushToCloud(false);
+          });
+        }
+
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', async () => {
+            if (sbClient) await sbClient.auth.signOut();
+            currentUser = null;
+            updateHeaderUI();
+            showBanner('Вы вышли из облачного аккаунта.', 'info');
+          });
+        }
+
+        initClient();
+      })();
+
       // ================= УНИВЕРСАЛЬНАЯ БЛОКИРОВКА СКРОЛЛА, КЛИК ПО ФОНУ И ESC ДЛЯ ВСЕХ МОДАЛОК =================
       (function initUniversalModalBehavior() {
         const modalIds = [
@@ -9372,6 +9739,7 @@
           'edit-modal',
           'tz-modal',
           'reminders-modal',
+          'cloud-modal',
           'schedule-shift-editor-modal',
           'rename-tab-modal',
           'substage-modal',
