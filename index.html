@@ -648,6 +648,68 @@
   </div>
 
 
+  <!-- Welcome Onboarding Modal (показывается один раз при первом входе) -->
+  <div id="welcome-modal" class="hidden fixed inset-0 z-50 bg-slate-900/65 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden max-h-[92vh] flex flex-col">
+      <div class="px-6 py-4 bg-gradient-to-r from-indigo-600 via-violet-600 to-sky-600 text-white flex items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-xl shadow-inner">🚀</div>
+          <div>
+            <h3 class="text-base sm:text-lg font-extrabold tracking-tight">Добро пожаловать в рабочее место ОНБ</h3>
+            <p class="text-[11px] sm:text-xs text-white/85">Короткий гид: с чего начать и как всё устроено</p>
+          </div>
+        </div>
+        <button id="close-welcome-modal" type="button" class="w-8 h-8 rounded-xl bg-white/15 hover:bg-white/25 flex items-center justify-center text-white text-sm font-bold transition">✕</button>
+      </div>
+
+      <div class="p-5 sm:p-6 overflow-y-auto space-y-3 text-xs text-slate-700 dark:text-slate-300">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-3.5 rounded-2xl bg-sky-50/80 dark:bg-sky-950/30 border border-sky-200/80 dark:border-sky-800/60 space-y-1.5">
+            <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
+              <span>☁️</span>
+              <span>1. Облачное сохранение</span>
+            </div>
+            <p class="leading-relaxed text-[11.5px]">Нажми <b>«☁️ Облако»</b> в шапке, введи свой Email и пароль и нажми <b>«Регистрация»</b>. После этого твои лиды, смены, план и скрипты будут сохраняться автоматически и открываться с любого ПК.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/60 space-y-1.5">
+            <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
+              <span>📊</span>
+              <span>2. Лиды и импорт с ПК</span>
+            </div>
+            <p class="leading-relaxed text-[11.5px]">Добавляй записи вручную или загружай готовую базу с компьютера через кнопку <b>«📂 Импорт CSV»</b> (рядом с <b>«⬇ Экспорт CSV»</b>). Таблица перезвонов и напоминания не дадут забыть клиента.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-violet-50/80 dark:bg-violet-950/30 border border-violet-200/80 dark:border-violet-800/60 space-y-1.5">
+            <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
+              <span>💬</span>
+              <span>3. Скрипты, время и устройства</span>
+            </div>
+            <p class="leading-relaxed text-[11.5px]">Вся база скриптов <b>Тетрики</b> и <b>Лектариума</b> с автоподстановкой имён, встроенным редактором, калькулятором часовых поясов РФ и таблицей совместимости устройств.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/60 space-y-1.5">
+            <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
+              <span>📅</span>
+              <span>4. Мой график и план KPI</span>
+            </div>
+            <p class="leading-relaxed text-[11.5px]">Выставляй свои рабочие смены в календаре, отслеживай норму часов и задавай личные цели по направлениям — всё начинается с чистого листа.</p>
+          </div>
+        </div>
+
+        <div class="px-3.5 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2">
+          <span>💡</span>
+          <span>Этот гид показывается автоматически <b>один раз</b> при первом входе. В любой момент его можно открыть снова по кнопке <b>«?»</b> в шапке.</span>
+        </div>
+      </div>
+
+      <div class="px-5 sm:px-6 py-3.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 flex flex-wrap items-center justify-end gap-2.5 shrink-0">
+        <button id="welcome-go-cloud-btn" type="button" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 transition">☁️ Подключить облако</button>
+        <button id="welcome-start-btn" type="button" class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">Понятно, начать работу</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Supabase Cloud Sync Modal -->
   <div id="cloud-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overscroll-contain">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
@@ -950,11 +1012,14 @@
             </div>
           </div>
 
-          <button id="btn-theme-desktop" type="button" class="hidden lg:inline-flex p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Переключить тему">
+          <div class="hidden lg:flex flex-col items-center gap-1.5 shrink-0">
+            <button id="btn-theme-desktop" type="button" class="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Переключить тему">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
             </svg>
           </button>
+            <button id="btn-open-welcome-modal" type="button" class="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-extrabold transition" title="Быстрый гид по сайту">?</button>
+          </div>
         </div>
       </div>
 
@@ -2257,6 +2322,10 @@
               <span>Загрузить</span>
             </label>
             <input id="import-file-input" type="file" accept=".json" class="hidden" />
+            <label for="tracker-import-csv-input" class="px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 cursor-pointer transition" title="Загрузить лиды из CSV-файла с компьютера">
+              📂 Импорт CSV
+            </label>
+            <input id="tracker-import-csv-input" type="file" accept=".csv,text/csv" class="hidden" />
             <button id="btn-tracker-export" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
               ⬇ Экспорт CSV
             </button>
@@ -3464,2308 +3533,9 @@
       const STORAGE_RECORDS_KEY = 'tetrika_onb_records_v3_full';
       const STORAGE_CALLBACKS_KEY = 'tetrika_onb_callbacks_v3_full';
 
-      const defaultRecords = [
-        {
-                "id": "rec-1",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-2",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-3",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-4",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-5",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-6",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-7",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-8",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-9",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-10",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-11",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "не хотела вообще ничего",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-12",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-13",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-14",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-15",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-16",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-17",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "ИИ"
-                ],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-18",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-19",
-                "date": "2026-11-09",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-20",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-21",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-22",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-23",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-24",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-25",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-26",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-27",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-28",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "реб хотят только англ!",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-29",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-30",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-31",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-32",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-33",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-34",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-35",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-36",
-                "date": "2026-11-08",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-37",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-38",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-39",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-40",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "SFT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-41",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "SFT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-42",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-43",
-                "date": "2026-11-04",
-                "phone": "+79185483855",
-                "comment": "КСЕНИЯ +79185483855 - через минут 20",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-44",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-45",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-46",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-47",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-48",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-49",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "взр",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-50",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-51",
-                "date": "2026-11-04",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-52",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-53",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-54",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-55",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-56",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-57",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-58",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-59",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-60",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "ИИ"
-                ],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-61",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-62",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-63",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-64",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-65",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-66",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-67",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-68",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-69",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-70",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-71",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-72",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-73",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-74",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "взр",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-75",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-76",
-                "date": "2026-11-01",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-77",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-78",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-79",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-80",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-81",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-82",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-83",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-84",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-85",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-86",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-87",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-88",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "SFT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-89",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-90",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-91",
-                "date": "2026-10-31",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-92",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "SFT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-93",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "реб 9 кл",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-94",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-95",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "дош",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-96",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "SFT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-97",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "взр",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-98",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "дош",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-99",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-100",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-101",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-102",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-103",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-104",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-105",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-106",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-107",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-108",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-109",
-                "date": "2026-10-28",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-110",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-111",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "19 лет",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-112",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-113",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-114",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-115",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-116",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-117",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-118",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-119",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-120",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-121",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-122",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-123",
-                "date": "2026-10-27",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-124",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "взр",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-125",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-126",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-127",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-128",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-129",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-130",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-131",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-132",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "дош",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-133",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-134",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-135",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-136",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-137",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-138",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "взр",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-139",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "SFT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-140",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-141",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-142",
-                "date": "2026-10-24",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-143",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-144",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-145",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "дош",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-146",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-147",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-148",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-149",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-150",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-151",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "взр",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-152",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "SFT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-153",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-154",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-155",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-156",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-157",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-158",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-159",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "ИИ"
-                ],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-160",
-                "date": "2026-10-21",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-161",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-162",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-163",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-164",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-165",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "дош",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-166",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-167",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-168",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-169",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 5,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "SFT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-170",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "взр",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Нет",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-171",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-172",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-173",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-174",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-175",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 4,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-176",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-177",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT",
-                        "ИИ"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-178",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 1,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "ИИ"
-                ],
-                "ref": "Да"
-        },
-        {
-                "id": "rec-179",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 2,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        },
-        {
-                "id": "rec-180",
-                "date": "2026-10-17",
-                "phone": "—",
-                "comment": "—",
-                "qty": 3,
-                "lekta": false,
-                "mvu": "Да",
-                "dirs": [
-                        "IT"
-                ],
-                "ref": "Нет"
-        }
-];
+      const defaultRecords = [];
 
-      const defaultCallbacks = [
-        {
-          id: 'cb-1',
-          name: 'Ксения',
-          phone: '+79185483855',
-          time: 'через 20 мин',
-          note: 'Перезвонить по записи на IT (из записи №43)',
-          done: false
-        },
-        {
-          id: 'cb-2',
-          name: 'Родитель (9 кл)',
-          phone: '—',
-          time: '18:00',
-          note: 'Уточнить время ВУ по школьным предметам',
-          done: false
-        },
-        {
-          id: 'cb-3',
-          name: 'Родитель (англ. яз.)',
-          phone: '—',
-          time: '19:30',
-          note: 'Хотят только английский — контрольный звонок',
-          done: false
-        }
-      ];
+      const defaultCallbacks = [];
 
       // =========================================================================
       // НАДЁЖНАЯ ПЕРСИСТЕНТНОСТЬ (IndexedDB + localStorage)
@@ -6828,6 +4598,89 @@
             importDatabaseFromComputer(e.target.files[0]);
             e.target.value = '';
           }
+        });
+      }
+
+      // CSV Import
+      const trackerImportCsvInput = document.getElementById('tracker-import-csv-input');
+      if (trackerImportCsvInput) {
+        trackerImportCsvInput.addEventListener('change', (ev) => {
+          const file = ev.target.files && ev.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            try {
+              let text = String(e.target.result || '').replace(/^\uFEFF/, '');
+              const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+              if (lines.length < 2) {
+                showToast('CSV-файл пустой или не содержит строк');
+                return;
+              }
+              const sep = lines[0].includes(';') ? ';' : ',';
+              function parseCsvLine(line, delimiter) {
+                const res = [];
+                let cur = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                  const ch = line[i];
+                  if (ch === '"') {
+                    if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+                    else { inQuotes = !inQuotes; }
+                  } else if (ch === delimiter && !inQuotes) {
+                    res.push(cur);
+                    cur = '';
+                  } else {
+                    cur += ch;
+                  }
+                }
+                res.push(cur);
+                return res;
+              }
+
+              const imported = [];
+              const nowBase = Date.now();
+              for (let i = 1; i < lines.length; i++) {
+                const cols = parseCsvLine(lines[i], sep);
+                if (cols.length < 3) continue;
+                const dateVal = (cols[1] || '').trim() || new Date().toISOString().slice(0, 10);
+                const phoneVal = (cols[2] || '').trim() || '—';
+                const commentVal = (cols[3] || '').trim() || '—';
+                const qtyVal = Math.max(1, parseInt(cols[4], 10) || 1);
+                const lektaRaw = (cols[5] || '').trim().toLowerCase();
+                const lektaVal = lektaRaw === 'да' || lektaRaw === 'true' || lektaRaw === '1';
+                const mvuVal = (cols[6] || '').trim() || 'Да';
+                const dirsRaw = (cols[7] || '').trim();
+                const dirsVal = dirsRaw ? dirsRaw.split('+').map(s => s.trim()).filter(Boolean) : [];
+                const refVal = (cols[8] || '').trim() || 'Нет';
+                imported.push({
+                  id: 'rec-csv-' + nowBase + '-' + i,
+                  date: dateVal,
+                  phone: phoneVal,
+                  comment: commentVal,
+                  qty: qtyVal,
+                  lekta: lektaVal,
+                  mvu: mvuVal,
+                  dirs: dirsVal,
+                  ref: refVal
+                });
+              }
+
+              if (imported.length === 0) {
+                showToast('Не удалось распознать строки в CSV');
+                return;
+              }
+
+              records = records.concat(imported);
+              saveStorage(STORAGE_RECORDS_KEY, records);
+              if (typeof renderTracker === 'function') renderTracker();
+              showToast('Загружено лидов из CSV: ' + imported.length);
+            } catch (err) {
+              showToast('Ошибка чтения CSV: ' + (err.message || err));
+            } finally {
+              ev.target.value = '';
+            }
+          };
+          reader.readAsText(file, 'utf-8');
         });
       }
 
@@ -8396,9 +6249,9 @@
       function loadPlanKpiTargets() {
         try {
           const raw = localStorage.getItem(STORAGE_PLAN_KPI_KEY);
-          return raw ? JSON.parse(raw) : { peopleTarget: 100, avgTarget: 2.2, mvuTarget: 65 };
+          return raw ? JSON.parse(raw) : { peopleTarget: 0, avgTarget: 0, mvuTarget: 0 };
         } catch (e) {
-          return { peopleTarget: 100, avgTarget: 2.2, mvuTarget: 65 };
+          return { peopleTarget: 0, avgTarget: 0, mvuTarget: 0 };
         }
       }
 
@@ -8413,11 +6266,11 @@
       var planKpiTargets = loadPlanKpiTargets();
 
       const defaultPlanItems = [
-        { id: 'plan-shp', name: 'Школьная программа (ШП)', target: 200, enabled: true, color: 'indigo' },
-        { id: 'plan-it', name: 'IT и Программирование', target: 80, enabled: true, color: 'violet' },
-        { id: 'plan-ai', name: 'Искусственный интеллект (ИИ)', target: 40, enabled: true, color: 'emerald' },
-        { id: 'plan-sft', name: 'Soft Skills / Лидерство', target: 15, enabled: true, color: 'amber' },
-        { id: 'plan-ref', name: 'Реферальные записи (Брат/Сестра)', target: 20, enabled: true, color: 'rose' }
+        { id: 'plan-shp', name: 'Школьная программа (ШП)', target: 0, enabled: true, color: 'indigo' },
+        { id: 'plan-it', name: 'IT и Программирование', target: 0, enabled: true, color: 'violet' },
+        { id: 'plan-ai', name: 'Искусственный интеллект (ИИ)', target: 0, enabled: true, color: 'emerald' },
+        { id: 'plan-sft', name: 'Soft Skills / Лидерство', target: 0, enabled: true, color: 'amber' },
+        { id: 'plan-ref', name: 'Реферальные записи (Брат/Сестра)', target: 0, enabled: true, color: 'rose' }
       ];
 
       function loadPlanItems() {
@@ -8950,26 +6803,7 @@
           const raw = localStorage.getItem(STORAGE_SCHEDULE_KEY);
           if (raw) return JSON.parse(raw);
         } catch (e) {}
-
-        const defaults = {};
-        // 2/2 work schedule defaults for October & November 2026
-        [[2026, 9, 31], [2026, 10, 30]].forEach(([yr, mo, maxD]) => {
-          for (let d = 1; d <= maxD; d++) {
-            const dayStr = yr + '-' + String(mo + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-            if (d % 4 === 1 || d % 4 === 2) {
-              defaults[dayStr] = {
-                type: 'work',
-                start: '09:00',
-                end: '21:00',
-                breakMinutes: 60,
-                netHours: 11.0
-              };
-            } else {
-              defaults[dayStr] = { type: 'off', start: '', end: '', breakMinutes: 0, netHours: 0 };
-            }
-          }
-        });
-        return defaults;
+        return {};
       }
 
       function saveShiftsData(data) {
@@ -9793,9 +7627,67 @@
         initClient();
       })();
 
+      // ================= ПРИВЕТСТВЕННЫЙ ЭКРАН (ОДИН РАЗ ПРИ ПЕРВОМ ВХОДЕ) =================
+      (function initWelcomeOnboardingModal() {
+        const WELCOME_SEEN_KEY = 'tetrika_welcome_seen_v1';
+        const welcomeModal = document.getElementById('welcome-modal');
+        const openWelcomeBtn = document.getElementById('btn-open-welcome-modal');
+        const closeWelcomeBtn = document.getElementById('close-welcome-modal');
+        const startBtn = document.getElementById('welcome-start-btn');
+        const goCloudBtn = document.getElementById('welcome-go-cloud-btn');
+        const cloudModal = document.getElementById('cloud-modal');
+
+        if (!welcomeModal) return;
+
+        function markWelcomeSeen() {
+          try {
+            localStorage.setItem(WELCOME_SEEN_KEY, '1');
+          } catch (e) {}
+        }
+
+        function closeWelcome() {
+          welcomeModal.classList.add('hidden');
+          markWelcomeSeen();
+        }
+
+        if (openWelcomeBtn) {
+          openWelcomeBtn.addEventListener('click', () => {
+            welcomeModal.classList.remove('hidden');
+          });
+        }
+        if (closeWelcomeBtn) closeWelcomeBtn.addEventListener('click', closeWelcome);
+        if (startBtn) startBtn.addEventListener('click', closeWelcome);
+        if (goCloudBtn) {
+          goCloudBtn.addEventListener('click', () => {
+            closeWelcome();
+            if (cloudModal) cloudModal.classList.remove('hidden');
+          });
+        }
+
+        // Если пользователь закрыл приветствие кликом по фону или Esc — тоже запоминаем
+        welcomeModal.addEventListener('click', (e) => {
+          if (e.target === welcomeModal) markWelcomeSeen();
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !welcomeModal.classList.contains('hidden')) {
+            markWelcomeSeen();
+          }
+        });
+
+        // Показываем автоматически ровно один раз при первом входе
+        let alreadySeen = false;
+        try {
+          alreadySeen = localStorage.getItem(WELCOME_SEEN_KEY) === '1';
+        } catch (e) {}
+        if (!alreadySeen) {
+          welcomeModal.classList.remove('hidden');
+        }
+      })();
+
       // ================= УНИВЕРСАЛЬНАЯ БЛОКИРОВКА СКРОЛЛА, КЛИК ПО ФОНУ И ESC ДЛЯ ВСЕХ МОДАЛОК =================
       (function initUniversalModalBehavior() {
         const modalIds = [
+          'welcome-modal',
           'add-objection-modal',
           'edit-modal',
           'tz-modal',
@@ -9810,6 +7702,7 @@
 
         function syncBodyScrollLock() {
           const anyOpen = modals.some((m) => !m.classList.contains('hidden'));
+          document.documentElement.style.overflow = anyOpen ? 'hidden' : '';
           document.body.style.overflow = anyOpen ? 'hidden' : '';
           if (!anyOpen) {
             const gPop = document.getElementById('global-date-popover');
@@ -9820,6 +7713,7 @@
         }
 
         const observer = new MutationObserver(syncBodyScrollLock);
+        syncBodyScrollLock();
         modals.forEach((m) => {
           m.classList.add('overscroll-contain');
           observer.observe(m, { attributes: true, attributeFilter: ['class'] });
