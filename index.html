@@ -3188,8 +3188,61 @@
         document.body.removeChild(ta);
       }
 
+      // Авто-восстановление текстовых плейсхолдеров в карточках (если они попали без span.dyn-var)
+      function normalizeDynamicPlaceholdersInDom() {
+        const patterns = [
+          { re: /<(Имя менеджера|Имя агента)>/gi, key: 'agent', fallback: '<Имя менеджера>' },
+          { re: /<(Имя клиента|ИМЯ РОДИТЕЛЯ)>/gi, key: 'client', fallback: '<Имя клиента>' },
+          { re: /<(Имя ребенка|Имя ребёнка|ИМЯ ребёнка)>/gi, key: 'child', fallback: '<Имя ребенка>' },
+          { re: /<(Цель обучения)>/gi, key: 'goal', fallback: '<Цель обучения>' }
+        ];
+        document.querySelectorAll('.speech-bubble, [data-editable-id]').forEach((container) => {
+          const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+          const textNodes = [];
+          let n;
+          while ((n = walker.nextNode())) {
+            if (n.parentElement && n.parentElement.classList && n.parentElement.classList.contains('dyn-var')) continue;
+            if (n.parentElement && (n.parentElement.tagName === 'TEXTAREA' || n.parentElement.tagName === 'INPUT' || n.parentElement.tagName === 'SCRIPT')) continue;
+            if (/<(Имя менеджера|Имя агента|Имя клиента|ИМЯ РОДИТЕЛЯ|Имя ребенка|Имя ребёнка|ИМЯ ребёнка|Цель обучения)>/i.test(n.nodeValue)) {
+              textNodes.push(n);
+            }
+          }
+          textNodes.forEach((node) => {
+            const frag = document.createDocumentFragment();
+            let rest = node.nodeValue;
+            while (rest.length > 0) {
+              let earliest = null;
+              let matchedRule = null;
+              patterns.forEach((rule) => {
+                rule.re.lastIndex = 0;
+                const m = rule.re.exec(rest);
+                if (m && (!earliest || m.index < earliest.index)) {
+                  earliest = m;
+                  matchedRule = rule;
+                }
+              });
+              if (!earliest) {
+                frag.appendChild(document.createTextNode(rest));
+                break;
+              }
+              if (earliest.index > 0) {
+                frag.appendChild(document.createTextNode(rest.slice(0, earliest.index)));
+              }
+              const span = document.createElement('span');
+              span.className = 'dyn-var';
+              span.setAttribute('data-var', matchedRule.key);
+              span.textContent = matchedRule.fallback;
+              frag.appendChild(span);
+              rest = rest.slice(earliest.index + earliest[0].length);
+            }
+            if (node.parentNode) node.parentNode.replaceChild(frag, node);
+          });
+        });
+      }
+
       // Update dynamic variables across all scripts
       function updateDynamicVars() {
+        normalizeDynamicPlaceholdersInDom();
         Object.keys(varInputs).forEach((key) => {
           if (!varInputs[key].el) return;
           const val = varInputs[key].el.value.trim();
@@ -4983,7 +5036,7 @@
 
         // Check if text has title prefix like "1. Вопрос..."
         const formatted = qaEscapeHtml(text)
-          .replace(/&lt;Имя менеджера&gt;/gi, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>')
+          .replace(/&lt;(?:Имя менеджера|Имя агента)&gt;/gi, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>')
           .replace(/&lt;Имя клиента&gt;/gi, '<span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>')
           .replace(/&lt;Имя ребенка&gt;/gi, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
           .replace(/&lt;Цель обучения&gt;/gi, '<span class="dyn-var" data-var="goal">&lt;Цель обучения&gt;</span>')
@@ -5152,7 +5205,7 @@
         card.setAttribute('data-edit-id', obj.id);
 
         const formatted = qaEscapeHtml(obj.text)
-          .replace(/&lt;Имя менеджера&gt;/gi, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>')
+          .replace(/&lt;(?:Имя менеджера|Имя агента)&gt;/gi, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>')
           .replace(/&lt;Имя клиента&gt;/gi, '<span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>')
           .replace(/&lt;Имя ребенка&gt;/gi, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
           .replace(/&lt;Цель обучения&gt;/gi, '<span class="dyn-var" data-var="goal">&lt;Цель обучения&gt;</span>')
@@ -7577,7 +7630,7 @@
 
             // 6. Имя менеджера и текстовые правки скриптов
             const savedAgent = localStorage.getItem('tetrika_onb_agent_name_v1');
-            if (typeof varInputs !== 'undefined' && varInputs.agent && varInputs.agent.el && savedAgent !== null) {
+            if (typeof varInputs !== 'undefined' && varInputs.agent && varInputs.agent.el && savedAgent !== null && document.activeElement !== varInputs.agent.el) {
               varInputs.agent.el.value = savedAgent;
             }
             if (typeof loadScriptEdits === 'function' && typeof applySavedTextToElement === 'function') {
