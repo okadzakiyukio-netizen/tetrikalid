@@ -7319,7 +7319,7 @@
         let isApplyingCloudData = false;
 
         function isAppDataKey(k) {
-          return k && !k.startsWith('sb-') && k !== CFG_URL_KEY && k !== CFG_ANON_KEY && k !== LAST_SYNC_KEY && k !== LAST_UID_KEY && k !== 'tetrika_welcome_seen_v1' && k !== 'tetrika_onb_weather_cache_v1';
+          return k && !k.startsWith('sb-') && k !== CFG_URL_KEY && k !== CFG_ANON_KEY && k !== LAST_SYNC_KEY && k !== LAST_UID_KEY && k !== 'tetrika_welcome_seen_v1' && k !== 'tetrika_onb_weather_cache_v1' && k !== LAST_LOCAL_MUTATION_KEY;
         }
 
         function getConfig() {
@@ -7412,6 +7412,10 @@
 
         async function pullFromCloud(reloadOnUpdate, isAccountSwitch) {
           if (!sbClient || !currentUser) return;
+          if (!reloadOnUpdate && !isAccountSwitch) {
+            const lastMut = Number(localStorage.getItem(LAST_LOCAL_MUTATION_KEY) || 0);
+            if (lastMut && (Date.now() - lastMut) < 2500) return;
+          }
           try {
             const prevUid = localStorage.getItem(LAST_UID_KEY);
             const switchedUser = Boolean(isAccountSwitch || (prevUid && prevUid !== currentUser.id));
@@ -7477,28 +7481,65 @@
           }
         }
 
+        const LAST_LOCAL_MUTATION_KEY = 'tetrika_last_local_mutation_ts';
+        function markLocalMutation() {
+          try { sessionStorage.setItem(LAST_LOCAL_MUTATION_KEY, String(Date.now())); } catch (e) {}
+          try { origSetItem.call(localStorage, LAST_LOCAL_MUTATION_KEY, String(Date.now())); } catch (e) {}
+        }
+
         function scheduleAutoPush() {
           if (!sbClient || !currentUser || isApplyingCloudData) return;
+          markLocalMutation();
           clearTimeout(syncTimer);
           syncTimer = setTimeout(() => {
             syncTimer = null;
             pushToCloud(true);
-          }, 400);
+          }, 300);
         }
 
         function refreshAppStateFromLocalStorage() {
           try {
+            // 1. Лиды и перезвоны
             if (typeof loadStorage === 'function') {
               if (typeof STORAGE_RECORDS_KEY !== 'undefined') records = loadStorage(STORAGE_RECORDS_KEY, []);
               if (typeof STORAGE_CALLBACKS_KEY !== 'undefined') callbacks = loadStorage(STORAGE_CALLBACKS_KEY, []);
             }
-            if (typeof loadScheduleData === 'function') shiftsData = loadScheduleData();
-            if (typeof loadPlanItems === 'function') planItems = loadPlanItems();
-            if (typeof loadPlanKpiTargets === 'function') planKpiTargets = loadPlanKpiTargets();
             if (typeof renderTrackerAll === 'function') renderTrackerAll();
             if (typeof renderCallbacks === 'function') renderCallbacks();
+
+            // 2. График смен и норма часов
+            if (typeof loadScheduleData === 'function') shiftsData = loadScheduleData();
+            if (typeof loadNormHoursByMonth === 'function') normHoursByMonth = loadNormHoursByMonth();
             if (typeof renderSchedule === 'function') renderSchedule();
+
+            // 3. План на месяц и KPI
+            if (typeof loadPlanItems === 'function') planItems = loadPlanItems();
+            if (typeof loadPlanKpiTargets === 'function') planKpiTargets = loadPlanKpiTargets();
             if (typeof renderPlan === 'function') renderPlan();
+            if (typeof renderPlanMonthModule === 'function') renderPlanMonthModule();
+
+            // 4. Напоминания
+            if (typeof renderReminders === 'function') renderReminders();
+
+            // 5. Скрипты, этапы, подэтапы и вкладки
+            if (typeof loadCustomScripts === 'function') customScripts = loadCustomScripts();
+            if (typeof loadExtraStages === 'function') extraStages = loadExtraStages();
+            if (typeof loadStageOrderMap === 'function') stageOrderMap = loadStageOrderMap();
+            if (typeof loadHiddenStages === 'function') hiddenStages = loadHiddenStages();
+            if (typeof loadStageMetaOverrides === 'function') stageMetaOverrides = loadStageMetaOverrides();
+            if (typeof loadSubstages === 'function') customSubstages = loadSubstages();
+            if (typeof loadHiddenScripts === 'function') hiddenBuiltInScripts = loadHiddenScripts();
+            if (typeof loadTabTitles === 'function') customTabTitles = loadTabTitles();
+
+            if (typeof renderAllCustomScripts === 'function') renderAllCustomScripts();
+            if (typeof applyHiddenScripts === 'function') applyHiddenScripts();
+            if (typeof applyCustomTabTitles === 'function') applyCustomTabTitles();
+            if (typeof applySavedTabsOrder === 'function') applySavedTabsOrder();
+
+            // 6. Тема оформления
+            const savedTheme = localStorage.getItem('tetrika_theme');
+            if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+            else if (savedTheme === 'light') document.documentElement.classList.remove('dark');
           } catch (e) {}
         }
 
@@ -7516,12 +7557,16 @@
             syncTimer = null;
             pushToCloud(true);
           } else if (document.visibilityState === 'visible' && !syncTimer && sbClient && currentUser && !isApplyingCloudData) {
-            pullFromCloud(false, false);
+            setTimeout(() => {
+              if (!syncTimer && !isApplyingCloudData) pullFromCloud(false, false);
+            }, 900);
           }
         });
         window.addEventListener('focus', () => {
           if (!syncTimer && sbClient && currentUser && !isApplyingCloudData) {
-            pullFromCloud(false, false);
+            setTimeout(() => {
+              if (!syncTimer && !isApplyingCloudData) pullFromCloud(false, false);
+            }, 900);
           }
         });
         setInterval(() => {
