@@ -3132,6 +3132,14 @@
       const toastText = document.getElementById('toast-text');
 
       // Variable Inputs
+      function qaEscapeHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
       const varInputs = {
         agent: { el: document.getElementById('var-agent'), fallback: '<Имя менеджера>' },
         client: { el: document.getElementById('var-client'), fallback: '<Имя клиента>' },
@@ -4481,15 +4489,16 @@
             }
 
             const hasPhone = item.phone && item.phone !== '—';
+            const safePhone = qaEscapeHtml(item.phone);
             const phoneCellHtml = hasPhone
-              ? '<button type="button" data-copy-phone="' + item.phone + '" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-800 transition" title="Скопировать номер">' + item.phone + '</button>'
+              ? '<button type="button" data-copy-phone="' + safePhone + '" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-800 transition" title="Скопировать номер">' + safePhone + '</button>'
               : '<span class="text-slate-400">—</span>';
 
             tr.innerHTML =
               '<td class="py-2.5 px-3.5 text-slate-400 font-semibold">' + (rowCounter++) + '</td>' +
               '<td class="py-2.5 px-3.5 text-slate-700 dark:text-slate-300 whitespace-nowrap">' + formatRuDate(item.date) + '</td>' +
               '<td class="py-2.5 px-3.5 whitespace-nowrap">' + phoneCellHtml + '</td>' +
-              '<td class="py-2.5 px-3.5 text-slate-800 dark:text-slate-200 font-medium">' + (item.comment || '—') + '</td>' +
+              '<td class="py-2.5 px-3.5 text-slate-800 dark:text-slate-200 font-medium">' + (item.comment ? qaEscapeHtml(item.comment) : '—') + '</td>' +
               '<td class="py-2.5 px-2.5 text-center">' +
                 '<span class="inline-flex items-center justify-center w-7 h-6 rounded-full text-xs font-bold border ' + getQtyBadgeClass(item.qty) + '">' + item.qty + '</span>' +
               '</td>' +
@@ -4805,12 +4814,12 @@
 
           tr.innerHTML =
             '<td class="py-2.5 px-3">' +
-              '<div class="font-semibold text-slate-900 dark:text-white ' + (cb.done ? 'line-through' : '') + '">' + cb.name + '</div>' +
-              (cb.note ? '<div class="text-[11px] text-slate-500 dark:text-slate-400">' + cb.note + '</div>' : '') +
+              '<div class="font-semibold text-slate-900 dark:text-white ' + (cb.done ? 'line-through' : '') + '">' + qaEscapeHtml(cb.name) + '</div>' +
+              (cb.note ? '<div class="text-[11px] text-slate-500 dark:text-slate-400">' + qaEscapeHtml(cb.note) + '</div>' : '') +
             '</td>' +
             '<td class="py-2.5 px-2.5 whitespace-nowrap">' +
-              '<button type="button" data-cb-copy="' + cb.phone + '" class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold hover:bg-indigo-100" title="Скопировать номер">' +
-                cb.phone +
+              '<button type="button" data-cb-copy="' + qaEscapeHtml(cb.phone) + '" class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold hover:bg-indigo-100" title="Скопировать номер">' +
+                qaEscapeHtml(cb.phone) +
               '</button>' +
             '</td>' +
             '<td class="py-2.5 px-2 text-center whitespace-nowrap">' +
@@ -4973,13 +4982,13 @@
         const hasParagraph = el.querySelector('p');
 
         // Check if text has title prefix like "1. Вопрос..."
-        const formatted = text
-          .replace(/<Имя менеджера>|&lt;Имя менеджера&gt;/gi, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>')
-          .replace(/<Имя клиента>|&lt;Имя клиента&gt;/gi, '<span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>')
-          .replace(/<Имя ребенка>|&lt;Имя ребенка&gt;/gi, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
-          .replace(/<Цель обучения>|&lt;Цель обучения&gt;/gi, '<span class="dyn-var" data-var="goal">&lt;Цель обучения&gt;</span>')
-          .replace(/<ИМЯ РОДИТЕЛЯ>/g, '<span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>')
-          .replace(/<ИМЯ ребёнка>/g, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
+        const formatted = qaEscapeHtml(text)
+          .replace(/&lt;Имя менеджера&gt;/gi, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>')
+          .replace(/&lt;Имя клиента&gt;/gi, '<span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>')
+          .replace(/&lt;Имя ребенка&gt;/gi, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
+          .replace(/&lt;Цель обучения&gt;/gi, '<span class="dyn-var" data-var="goal">&lt;Цель обучения&gt;</span>')
+          .replace(/&lt;ИМЯ РОДИТЕЛЯ&gt;/g, '<span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>')
+          .replace(/&lt;ИМЯ ребёнка&gt;/gi, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
           .replace(/Юкио/g, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>');
 
         // Render cleanly
@@ -5142,16 +5151,18 @@
         card.setAttribute('data-default-content', '');
         card.setAttribute('data-edit-id', obj.id);
 
-        const formatted = obj.text
-          .replace(/<Имя клиента>/g, '<span class="dyn-var" data-var="client"><Имя клиента></span>')
-          .replace(/<Имя ребенка>/g, '<span class="dyn-var" data-var="child"><Имя ребенка></span>')
+        const formatted = qaEscapeHtml(obj.text)
+          .replace(/&lt;Имя менеджера&gt;/gi, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>')
+          .replace(/&lt;Имя клиента&gt;/gi, '<span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>')
+          .replace(/&lt;Имя ребенка&gt;/gi, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
+          .replace(/&lt;Цель обучения&gt;/gi, '<span class="dyn-var" data-var="goal">&lt;Цель обучения&gt;</span>')
           .replace(/Юкио/g, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>');
 
         card.innerHTML = 
           '<div class="flex items-center justify-between mb-1.5 pr-6">' +
             '<div class="text-xs font-bold text-rose-700 dark:text-rose-400 flex items-center gap-1.5">' +
               '<span class="custom-obj-badge">Свое</span>' +
-              '<span>' + obj.title + '</span>' +
+              '<span>' + qaEscapeHtml(obj.title) + '</span>' +
             '</div>' +
           '</div>' +
           '<p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">' + formatted.replace(/\n/g, '<br>') + '</p>';
@@ -8348,6 +8359,7 @@
         try {
           const geoUrl = 'https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(q) + '&count=1&language=ru&format=json';
           const res = await fetch(geoUrl);
+          if (!res.ok) throw new Error('HTTP ' + res.status);
           const data = await res.json();
           if (data && data.results && data.results.length > 0) {
             const place = data.results[0];
@@ -10350,6 +10362,19 @@
       updateDynamicVars();
       setActiveTab('shp');
     })();
-  </script>
+  
+      // Глобальное закрытие открытых модальных окон по клавише Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        ['edit-modal', 'add-obj-modal', 'welcome-modal', 'supabase-auth-modal', 'custom-script-modal'].forEach((mid) => {
+          const m = document.getElementById(mid);
+          if (m && !m.classList.contains('hidden')) {
+            m.classList.add('hidden');
+            if (m.style && m.style.display === 'flex') m.style.display = 'none';
+          }
+        });
+      });
+
+</script>
 </body>
 </html>
