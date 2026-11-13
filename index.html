@@ -10079,14 +10079,9 @@
           if (clockMskEl) clockMskEl.textContent = String(mskHours).padStart(2, '0') + ':' + mm + ':' + ss;
         }
 
-        // 2. Ваше местное время по расположению (Дананг, UTC+7 / локальная таймзона)
+        // 2. Местное время автоматически подстраивается под часовой пояс устройства каждого менеджера
         try {
-          // Если выбрана локация Дананг/Вьетнам — точно Asia/Ho_Chi_Minh
-          const locName = (currentWeatherLoc && currentWeatherLoc.name) ? currentWeatherLoc.name.toLowerCase() : '';
-          const targetTz = locName.includes('дананг') || locName.includes('vietnam')
-            ? 'Asia/Ho_Chi_Minh'
-            : (Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Ho_Chi_Minh');
-
+          const targetTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Moscow';
           const localTimeStr = new Intl.DateTimeFormat('ru-RU', {
             timeZone: targetTz,
             hour: '2-digit',
@@ -10130,12 +10125,46 @@
       const weatherCitySave = document.getElementById('weather-city-save');
       const weatherRefreshBtn = document.getElementById('weather-refresh-btn');
 
+      const TZ_DEFAULT_CITIES = {
+        'Europe/Moscow': { name: 'Москва', lat: 55.7558, lon: 37.6173 },
+        'Europe/Kaliningrad': { name: 'Калининград', lat: 54.7104, lon: 20.4522 },
+        'Europe/Samara': { name: 'Самара', lat: 53.1959, lon: 50.1002 },
+        'Asia/Yekaterinburg': { name: 'Екатеринбург', lat: 56.8389, lon: 60.6057 },
+        'Asia/Omsk': { name: 'Омск', lat: 54.9885, lon: 73.3242 },
+        'Asia/Novosibirsk': { name: 'Новосибирск', lat: 55.0084, lon: 82.9357 },
+        'Asia/Barnaul': { name: 'Барнаул', lat: 53.3479, lon: 83.7798 },
+        'Asia/Tomsk': { name: 'Томск', lat: 56.4846, lon: 84.9481 },
+        'Asia/Krasnoyarsk': { name: 'Красноярск', lat: 56.0153, lon: 92.8932 },
+        'Asia/Irkutsk': { name: 'Иркутск', lat: 52.2870, lon: 104.3050 },
+        'Asia/Yakutsk': { name: 'Якутск', lat: 62.0397, lon: 129.7422 },
+        'Asia/Vladivostok': { name: 'Владивосток', lat: 43.1155, lon: 131.8855 },
+        'Asia/Ho_Chi_Minh': { name: 'Дананг', lat: 16.0544, lon: 108.2022 },
+        'Asia/Bangkok': { name: 'Бангкок', lat: 13.7563, lon: 100.5018 },
+        'Europe/Minsk': { name: 'Минск', lat: 53.9006, lon: 27.5590 },
+        'Asia/Almaty': { name: 'Алматы', lat: 43.2220, lon: 76.8512 },
+        'Asia/Tbilisi': { name: 'Тбилиси', lat: 41.7151, lon: 44.8271 }
+      };
+
+      function getFallbackCityByTimezone() {
+        try {
+          const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          if (tz && TZ_DEFAULT_CITIES[tz]) return TZ_DEFAULT_CITIES[tz];
+        } catch (e) {}
+        return { name: 'Москва', lat: 55.7558, lon: 37.6173 };
+      }
+
+      function hasSavedWeatherLocation() {
+        try {
+          return Boolean(localStorage.getItem(STORAGE_WEATHER_CITY_KEY));
+        } catch (e) { return false; }
+      }
+
       function loadWeatherLocation() {
         try {
           const raw = localStorage.getItem(STORAGE_WEATHER_CITY_KEY);
           if (raw) return JSON.parse(raw);
         } catch (e) {}
-        return { name: 'Дананг', lat: 16.0544, lon: 108.2022 };
+        return getFallbackCityByTimezone();
       }
 
       function saveWeatherLocation(loc) {
@@ -10145,6 +10174,30 @@
       }
 
       let currentWeatherLoc = loadWeatherLocation();
+
+      async function autoDetectCityIfNotSaved() {
+        if (hasSavedWeatherLocation()) return;
+        try {
+          const res = await fetch('https://get.geojs.io/v1/ip/geo.json');
+          if (!res.ok) return;
+          const geo = await res.json();
+          if (geo && geo.latitude && geo.longitude && (geo.city || geo.region)) {
+            const lat = parseFloat(geo.latitude);
+            const lon = parseFloat(geo.longitude);
+            if (!isNaN(lat) && !isNaN(lon)) {
+              currentWeatherLoc = {
+                name: geo.city || geo.region,
+                lat: lat,
+                lon: lon
+              };
+              if (!hasSavedWeatherLocation()) {
+                fetchWeatherForecast();
+              }
+            }
+          }
+        } catch (e) {}
+      }
+      autoDetectCityIfNotSaved();
 
       async function fetchWeatherForecast() {
         if (weatherCityLabel) weatherCityLabel.textContent = '📍 ' + currentWeatherLoc.name;
