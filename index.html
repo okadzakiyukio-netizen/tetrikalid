@@ -9447,12 +9447,13 @@
       // ================= ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ SUPABASE =================
       (function initSupabaseCloudSync() {
         // Вставьте сюда ваши ключи из Supabase (Project Settings -> API), чтобы они работали сразу у всех сотрудников без настройки:
-        const DEFAULT_SUPABASE_URL = '';
-        const DEFAULT_SUPABASE_ANON_KEY = '';
+        const DEFAULT_SUPABASE_URL = 'https://jhspaintdtxjgrpgaklg.supabase.co';
+        const DEFAULT_SUPABASE_ANON_KEY = 'sb_publishable_Dr686z8u_oUMC60PA6v14w_Jv-e0igM';
 
         const CFG_URL_KEY = 'tetrika_sb_url_v1';
         const CFG_ANON_KEY = 'tetrika_sb_anon_v1';
         const LAST_SYNC_KEY = 'tetrika_sb_last_sync_v1';
+        const LAST_UID_KEY = 'tetrika_sb_last_uid_v1';
 
         const openBtn = document.getElementById('btn-open-cloud-modal');
         const closeBtn = document.getElementById('close-cloud-modal');
@@ -9483,6 +9484,10 @@
         let syncTimer = null;
         let isApplyingCloudData = false;
 
+        function isAppDataKey(k) {
+          return k && !k.startsWith('sb-') && k !== CFG_URL_KEY && k !== CFG_ANON_KEY && k !== LAST_SYNC_KEY && k !== LAST_UID_KEY;
+        }
+
         function getConfig() {
           const url = (localStorage.getItem(CFG_URL_KEY) || DEFAULT_SUPABASE_URL || '').trim();
           const key = (localStorage.getItem(CFG_ANON_KEY) || DEFAULT_SUPABASE_ANON_KEY || '').trim();
@@ -9509,11 +9514,21 @@
           const data = {};
           for (let i = 0; i < localStorage.length; i++) {
             const k = localStorage.key(i);
-            if (!k) continue;
-            if (k.startsWith('sb-') || k === CFG_URL_KEY || k === CFG_ANON_KEY || k === LAST_SYNC_KEY) continue;
+            if (!isAppDataKey(k)) continue;
             data[k] = localStorage.getItem(k);
           }
           return data;
+        }
+
+        function clearAppLocalData() {
+          const keysToRemove = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (isAppDataKey(k)) keysToRemove.push(k);
+          }
+          isApplyingCloudData = true;
+          keysToRemove.forEach((k) => localStorage.removeItem(k));
+          isApplyingCloudData = false;
         }
 
         function updateHeaderUI() {
@@ -9546,6 +9561,7 @@
                 updated_at: new Date().toISOString()
               }, { onConflict: 'user_id' });
             if (error) throw error;
+            localStorage.setItem(LAST_UID_KEY, currentUser.id);
             const nowStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             localStorage.setItem(LAST_SYNC_KEY, 'Синхр. в ' + nowStr);
             if (syncTimeEl) syncTimeEl.textContent = 'Синхр. в ' + nowStr;
@@ -9555,9 +9571,12 @@
           }
         }
 
-        async function pullFromCloud(reloadOnUpdate) {
+        async function pullFromCloud(reloadOnUpdate, isAccountSwitch) {
           if (!sbClient || !currentUser) return;
           try {
+            const prevUid = localStorage.getItem(LAST_UID_KEY);
+            const switchedUser = Boolean(isAccountSwitch || (prevUid && prevUid !== currentUser.id));
+
             const { data, error } = await sbClient
               .from('user_workspace')
               .select('data_json, updated_at')
@@ -9567,16 +9586,22 @@
             if (error) throw error;
 
             if (data && data.data_json && Object.keys(data.data_json).length > 0) {
+              if (switchedUser) {
+                clearAppLocalData();
+              }
               isApplyingCloudData = true;
               const cloudObj = data.data_json;
-              let changed = false;
+              let changed = switchedUser;
               Object.keys(cloudObj).forEach((k) => {
-                if (localStorage.getItem(k) !== cloudObj[k]) {
-                  localStorage.setItem(k, cloudObj[k]);
-                  changed = true;
+                if (typeof cloudObj[k] === 'string' && isAppDataKey(k)) {
+                  if (localStorage.getItem(k) !== cloudObj[k]) {
+                    localStorage.setItem(k, cloudObj[k]);
+                    changed = true;
+                  }
                 }
               });
               isApplyingCloudData = false;
+              localStorage.setItem(LAST_UID_KEY, currentUser.id);
               const nowStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
               localStorage.setItem(LAST_SYNC_KEY, 'Синхр. в ' + nowStr);
               if (syncTimeEl) syncTimeEl.textContent = 'Синхр. в ' + nowStr;
@@ -9584,8 +9609,15 @@
                 location.reload();
               }
             } else {
-              // Облако пока пустое — загружаем текущие локальные данные в облако
+              if (switchedUser) {
+                // Если вошёл другой пользователь и у него в облаке пусто — не смешиваем с чужими локальными данными
+                clearAppLocalData();
+              }
+              localStorage.setItem(LAST_UID_KEY, currentUser.id);
               await pushToCloud(true);
+              if (switchedUser && reloadOnUpdate) {
+                location.reload();
+              }
             }
           } catch (err) {
             showBanner('Ошибка загрузки из облака: ' + (err.message || err), 'error');
@@ -9595,21 +9627,33 @@
         function scheduleAutoPush() {
           if (!sbClient || !currentUser || isApplyingCloudData) return;
           clearTimeout(syncTimer);
-          syncTimer = setTimeout(() => pushToCloud(true), 1500);
+          syncTimer = setTimeout(() => {
+            syncTimer = null;
+            pushToCloud(true);
+          }, 1500);
         }
+
+        // Немедленная синхронизация при сворачивании/закрытии вкладки, если есть отложенные правки
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'hidden' && syncTimer && sbClient && currentUser && !isApplyingCloudData) {
+            clearTimeout(syncTimer);
+            syncTimer = null;
+            pushToCloud(true);
+          }
+        });
 
         // Перехват любых изменений localStorage для автоматической фоновой синхронизации
         const origSetItem = Storage.prototype.setItem;
         const origRemoveItem = Storage.prototype.removeItem;
         Storage.prototype.setItem = function (k, v) {
           origSetItem.apply(this, arguments);
-          if (this === localStorage && k && !k.startsWith('sb-') && k !== CFG_URL_KEY && k !== CFG_ANON_KEY && k !== LAST_SYNC_KEY) {
+          if (this === localStorage && isAppDataKey(k)) {
             scheduleAutoPush();
           }
         };
         Storage.prototype.removeItem = function (k) {
           origRemoveItem.apply(this, arguments);
-          if (this === localStorage && k && !k.startsWith('sb-') && k !== CFG_URL_KEY && k !== CFG_ANON_KEY && k !== LAST_SYNC_KEY) {
+          if (this === localStorage && isAppDataKey(k)) {
             scheduleAutoPush();
           }
         };
@@ -9638,7 +9682,9 @@
             currentUser = data && data.session ? data.session.user : null;
             updateHeaderUI();
             if (currentUser) {
-              await pullFromCloud(false);
+              const alreadySyncedThisTab = sessionStorage.getItem('tetrika_sb_tab_pulled') === '1';
+              sessionStorage.setItem('tetrika_sb_tab_pulled', '1');
+              await pullFromCloud(!alreadySyncedThisTab, false);
             }
           } catch (e) {
             showBanner('Ошибка инициализации Supabase: ' + (e.message || e), 'error');
@@ -9676,21 +9722,30 @@
           });
         }
 
+        async function handleLogin() {
+          if (!sbClient) { showBanner('Сначала настройте Project URL и Anon Key ниже.', 'error'); return; }
+          const email = (emailInput ? emailInput.value : '').trim();
+          const password = passInput ? passInput.value : '';
+          if (!email || !password) { showBanner('Введите Email и пароль.', 'error'); return; }
+          if (loginBtn) loginBtn.disabled = true;
+          const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+          if (loginBtn) loginBtn.disabled = false;
+          if (error) { showBanner('Ошибка входа: ' + error.message, 'error'); return; }
+          const prevUid = localStorage.getItem(LAST_UID_KEY);
+          currentUser = data.user;
+          updateHeaderUI();
+          showBanner('Вход выполнен! Синхронизируем данные...', 'success');
+          await pullFromCloud(true, Boolean(prevUid && prevUid !== currentUser.id));
+        }
+
         if (loginBtn) {
-          loginBtn.addEventListener('click', async () => {
-            if (!sbClient) { showBanner('Сначала настройте Project URL и Anon Key ниже.', 'error'); return; }
-            const email = (emailInput ? emailInput.value : '').trim();
-            const password = passInput ? passInput.value : '';
-            if (!email || !password) { showBanner('Введите Email и пароль.', 'error'); return; }
-            loginBtn.disabled = true;
-            const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
-            loginBtn.disabled = false;
-            if (error) { showBanner('Ошибка входа: ' + error.message, 'error'); return; }
-            currentUser = data.user;
-            updateHeaderUI();
-            showBanner('Вход выполнен! Синхронизируем данные...', 'success');
-            await pullFromCloud(true);
-          });
+          loginBtn.addEventListener('click', handleLogin);
+        }
+        if (emailInput) {
+          emailInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
+        }
+        if (passInput) {
+          passInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
         }
 
         if (signupBtn) {
@@ -9705,6 +9760,7 @@
             if (error) { showBanner('Ошибка регистрации: ' + error.message, 'error'); return; }
             if (data.session) {
               currentUser = data.user;
+              localStorage.setItem(LAST_UID_KEY, currentUser.id);
               updateHeaderUI();
               await pushToCloud(true);
               showBanner('Аккаунт создан и данные сохранены в облако!', 'success');
@@ -9722,6 +9778,11 @@
 
         if (logoutBtn) {
           logoutBtn.addEventListener('click', async () => {
+            if (syncTimer) {
+              clearTimeout(syncTimer);
+              syncTimer = null;
+              await pushToCloud(true);
+            }
             if (sbClient) await sbClient.auth.signOut();
             currentUser = null;
             updateHeaderUI();
