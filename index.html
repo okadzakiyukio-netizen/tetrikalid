@@ -989,9 +989,7 @@
                   <span>☁️</span>
                   <span id="cloud-btn-label">Облако</span>
                 </button>
-                <button id="btn-open-lock-modal" type="button" title="Пароль для демо-доступа и блокировка экрана" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/70 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition cursor-pointer whitespace-nowrap">
-                  <span>🔒</span><span>Доступ</span>
-                </button>
+
               </div>
             </div>
           </div>
@@ -1042,6 +1040,10 @@
 
         <!-- Right Side Controls: Сверху Погода, ниже Рассвет/Закат, ниже Время (МСК и Местное) -->
         <div class="flex items-center gap-2 relative">
+          <div class="flex flex-col items-end gap-1">
+            <button id="btn-open-lock-modal" type="button" title="Пароль для демо-доступа и блокировка экрана" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/70 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition cursor-pointer whitespace-nowrap self-end">
+              <span>🔒</span><span>Доступ</span>
+            </button>
           <!-- 3-уровневый комфортный инфоблок (Погода, Солнце, Время) -->
           <button id="weather-widget-btn" type="button" class="px-3.5 py-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-left transition shadow-xs hover:shadow-sm" title="Кликните для деталей, обновления и смены города">
             <!-- 1. Сверху: Погода (крупнее и четче) -->
@@ -1075,6 +1077,7 @@
               </span>
             </div>
           </button>
+          </div>
 
           <!-- Выпадающее окно детального прогноза и смены города -->
           <div id="weather-popover" class="hidden absolute right-0 top-full mt-2 w-72 p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl z-50 space-y-3 text-xs">
