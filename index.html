@@ -2193,7 +2193,7 @@
               </button>
             </div>
 
-            <button id="btn-save-plan-config" type="button" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm flex items-center gap-1.5 transition" title="Сохранить настройки плана">
+            <button id="btn-save-plan-config" type="button" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm flex items-center gap-1.5 transition" title="Сохранить в браузер и на сервер (Облако)">
               <span>💾</span>
               <span>Сохранить</span>
             </button>
@@ -2344,7 +2344,7 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
-            <button id="btn-save-browser-leads" type="button" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm flex items-center gap-1.5 transition" title="Надёжно сохранить все записи и перезвоны">
+            <button id="btn-save-browser-leads" type="button" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm flex items-center gap-1.5 transition" title="Сохранить в браузер и на сервер (Облако)">
               <span>💾</span>
               <span>Сохранить</span>
             </button>
@@ -2698,7 +2698,7 @@
             <button id="btn-schedule-fill-22" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold border border-indigo-200 dark:border-indigo-800 bg-indigo-50/50 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 transition" title="Автоматически заполнить график по схеме 2 через 2">
               ⚡ График 2/2
             </button>
-            <button id="btn-schedule-save" type="button" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm flex items-center gap-1.5 transition" title="Сохранить в браузер">
+            <button id="btn-schedule-save" type="button" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm flex items-center gap-1.5 transition" title="Сохранить в браузер и на сервер (Облако)">
               <span>💾</span>
               <span>Сохранить</span>
             </button>
@@ -7610,6 +7610,14 @@
           try { origSetItem.call(localStorage, LAST_LOCAL_MUTATION_KEY, String(Date.now())); } catch (e) {}
         }
 
+        window.forcePushToCloud = async function () {
+          if (!sbClient || !currentUser || isApplyingCloudData) return false;
+          markLocalMutation();
+          if (pushTimer) { clearTimeout(pushTimer); pushTimer = null; }
+          await pushToCloud(false);
+          return true;
+        };
+
         function scheduleAutoPush() {
           if (!sbClient || !currentUser || isApplyingCloudData) return;
           markLocalMutation();
@@ -10461,6 +10469,31 @@
             if (m.style && m.style.display === 'flex') m.style.display = 'none';
           }
         });
+      });
+
+
+      // Мгновенная отправка на сервер (Supabase) при клике на любую кнопку "Сохранить"
+      [
+        'btn-save-plan-config',
+        'btn-save-browser-leads',
+        'btn-schedule-save',
+        'btn-save-day-shift',
+        'btn-save-edit-modal',
+        'btn-save-rename-tab',
+        'btn-save-edit-stage-meta',
+        'btn-save-substage',
+        'btn-save-new-script'
+      ].forEach((btnId) => {
+        const b = document.getElementById(btnId);
+        if (b) {
+          b.addEventListener('click', () => {
+            setTimeout(() => {
+              if (typeof window.forcePushToCloud === 'function') {
+                window.forcePushToCloud();
+              }
+            }, 30);
+          });
+        }
       });
 
 </script>
