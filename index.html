@@ -1064,6 +1064,9 @@
                   <span>☁️</span>
                   <span id="cloud-btn-label">Облако</span>
                 </button>
+                <button id="btn-open-lock-modal" type="button" title="Пароль для демо-доступа и блокировка экрана" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/70 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition cursor-pointer whitespace-nowrap">
+                  <span>🔒</span><span>Доступ</span>
+                </button>
 
               </div>
             </div>
@@ -1115,12 +1118,8 @@
 
         <!-- Right Side Controls: Сверху Погода, ниже Рассвет/Закат, ниже Время (МСК и Местное) -->
         <div class="flex items-center gap-2 relative">
-          <div class="flex flex-col items-end gap-1">
-            <button id="btn-open-lock-modal" type="button" title="Пароль для демо-доступа и блокировка экрана" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/70 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition cursor-pointer whitespace-nowrap self-end">
-              <span>🔒</span><span>Доступ</span>
-            </button>
           <!-- 3-уровневый комфортный инфоблок (Погода, Солнце, Время) -->
-          <button id="weather-widget-btn" type="button" class="px-3.5 py-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-left transition shadow-xs hover:shadow-sm" title="Кликните для деталей, обновления и смены города">
+          <button id="weather-widget-btn" type="button" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-left transition shadow-xs hover:shadow-sm flex flex-col justify-center" title="Кликните для деталей, обновления и смены города">
             <!-- 1. Сверху: Погода (крупнее и четче) -->
             <div class="flex items-center gap-2 text-xs leading-snug font-medium">
               <span id="weather-icon" class="text-sm">🌧️</span>
@@ -1132,7 +1131,7 @@
             </div>
 
             <!-- 2. Ниже: Рассвет и Закат -->
-            <div class="flex items-center gap-2 text-[11px] text-amber-600 dark:text-amber-400 font-semibold leading-snug mt-1">
+            <div class="flex items-center gap-2 text-[11px] text-amber-600 dark:text-amber-400 font-semibold leading-tight mt-0.5">
               <span class="flex items-center gap-1"><span>🌅</span><span id="weather-sunrise-brief" class="font-sans tabular-nums font-bold">05:47</span></span>
               <span class="text-slate-300 dark:text-slate-600">•</span>
               <span class="flex items-center gap-1"><span>🌇</span><span id="weather-sunset-brief" class="font-sans tabular-nums font-bold">17:14</span></span>
@@ -1140,7 +1139,7 @@
             </div>
 
             <!-- 3. Ниже: Время (МСК и Местное) -->
-            <div class="flex items-center gap-2.5 text-[11px] font-sans tabular-nums leading-snug mt-1 pt-1 border-t border-slate-100 dark:border-slate-700/80">
+            <div class="flex items-center gap-2.5 text-[11px] font-sans tabular-nums leading-tight mt-0.5 pt-0.5 border-t border-slate-100 dark:border-slate-700/80">
               <span class="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-bold" title="Время по Москве (МСК)">
                 <span class="text-[10px] uppercase font-bold text-slate-400">МСК</span>
                 <span id="clock-msk-time" class="tracking-tight">--:--:--</span>
@@ -1152,7 +1151,6 @@
               </span>
             </div>
           </button>
-          </div>
 
           <!-- Выпадающее окно детального прогноза и смены города -->
           <div id="weather-popover" class="hidden absolute right-0 top-full mt-2 w-72 p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl z-50 space-y-3 text-xs">
@@ -9188,10 +9186,11 @@
         if (!mainTabsNav || !mainCol) return;
 
         customScripts.forEach((sc) => {
+          const safeScId = String(sc.id || '').replace(/[^a-zA-Z0-9_-]/g, '') || ('custom_' + Date.now());
           const tabBtn = document.createElement('button');
           tabBtn.type = 'button';
           tabBtn.setAttribute('draggable', 'true');
-          tabBtn.setAttribute('data-tab', sc.id);
+          tabBtn.setAttribute('data-tab', safeScId);
           tabBtn.setAttribute('title', 'Клик — открыть • Перетащите для смены порядка');
           tabBtn.className = 'script-tab custom-script-tab cursor-grab active:cursor-grabbing inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] xl:text-xs font-semibold whitespace-nowrap transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
           tabBtn.innerHTML = '<span class="text-xs">' + escapeHtmlCustom(sc.icon || '📘') + '</span><span>' + escapeHtmlCustom(sc.title) + '</span>';
@@ -9200,16 +9199,16 @@
 
           const grad = BANNER_GRADIENTS[sc.color] || BANNER_GRADIENTS.indigo;
           const sec = document.createElement('section');
-          sec.id = 'section-' + sc.id;
-          sec.setAttribute('data-script-section', sc.id);
+          sec.id = 'section-' + safeScId;
+          sec.setAttribute('data-script-section', safeScId);
           sec.setAttribute('data-custom-script', 'true');
           sec.className = 'space-y-6 hidden';
 
           let stagesHtml = '';
           (sc.stages || []).forEach((st, idx) => {
-            const speechId = sc.id + '-speech-' + idx;
-            const objCardId = sc.id + '-objcard-' + idx;
-            const objGridId = sc.id + '-objgrid-' + idx;
+            const speechId = safeScId + '-speech-' + idx;
+            const objCardId = safeScId + '-objcard-' + idx;
+            const objGridId = safeScId + '-objgrid-' + idx;
             const objCardHtml = (st.objectionTitle && st.objectionReply) ? (
               '<div data-custom-block-id="' + objCardId + '" class="objection-card bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800 shadow-sm">' +
                 '<div class="text-xs font-bold text-rose-700 dark:text-rose-400 mb-1.5">' + escapeHtmlCustom(st.objectionTitle) + '</div>' +
@@ -9232,7 +9231,7 @@
               '</details>';
 
             stagesHtml +=
-              '<article id="' + sc.id + '-stage-' + (idx + 1) + '" data-stage-title="' + escapeHtmlCustom(sc.title + ' • Этап ' + (idx + 1) + ': ' + st.title) + '" class="searchable-block bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">' +
+              '<article id="' + safeScId + '-stage-' + (idx + 1) + '" data-stage-title="' + escapeHtmlCustom(sc.title + ' • Этап ' + (idx + 1) + ': ' + st.title) + '" class="searchable-block bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">' +
                 '<div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">' +
                   '<div class="flex items-center gap-2.5">' +
                     '<input type="checkbox" class="stage-check w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer" aria-label="Отметить этап пройденным" />' +
@@ -9257,9 +9256,9 @@
                   (sc.subtitle ? '<p class="text-white/85 text-xs sm:text-sm mt-1">' + escapeHtmlCustom(sc.subtitle) + '</p>' : '') +
                 '</div>' +
                 '<div class="flex flex-wrap items-center gap-2">' +
-                  '<button type="button" data-add-stage-custom-script="' + sc.id + '" class="px-3 py-1.5 rounded-xl bg-emerald-500/90 hover:bg-emerald-600 text-white text-xs font-bold transition shadow-xs">➕ Новый этап</button>' +
-                  '<button type="button" data-edit-custom-script="' + sc.id + '" class="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-xs font-bold transition">✏️ Изменить</button>' +
-                  '<button type="button" data-del-custom-script="' + sc.id + '" class="px-3 py-1.5 rounded-xl bg-rose-500/80 hover:bg-rose-600 text-white text-xs font-bold transition">🗑️ Удалить</button>' +
+                  '<button type="button" data-add-stage-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-emerald-500/90 hover:bg-emerald-600 text-white text-xs font-bold transition shadow-xs">➕ Новый этап</button>' +
+                  '<button type="button" data-edit-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-xs font-bold transition">✏️ Изменить</button>' +
+                  '<button type="button" data-del-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-rose-500/80 hover:bg-rose-600 text-white text-xs font-bold transition">🗑️ Удалить</button>' +
                 '</div>' +
               '</div>' +
             '</div>' +
