@@ -2409,10 +2409,7 @@
               <p class="text-xs text-slate-500 dark:text-slate-400">Фиксированный оклад (30 000 ₽) + премия по месяцам из раздела «График смен»</p>
             </div>
             <div class="flex flex-wrap items-center gap-3 text-xs">
-              <div class="px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <span class="text-slate-500 dark:text-slate-400">За 6 мес.: </span>
-                <span id="salary-chart-6m-total" class="font-black text-slate-900 dark:text-white">0 ₽</span>
-              </div>
+
               <div class="px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/80 dark:border-emerald-800/70">
                 <span class="text-emerald-700 dark:text-emerald-300">Среднее: </span>
                 <span id="salary-chart-6m-avg" class="font-black text-emerald-700 dark:text-emerald-300">0 ₽</span>
@@ -2424,12 +2421,37 @@
             <!-- Rendered via JS -->
           </div>
 
+          <!-- Панель быстрого редактирования любого из 6 месяцев по клику на столбец -->
+          <div id="salary-chart-quick-editor" class="hidden rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-indigo-200/80 dark:border-indigo-800/70 p-3 sm:p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <div class="text-xs font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                <span>✏️</span>
+                <span>Редактировать ЗП за <span id="salary-qe-month-label" class="text-indigo-600 dark:text-indigo-400"></span></span>
+              </div>
+              <button id="salary-qe-close" type="button" class="text-xs text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-1.5 py-0.5 rounded-lg">✕</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-end">
+              <div>
+                <label for="salary-qe-base" class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Оклад (₽)</label>
+                <input id="salary-qe-base" type="number" min="0" step="500" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-900 dark:text-white" />
+              </div>
+              <div>
+                <label for="salary-qe-bonus" class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Премия (₽)</label>
+                <input id="salary-qe-bonus" type="number" min="0" step="500" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-900 dark:text-white" />
+              </div>
+              <div class="text-xs font-bold text-slate-600 dark:text-slate-300 py-1.5">
+                Итого: <span id="salary-qe-total" class="text-sm font-black text-emerald-600 dark:text-emerald-400">30 000 ₽</span>
+              </div>
+              <button id="salary-qe-save" type="button" class="py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition">💾 Сохранить</button>
+            </div>
+          </div>
+
           <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
             <div class="flex flex-wrap items-center gap-4">
               <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-indigo-500 inline-block"></span> Фиксированный оклад (30 000 ₽)</span>
               <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-emerald-500 inline-block"></span> Премия</span>
             </div>
-            <span>Редактируется в «Графике смен»</span>
+            <span>Кликните по столбцу месяца, чтобы изменить ЗП</span>
           </div>
         </div>
       </section>
@@ -2875,7 +2897,11 @@
             <div class="flex items-center gap-2">
               <span class="text-base">💵</span>
               <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Фиксация зарплаты за месяц</h3>
-              <span id="salary-month-badge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800">Ноябрь 2026</span>
+              <div class="inline-flex items-center gap-1 bg-indigo-50/80 dark:bg-indigo-950/50 border border-indigo-200/80 dark:border-indigo-800 rounded-full px-1.5 py-0.5">
+                <button id="salary-month-prev" type="button" title="Предыдущий месяц" class="w-5 h-5 rounded-full hover:bg-indigo-200/70 dark:hover:bg-indigo-800/70 text-indigo-700 dark:text-indigo-300 text-[10px] font-black flex items-center justify-center">◀</button>
+                <span id="salary-month-badge" class="px-1 text-[11px] font-bold text-indigo-700 dark:text-indigo-300">Ноябрь 2026</span>
+                <button id="salary-month-next" type="button" title="Следующий месяц" class="w-5 h-5 rounded-full hover:bg-indigo-200/70 dark:hover:bg-indigo-800/70 text-indigo-700 dark:text-indigo-300 text-[10px] font-black flex items-center justify-center">▶</button>
+              </div>
             </div>
             <div class="flex items-center gap-2">
               <span class="text-xs text-slate-500 dark:text-slate-400">Итого за месяц:</span>
@@ -10832,6 +10858,413 @@
         const bonusInput = document.getElementById('salary-bonus-input');
         const totalEl = document.getElementById('salary-total-display');
         const monthBadge = document.getElementById('salary-month-badge');
+        const prevMonthBtn = document.getElementById('salary-month-prev');
+        const nextMonthBtn = document.getElementById('salary-month-next');
+        const saveBtn = document.getElementById('btn-save-salary');
+
+        // Элементы быстрого редактора под графиком 6 месяцев
+        const qeBox = document.getElementById('salary-chart-quick-editor');
+        const qeLabel = document.getElementById('salary-qe-month-label');
+        const qeBase = document.getElementById('salary-qe-base');
+        const qeBonus = document.getElementById('salary-qe-bonus');
+        const qeTotal = document.getElementById('salary-qe-total');
+        const qeSave = document.getElementById('salary-qe-save');
+        const qeClose = document.getElementById('salary-qe-close');
+
+        let activeSalaryYear = typeof currentScheduleYear === 'number' ? currentScheduleYear : new Date().getFullYear();
+        let activeSalaryMonth = typeof currentScheduleMonth === 'number' ? currentScheduleMonth : new Date().getMonth();
+        let qeEditingKey = null;
+
+        function formatRub(val) {
+          return Math.round(Number(val) || 0).toLocaleString('ru-RU') + ' ₽';
+        }
+
+        function loadSalaryMap() {
+          try {
+            const raw = localStorage.getItem(SALARY_KEY);
+            const parsed = raw ? JSON.parse(raw) : {};
+            return parsed && typeof parsed === 'object' ? parsed : {};
+          } catch (e) {
+            return {};
+          }
+        }
+
+        function saveSalaryMap(map) {
+          localStorage.setItem(SALARY_KEY, JSON.stringify(map));
+        }
+
+        function formatMonthKey(y, m) {
+          return y + '-' + String(m + 1).padStart(2, '0');
+        }
+
+        function updateTotalPreview() {
+          if (!totalEl) return;
+          const b = Math.max(0, Number(baseInput ? baseInput.value : DEFAULT_BASE_SALARY) || 0);
+          const p = Math.max(0, Number(bonusInput ? bonusInput.value : 0) || 0);
+          totalEl.textContent = formatRub(b + p);
+        }
+
+        function updateQeTotal() {
+          if (!qeTotal) return;
+          const b = Math.max(0, Number(qeBase ? qeBase.value : DEFAULT_BASE_SALARY) || 0);
+          const p = Math.max(0, Number(qeBonus ? qeBonus.value : 0) || 0);
+          qeTotal.textContent = formatRub(b + p);
+        }
+
+        function loadInputsForActiveSalaryMonth() {
+          const key = formatMonthKey(activeSalaryYear, activeSalaryMonth);
+          const map = loadSalaryMap();
+          const rec = map[key];
+          const base = rec && rec.base !== undefined ? Number(rec.base) : DEFAULT_BASE_SALARY;
+          const bonus = rec && rec.bonus !== undefined ? Number(rec.bonus) : 0;
+
+          if (monthBadge && typeof monthNamesRu !== 'undefined') {
+            monthBadge.textContent = monthNamesRu[activeSalaryMonth] + ' ' + activeSalaryYear;
+          }
+          if (baseInput && document.activeElement !== baseInput) baseInput.value = base;
+          if (bonusInput && document.activeElement !== bonusInput) bonusInput.value = bonus;
+          updateTotalPreview();
+        }
+
+        window.syncSalaryInputsForScheduleMonth = function () {
+          if (typeof currentScheduleYear === 'number') activeSalaryYear = currentScheduleYear;
+          if (typeof currentScheduleMonth === 'number') activeSalaryMonth = currentScheduleMonth;
+          loadInputsForActiveSalaryMonth();
+        };
+
+        function openQuickEditor(key, fullTitle) {
+          if (!qeBox) return;
+          const map = loadSalaryMap();
+          const rec = map[key];
+          qeEditingKey = key;
+          if (qeLabel) qeLabel.textContent = fullTitle;
+          if (qeBase) qeBase.value = rec && rec.base !== undefined ? Number(rec.base) : DEFAULT_BASE_SALARY;
+          if (qeBonus) qeBonus.value = rec && rec.bonus !== undefined ? Number(rec.bonus) : 0;
+          updateQeTotal();
+          qeBox.classList.remove('hidden');
+          if (qeBonus) qeBonus.focus();
+        }
+
+        window.renderSalary6MonthsChart = function () {
+          const barsContainer = document.getElementById('plan-salary-chart-bars');
+          const avg6El = document.getElementById('salary-chart-6m-avg');
+          if (!barsContainer) return;
+
+          const map = loadSalaryMap();
+          const now = new Date();
+          const months = [];
+          for (let offset = 5; offset >= 0; offset--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+            const y = d.getFullYear();
+            const m = d.getMonth();
+            const key = formatMonthKey(y, m);
+            const rec = map[key];
+            const base = rec && rec.base !== undefined ? Math.max(0, Number(rec.base) || 0) : DEFAULT_BASE_SALARY;
+            const bonus = rec && rec.bonus !== undefined ? Math.max(0, Number(rec.bonus) || 0) : 0;
+            const total = base + bonus;
+            const fullName = (typeof monthNamesRu !== 'undefined' ? monthNamesRu[m] : shortMonthsRu[m]) + ' ' + y;
+            months.push({
+              key,
+              label: shortMonthsRu[m] + (m === 0 || offset === 0 ? ' ' + String(y).slice(-2) : ''),
+              fullName,
+              base,
+              bonus,
+              total
+            });
+          }
+
+          const maxTotal = Math.max(DEFAULT_BASE_SALARY, ...months.map((item) => item.total), 1);
+          const sumTotal = months.reduce((acc, item) => acc + item.total, 0);
+          if (avg6El) avg6El.textContent = formatRub(sumTotal / months.length);
+
+          const maxBarPx = 132;
+          barsContainer.innerHTML = months.map((item) => {
+            const basePx = Math.max(6, Math.round((item.base / maxTotal) * maxBarPx));
+            const bonusPx = item.bonus > 0 ? Math.max(6, Math.round((item.bonus / maxTotal) * maxBarPx)) : 0;
+            const totalLabel = Math.round(item.total / 1000) + 'к';
+            const fullTitle = item.fullName + ': Оклад ' + formatRub(item.base) + ' + Премия ' + formatRub(item.bonus) + ' = ' + formatRub(item.total) + ' (клик для редактирования)';
+
+            return (
+              '<button type="button" data-salary-key="' + item.key + '" data-salary-name="' + item.fullName + '" class="salary-chart-bar-btn flex flex-col items-center justify-end min-w-0 h-full group cursor-pointer rounded-xl p-1 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition" title="' + fullTitle + '">' +
+                '<div class="text-[10px] sm:text-xs font-black text-slate-800 dark:text-slate-100 mb-1.5 text-center truncate max-w-full">' +
+                  '<span class="hidden sm:inline">' + formatRub(item.total) + '</span>' +
+                  '<span class="sm:hidden">' + totalLabel + '</span>' +
+                '</div>' +
+                '<div class="w-full max-w-[44px] flex flex-col justify-end rounded-t-lg overflow-hidden shadow-xs border border-slate-200/70 dark:border-slate-700/70 bg-slate-100/60 dark:bg-slate-800/50 group-hover:scale-[1.03] transition-transform">' +
+                  (bonusPx > 0
+                    ? '<div style="height:' + bonusPx + 'px" class="w-full bg-emerald-500 dark:bg-emerald-500 transition-all duration-300"></div>'
+                    : '') +
+                  '<div style="height:' + basePx + 'px" class="w-full bg-indigo-500 dark:bg-indigo-600 transition-all duration-300"></div>' +
+                '</div>' +
+                '<div class="mt-2 text-[10px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 text-center truncate max-w-full">' + item.label + '</div>' +
+                '<div class="text-[9px] text-slate-400 text-center hidden sm:block">' +
+                  (item.bonus > 0 ? '+' + Math.round(item.bonus / 1000) + 'к премия' : 'без премии') +
+                '</div>' +
+              '</button>'
+            );
+          }).join('');
+
+          barsContainer.querySelectorAll('.salary-chart-bar-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              openQuickEditor(btn.dataset.salaryKey, btn.dataset.salaryName);
+            });
+          });
+        };
+
+        if (prevMonthBtn) {
+          prevMonthBtn.addEventListener('click', () => {
+            activeSalaryMonth--;
+            if (activeSalaryMonth < 0) {
+              activeSalaryMonth = 11;
+              activeSalaryYear--;
+            }
+            loadInputsForActiveSalaryMonth();
+          });
+        }
+        if (nextMonthBtn) {
+          nextMonthBtn.addEventListener('click', () => {
+            activeSalaryMonth++;
+            if (activeSalaryMonth > 11) {
+              activeSalaryMonth = 0;
+              activeSalaryYear++;
+            }
+            loadInputsForActiveSalaryMonth();
+          });
+        }
+
+        if (baseInput) baseInput.addEventListener('input', updateTotalPreview);
+        if (bonusInput) bonusInput.addEventListener('input', updateTotalPreview);
+        if (qeBase) qeBase.addEventListener('input', updateQeTotal);
+        if (qeBonus) qeBonus.addEventListener('input', updateQeTotal);
+        if (qeClose && qeBox) {
+          qeClose.addEventListener('click', () => { qeBox.classList.add('hidden'); qeEditingKey = null; });
+        }
+
+        if (qeSave) {
+          qeSave.addEventListener('click', () => {
+            if (!qeEditingKey) return;
+            const map = loadSalaryMap();
+            const base = Math.max(0, Number(qeBase ? qeBase.value : DEFAULT_BASE_SALARY) || 0);
+            const bonus = Math.max(0, Number(qeBonus ? qeBonus.value : 0) || 0);
+            map[qeEditingKey] = { base, bonus, updatedAt: new Date().toISOString() };
+            saveSalaryMap(map);
+            loadInputsForActiveSalaryMonth();
+            window.renderSalary6MonthsChart();
+            if (typeof window.forcePushToCloud === 'function') window.forcePushToCloud();
+            if (qeBox) qeBox.classList.add('hidden');
+            if (typeof showToast === 'function') {
+              showToast('Зарплата за ' + (qeLabel ? qeLabel.textContent : qeEditingKey) + ' сохранена: ' + formatRub(base + bonus));
+            }
+          });
+        }
+
+        if (saveBtn) {
+          saveBtn.addEventListener('click', () => {
+            const key = formatMonthKey(activeSalaryYear, activeSalaryMonth);
+            const map = loadSalaryMap();
+            const base = Math.max(0, Number(baseInput ? baseInput.value : DEFAULT_BASE_SALARY) || 0);
+            const bonus = Math.max(0, Number(bonusInput ? bonusInput.value : 0) || 0);
+            map[key] = { base, bonus, updatedAt: new Date().toISOString() };
+            saveSalaryMap(map);
+            updateTotalPreview();
+            window.renderSalary6MonthsChart();
+            if (typeof window.forcePushToCloud === 'function') window.forcePushToCloud();
+            if (typeof showToast === 'function') {
+              showToast('Зарплата за ' + (monthBadge ? monthBadge.textContent : key) + ' сохранена: ' + formatRub(base + bonus));
+            }
+          });
+        }
+
+        loadInputsForActiveSalaryMonth();
+        window.renderSalary6MonthsChart();
+      })();
+
+      // === Система демо-доступа по паролю ===
+      (function initDemoLock() {
+        const LOCK_ENABLED_KEY = 'tetrika_onb_lock_enabled_v1';
+        const LOCK_HASH_KEY = 'tetrika_onb_lock_hash_v1';
+        const LOCK_SESSION_KEY = 'tetrika_onb_lock_unlocked_session_v1';
+        const DEFAULT_HASH = 'c096a8f90c71fceb465b2b04e7e515aedbdfbe5b39646b3b6536dc3f3d0d46ad';
+
+        const overlay = document.getElementById('demo-lock-overlay');
+        const form = document.getElementById('demo-lock-form');
+        const input = document.getElementById('demo-lock-input');
+        const errEl = document.getElementById('demo-lock-error');
+        const toggleVisBtn = document.getElementById('demo-lock-toggle-vis');
+        const cloudBtn = document.getElementById('demo-lock-cloud-btn');
+
+        const openModalBtn = document.getElementById('btn-open-lock-modal');
+        const settingsModal = document.getElementById('lock-settings-modal');
+        const closeSettingsBtn = document.getElementById('lock-settings-close');
+        const enabledCheckbox = document.getElementById('lock-enabled-checkbox');
+        const newPassInput = document.getElementById('lock-new-password');
+        const savePassBtn = document.getElementById('lock-save-password-btn');
+        const lockNowBtn = document.getElementById('lock-now-btn');
+
+        async function sha256Hex(text) {
+          const str = String(text || '');
+          if (window.crypto && window.crypto.subtle && window.TextEncoder) {
+            const buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+            return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+          }
+          // Fallback для file:// без WebCrypto
+          return 'plain:' + str;
+        }
+
+        function isLockEnabled() {
+          const v = localStorage.getItem(LOCK_ENABLED_KEY);
+          return v === null ? true : v === '1';
+        }
+
+        function getActiveHash() {
+          return localStorage.getItem(LOCK_HASH_KEY) || DEFAULT_HASH;
+        }
+
+        function showLock() {
+          if (!overlay) return;
+          overlay.classList.remove('hidden');
+          if (errEl) errEl.classList.add('hidden');
+          if (input) {
+            input.value = '';
+            setTimeout(() => input.focus(), 50);
+          }
+        }
+
+        function hideLock() {
+          if (overlay) overlay.classList.add('hidden');
+          sessionStorage.setItem(LOCK_SESSION_KEY, '1');
+        }
+
+        window.unlockDemoOverlayIfCloudSignedIn = function () {
+          hideLock();
+        };
+
+        function evaluateInitialLock() {
+          if (!isLockEnabled()) {
+            hideLock();
+            return;
+          }
+          if (sessionStorage.getItem(LOCK_SESSION_KEY) === '1') {
+            hideLock();
+            return;
+          }
+          // Если пользователь уже вошёл в Облако на этом устройстве — пропускаем
+          if (localStorage.getItem('tetrika_onb_cloud_last_uid_v1')) {
+            hideLock();
+            return;
+          }
+          showLock();
+        }
+
+        if (form) {
+          form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const val = (input ? input.value : '').trim();
+            if (!val) return;
+            const active = getActiveHash();
+            let ok = false;
+            if (active.startsWith('plain:')) {
+              ok = ('plain:' + val) === active;
+            } else {
+              const h = await sha256Hex(val);
+              ok = h === active || (h.startsWith('plain:') && val === 'onb2026' && active === DEFAULT_HASH);
+            }
+            if (ok) {
+              hideLock();
+            } else {
+              if (errEl) errEl.classList.remove('hidden');
+              if (input) input.select();
+            }
+          });
+        }
+
+        if (toggleVisBtn && input) {
+          toggleVisBtn.addEventListener('click', () => {
+            input.type = input.type === 'password' ? 'text' : 'password';
+          });
+        }
+
+        if (cloudBtn) {
+          cloudBtn.addEventListener('click', () => {
+            const authModal = document.getElementById('cloud-modal');
+            if (authModal) {
+              authModal.classList.remove('hidden');
+              authModal.style.zIndex = '9998';
+            }
+          });
+        }
+
+        if (openModalBtn && settingsModal) {
+          openModalBtn.addEventListener('click', () => {
+            if (enabledCheckbox) enabledCheckbox.checked = isLockEnabled();
+            if (newPassInput) newPassInput.value = '';
+            settingsModal.classList.remove('hidden');
+          });
+        }
+
+        if (closeSettingsBtn && settingsModal) {
+          closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
+          settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) settingsModal.classList.add('hidden');
+          });
+        }
+
+        if (enabledCheckbox) {
+          enabledCheckbox.addEventListener('change', () => {
+            localStorage.setItem(LOCK_ENABLED_KEY, enabledCheckbox.checked ? '1' : '0');
+            if (typeof window.forcePushToCloud === 'function') window.forcePushToCloud();
+            if (typeof showToast === 'function') {
+              showToast(enabledCheckbox.checked ? 'Защита паролем включена' : 'Защита паролем отключена');
+            }
+          });
+        }
+
+        if (savePassBtn && newPassInput) {
+          savePassBtn.addEventListener('click', async () => {
+            const np = newPassInput.value.trim();
+            if (np.length < 3) {
+              if (typeof showToast === 'function') showToast('Пароль должен быть от 3 символов');
+              return;
+            }
+            const h = await sha256Hex(np);
+            localStorage.setItem(LOCK_HASH_KEY, h);
+            localStorage.setItem(LOCK_ENABLED_KEY, '1');
+            if (enabledCheckbox) enabledCheckbox.checked = true;
+            newPassInput.value = '';
+            if (typeof window.forcePushToCloud === 'function') window.forcePushToCloud();
+            if (typeof showToast === 'function') showToast('Новый пароль доступа сохранён');
+          });
+        }
+
+        if (lockNowBtn) {
+          lockNowBtn.addEventListener('click', () => {
+            localStorage.setItem(LOCK_ENABLED_KEY, '1');
+            sessionStorage.removeItem(LOCK_SESSION_KEY);
+            if (settingsModal) settingsModal.classList.add('hidden');
+            showLock();
+          });
+        }
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && settingsModal && !settingsModal.classList.contains('hidden')) {
+            settingsModal.classList.add('hidden');
+          }
+        });
+
+        evaluateInitialLock();
+      })();
+
+
+      // === Фиксация ЗП по месяцам и график ЗП за последние 6 месяцев ===
+      (function initMonthlySalaryTracker() {
+        const SALARY_KEY = 'tetrika_onb_salary_by_month_v1';
+        const DEFAULT_BASE_SALARY = 30000;
+        const shortMonthsRu = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+
+        const baseInput = document.getElementById('salary-base-input');
+        const bonusInput = document.getElementById('salary-bonus-input');
+        const totalEl = document.getElementById('salary-total-display');
+        const monthBadge = document.getElementById('salary-month-badge');
         const saveBtn = document.getElementById('btn-save-salary');
 
         function formatRub(val) {
@@ -10882,7 +11315,6 @@
 
         window.renderSalary6MonthsChart = function () {
           const barsContainer = document.getElementById('plan-salary-chart-bars');
-          const sum6El = document.getElementById('salary-chart-6m-total');
           const avg6El = document.getElementById('salary-chart-6m-avg');
           if (!barsContainer) return;
 
@@ -10910,7 +11342,6 @@
 
           const maxTotal = Math.max(DEFAULT_BASE_SALARY, ...months.map((item) => item.total), 1);
           const sumTotal = months.reduce((acc, item) => acc + item.total, 0);
-          if (sum6El) sum6El.textContent = formatRub(sumTotal);
           if (avg6El) avg6El.textContent = formatRub(sumTotal / months.length);
 
           const maxBarPx = 132;
