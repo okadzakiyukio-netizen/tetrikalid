@@ -1121,13 +1121,13 @@
           <!-- 3-уровневый комфортный инфоблок (Погода, Солнце, Время) -->
           <button id="weather-widget-btn" type="button" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-left transition shadow-xs hover:shadow-sm flex flex-col justify-center" title="Кликните для деталей, обновления и смены города">
             <!-- 1. Сверху: Погода (крупнее и четче) -->
-            <div class="flex items-center gap-2 text-xs leading-snug font-medium">
+            <div class="flex items-center gap-2 text-xs leading-snug font-medium whitespace-nowrap">
               <span id="weather-icon" class="text-sm">🌧️</span>
               <span id="weather-temp" class="font-extrabold text-slate-900 dark:text-white text-xs sm:text-[13px]">24°C</span>
               <span class="text-slate-300 dark:text-slate-600">•</span>
               <span id="weather-rain" class="font-bold text-sky-600 dark:text-sky-400">Дождь</span>
               <span class="text-slate-300 dark:text-slate-600">•</span>
-              <span id="weather-humidity" class="text-slate-700 dark:text-slate-300 font-semibold">💧 91%</span>
+              <span id="weather-humidity" class="text-slate-700 dark:text-slate-300 font-semibold whitespace-nowrap">💧 91%</span>
             </div>
 
             <!-- 2. Ниже: Рассвет и Закат -->
@@ -1297,7 +1297,7 @@
       <!-- Quick Call Notes / Qualification Pad -->
       <div id="quick-notes-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm">
         <div class="flex items-center justify-between mb-2">
-          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Быстрые заметки звонка</h2>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 whitespace-nowrap">Заметки звонка</h2>
           <button id="btn-copy-notes" type="button" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium">Копировать</button>
         </div>
         <div class="grid grid-cols-2 gap-1.5 mb-2">
@@ -9267,9 +9267,9 @@
                   (sc.subtitle ? '<p class="text-white/85 text-xs sm:text-sm mt-1">' + escapeHtmlCustom(sc.subtitle) + '</p>' : '') +
                 '</div>' +
                 '<div class="flex flex-wrap items-center gap-2">' +
-                  '<button type="button" data-add-stage-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-emerald-500/90 hover:bg-emerald-600 text-white text-xs font-bold transition shadow-xs">➕ Новый этап</button>' +
+                  '<button type="button" data-add-stage-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-white text-xs font-bold transition">➕ Новый этап</button>' +
                   '<button type="button" data-edit-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-xs font-bold transition">✏️ Изменить</button>' +
-                  '<button type="button" data-del-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-rose-500/80 hover:bg-rose-600 text-white text-xs font-bold transition">🗑️ Удалить</button>' +
+                  '<button type="button" data-del-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-white text-xs font-bold transition">🗑️ Удалить</button>' +
                 '</div>' +
               '</div>' +
             '</div>' +
@@ -10744,7 +10744,7 @@
 
               const addStBtn = document.createElement('button');
               addStBtn.type = 'button';
-              addStBtn.className = 'btn-add-stage-banner inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/90 hover:bg-emerald-600 text-[11px] font-bold text-white transition shadow-xs cursor-pointer';
+              addStBtn.className = 'btn-add-stage-banner inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-[11px] font-bold text-white transition cursor-pointer';
               addStBtn.innerHTML = '<span>➕</span><span>Новый этап</span>';
               addStBtn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -10754,13 +10754,13 @@
 
               const rBtn = document.createElement('button');
               rBtn.type = 'button';
-              rBtn.className = 'btn-rename-script-banner inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 text-[11px] font-bold text-white transition';
+              rBtn.className = 'btn-rename-script-banner inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-[11px] font-bold text-white transition';
               rBtn.innerHTML = '<span>✏️</span><span>Переименовать</span>';
               rBtn.addEventListener('click', () => openRenameTabModal(secId));
 
               const dBtn = document.createElement('button');
               dBtn.type = 'button';
-              dBtn.className = 'btn-delete-script-banner inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-500/80 hover:bg-rose-600 text-[11px] font-bold text-white transition';
+              dBtn.className = 'btn-delete-script-banner inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-[11px] font-bold text-white transition';
               dBtn.innerHTML = '<span>🗑️</span><span>Удалить скрипт</span>';
               dBtn.addEventListener('click', () => {
                 deleteAnyScript(secId, h2.textContent);
