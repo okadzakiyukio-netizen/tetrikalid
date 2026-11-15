@@ -3783,7 +3783,7 @@
       });
 
       // Copy Call Notes
-      document.getElementById('btn-copy-notes').addEventListener('click', () => {
+      document.getElementById('btn-copy-notes')?.addEventListener('click', () => {
         const grade = document.getElementById('note-grade').value;
         const device = document.getElementById('note-device').value;
         const notes = document.getElementById('call-notes').value;
@@ -3807,7 +3807,7 @@
       });
 
       // Reset Call Data
-      document.getElementById('btn-reset-call').addEventListener('click', () => {
+      document.getElementById('btn-reset-call')?.addEventListener('click', () => {
         if (varInputs.client && varInputs.client.el) varInputs.client.el.value = '';
         if (varInputs.child && varInputs.child.el) varInputs.child.el.value = '';
         if (varInputs.goal && varInputs.goal.el) varInputs.goal.el.value = '';
@@ -3826,8 +3826,8 @@
       function toggleTheme() {
         document.documentElement.classList.toggle('dark');
       }
-      document.getElementById('btn-theme-desktop').addEventListener('click', toggleTheme);
-      document.getElementById('btn-theme-mobile').addEventListener('click', toggleTheme);
+      document.getElementById('btn-theme-desktop')?.addEventListener('click', toggleTheme);
+      document.getElementById('btn-theme-mobile')?.addEventListener('click', toggleTheme);
 
       // =========================================================================
       // ФИКСАЦИЯ ЗАПИСЕЙ И ТАБЛИЦА ПЕРЕЗВОНОВ (180 ЛИДОВ, АВТОСОХРАНЕНИЕ НА ПК)
@@ -4757,7 +4757,7 @@
               } else if (d === 'SFT') {
                 dirBadges.push('<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800/70 mr-1">SFT</span>');
               } else {
-                dirBadges.push('<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800/70 mr-1">' + d + '</span>');
+                dirBadges.push('<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800/70 mr-1">' + qaEscapeHtml(d) + '</span>');
               }
             });
             if (item.lekta) {
@@ -4854,11 +4854,18 @@
         });
       });
 
-      filterDateFromEl.addEventListener('change', renderTrackerAll);
-      filterDateToEl.addEventListener('change', renderTrackerAll);
-      trackerSearchEl.addEventListener('input', renderTrackerAll);
+      if (filterDateFromEl) filterDateFromEl.addEventListener('change', renderTrackerAll);
+      if (filterDateToEl) filterDateToEl.addEventListener('change', renderTrackerAll);
+      let trackerSearchTimer = null;
+      if (trackerSearchEl) {
+        trackerSearchEl.addEventListener('input', () => {
+          clearTimeout(trackerSearchTimer);
+          trackerSearchTimer = setTimeout(renderTrackerAll, 180);
+        });
+      }
 
-      document.getElementById('btn-reset-period').addEventListener('click', () => {
+      const btnResetPeriodEl = document.getElementById('btn-reset-period');
+      if (btnResetPeriodEl) btnResetPeriodEl.addEventListener('click', () => {
         activePeriod = 'all';
         filterDateFromEl.value = '';
         filterDateToEl.value = '';
@@ -4871,7 +4878,8 @@
         renderTrackerAll();
       });
 
-      document.getElementById('btn-tracker-refresh').addEventListener('click', () => {
+      const btnTrackerRefreshEl = document.getElementById('btn-tracker-refresh');
+      if (btnTrackerRefreshEl) btnTrackerRefreshEl.addEventListener('click', () => {
         renderTrackerAll();
         renderCallbacks();
         showToast('Статистика обновлена');
@@ -4990,7 +4998,7 @@
       }
 
       // CSV Export
-      document.getElementById('btn-tracker-export').addEventListener('click', () => {
+      document.getElementById('btn-tracker-export')?.addEventListener('click', () => {
         const headers = ['№', 'Дата', 'Номер клиента', 'Комментарий', 'Кол-во предметов', 'Лекта', 'МВУ', 'Направления', 'Реферал'];
         const rows = records.map((r, i) => [
           i + 1,
@@ -5042,13 +5050,13 @@
         });
       });
 
-      document.getElementById('btn-pull-from-header').addEventListener('click', () => {
+      document.getElementById('btn-pull-from-header')?.addEventListener('click', () => {
         cbNameEl.value = varInputs.client.el.value.trim() || '';
         cbPhoneEl.value = (varPhoneEl && varPhoneEl.value.trim()) || '';
         showToast('Данные подтянуты из шапки звонка');
       });
 
-      document.getElementById('btn-add-callback').addEventListener('click', () => {
+      document.getElementById('btn-add-callback')?.addEventListener('click', () => {
         const name = cbNameEl.value.trim() || varInputs.client.el.value.trim() || 'Клиент';
         const phone = cbPhoneEl.value.trim() || (varPhoneEl && varPhoneEl.value.trim()) || 'Не указан';
         const time = cbTimeEl.value.trim() || 'В течение дня';
@@ -5100,13 +5108,13 @@
             '</td>' +
             '<td class="py-2.5 px-2 text-center whitespace-nowrap">' +
               '<span class="px-2 py-0.5 rounded-full text-[11px] font-bold ' + (cb.done ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800') + '">' +
-                cb.time +
+                qaEscapeHtml(cb.time) +
               '</span>' +
             '</td>' +
             '<td class="py-2.5 px-2.5 text-right whitespace-nowrap space-x-1">' +
-              '<button type="button" data-cb-to-rec="' + cb.id + '" class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-indigo-600 text-white hover:bg-indigo-700" title="Перенести клиента в форму Новая запись и в Скрипт">В запись →</button>' +
-              '<button type="button" data-cb-toggle="' + cb.id + '" class="px-1.5 py-0.5 rounded-md text-[11px] font-bold border border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50" title="Отметить выполненным">✓</button>' +
-              '<button type="button" data-cb-del="' + cb.id + '" class="px-1.5 py-0.5 rounded-md text-[11px] font-bold border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:bg-rose-50" title="Удалить">✕</button>' +
+              '<button type="button" data-cb-to-rec="' + qaEscapeHtml(cb.id) + '" class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-indigo-600 text-white hover:bg-indigo-700" title="Перенести клиента в форму Новая запись и в Скрипт">В запись →</button>' +
+              '<button type="button" data-cb-toggle="' + qaEscapeHtml(cb.id) + '" class="px-1.5 py-0.5 rounded-md text-[11px] font-bold border border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50" title="Отметить выполненным">✓</button>' +
+              '<button type="button" data-cb-del="' + qaEscapeHtml(cb.id) + '" class="px-1.5 py-0.5 rounded-md text-[11px] font-bold border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:bg-rose-50" title="Удалить">✕</button>' +
             '</td>';
 
           cbTbody.appendChild(tr);
@@ -7187,7 +7195,7 @@
         }
       }
 
-      const monthNamesRu = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+      const monthNamesRu = window.RU_MONTHS_FULL = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
 
       // Кнопка «Наверх»
@@ -7735,7 +7743,8 @@
         }
 
         async function pullFromCloud(reloadOnUpdate, isAccountSwitch) {
-          if (!sbClient || !currentUser) return;
+          if (!sbClient || !currentUser || isCloudSyncInFlight) return;
+          isCloudSyncInFlight = true;
           if (!reloadOnUpdate && !isAccountSwitch) {
             const lastMut = Number(localStorage.getItem(LAST_LOCAL_MUTATION_KEY) || 0);
             if (lastMut && (Date.now() - lastMut) < 2500) return;
@@ -7802,6 +7811,8 @@
             }
           } catch (err) {
             showBanner('Ошибка загрузки из облака: ' + (err.message || err), 'error');
+          } finally {
+            isCloudSyncInFlight = false;
           }
         }
 
@@ -7811,10 +7822,11 @@
           try { origSetItem.call(localStorage, LAST_LOCAL_MUTATION_KEY, String(Date.now())); } catch (e) {}
         }
 
+        let isCloudSyncInFlight = false;
         window.forcePushToCloud = async function () {
           if (!sbClient || !currentUser || isApplyingCloudData) return false;
           markLocalMutation();
-          if (pushTimer) { clearTimeout(pushTimer); pushTimer = null; }
+          if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
           await pushToCloud(false);
           return true;
         };
@@ -10658,29 +10670,44 @@
       renderCallbacks();
       updateDynamicVars();
       (function restoreLastActiveTabAndScroll() {
+        try {
+          if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        } catch (e) {}
+
         isRestoringInitialView = true;
+        let savedScroll = 0;
         try {
           const savedTab = localStorage.getItem(LAST_TAB_KEY);
           const hasTab = savedTab && document.querySelector('#main-tabs-nav .script-tab[data-tab="' + savedTab + '"]');
           setActiveTab(hasTab ? savedTab : 'shp');
-          const savedScroll = Number(localStorage.getItem(LAST_SCROLL_KEY) || 0);
-          if (savedScroll > 0) {
-            requestAnimationFrame(() => {
-              setTimeout(() => window.scrollTo({ top: savedScroll, behavior: 'auto' }), 80);
-            });
-          }
+          savedScroll = Number(localStorage.getItem(LAST_SCROLL_KEY) || 0);
         } catch (e) {
           setActiveTab('shp');
         }
         isRestoringInitialView = false;
 
+        const applySavedScroll = () => {
+          if (savedScroll > 0) {
+            window.scrollTo({ top: savedScroll, behavior: 'auto' });
+          }
+        };
+        if (savedScroll > 0) {
+          requestAnimationFrame(() => {
+            applySavedScroll();
+            setTimeout(applySavedScroll, 120);
+          });
+          window.addEventListener('load', () => setTimeout(applySavedScroll, 60), { once: true });
+        }
+
         let scrollSaveTimer = null;
+        const saveScrollNow = () => {
+          try { localStorage.setItem(LAST_SCROLL_KEY, String(Math.round(window.scrollY || 0))); } catch (e) {}
+        };
         window.addEventListener('scroll', () => {
           clearTimeout(scrollSaveTimer);
-          scrollSaveTimer = setTimeout(() => {
-            try { localStorage.setItem(LAST_SCROLL_KEY, String(Math.round(window.scrollY || 0))); } catch (e) {}
-          }, 150);
+          scrollSaveTimer = setTimeout(saveScrollNow, 120);
         }, { passive: true });
+        window.addEventListener('beforeunload', saveScrollNow);
       })();
     })();
   
@@ -10903,7 +10930,7 @@
         const SALARY_KEY = 'tetrika_onb_salary_by_month_v1';
         const DEFAULT_BASE_SALARY = 30000;
         const shortMonthsRu = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
-        const fullMonthsRu = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+        const fullMonthsRu = window.RU_MONTHS_FULL || ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
         const baseInput = document.getElementById('salary-base-input');
         const bonusInput = document.getElementById('salary-bonus-input');
