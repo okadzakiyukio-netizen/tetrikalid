@@ -416,6 +416,33 @@
     @media (prefers-reduced-motion: reduce) {
       .script-tab::after, .btn-action::after, .speech-bubble:hover { animation: none !important; transition: none !important; }
     }
+
+    /* Красивая круговая анимация переключения темы (View Transitions API + fallback) */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none;
+      mix-blend-mode: normal;
+    }
+    ::view-transition-new(root) {
+      z-index: 9999;
+    }
+    ::view-transition-old(root) {
+      z-index: 1;
+    }
+    html.theme-transitioning *,
+    html.theme-transitioning *::before,
+    html.theme-transitioning *::after {
+      transition: background-color 0.35s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+    }
+    @keyframes themeIconSpin {
+      0% { transform: rotate(0deg) scale(0.75); opacity: 0.5; }
+      60% { transform: rotate(200deg) scale(1.12); opacity: 1; }
+      100% { transform: rotate(360deg) scale(1); opacity: 1; }
+    }
+    .theme-icon-spin {
+      animation: themeIconSpin 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
     html { scroll-behavior: smooth; }
   
     /* Mobile adaptation & scrollbar hide */
@@ -463,6 +490,9 @@
 
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    try { if (localStorage.getItem('tetrika_onb_theme_v1') === 'dark') document.documentElement.classList.add('dark'); } catch (e) {}
+  </script>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200">
   <!-- Экран входа / Демо-доступа по паролю -->
@@ -3858,12 +3888,143 @@
         showToast('Данные звонка очищены');
       });
 
-      // Theme Toggle
-      function toggleTheme() {
-        document.documentElement.classList.toggle('dark');
+      // Theme Toggle (с круговой волной View Transitions, сменой иконки и сохранением)
+      const STORAGE_THEME_KEY = 'tetrika_onb_theme_v1';
+      function syncThemeIcons(isDark, animate) {
+        const sunPath = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+        const moonPath = '<path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
+        ['btn-theme-desktop', 'btn-theme-mobile'].forEach(id => {
+          const btn = document.getElementById(id);
+          if (!btn) return;
+          const svg = btn.querySelector('svg');
+          if (!svg) return;
+          svg.innerHTML = isDark ? moonPath : sunPath;
+          if (animate) {
+            svg.classList.remove('theme-icon-spin');
+            void svg.offsetWidth;
+            svg.classList.add('theme-icon-spin');
+          }
+        });
+      }
+      (function initSavedTheme() {
+        try {
+          const savedTheme = localStorage.getItem(STORAGE_THEME_KEY);
+          if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+          else if (savedTheme === 'light') document.documentElement.classList.remove('dark');
+        } catch (e) {}
+        syncThemeIcons(document.documentElement.classList.contains('dark'), false);
+      })();
+
+      let activeThemeTransition = null;
+      function toggleTheme(event) {
+        const applyChange = () => {
+          const isDark = document.documentElement.classList.toggle('dark');
+          try { localStorage.setItem(STORAGE_THEME_KEY, isDark ? 'dark' : 'light'); } catch (e) {}
+          syncThemeIcons(isDark, true);
+        };
+
+        const btn = event?.currentTarget;
+        const rect = btn?.getBoundingClientRect?.();
+        const x = rect ? rect.left + rect.width / 2 : window.innerWidth - 40;
+        const y = rect ? rect.top + rect.height / 2 : 40;
+        const endRadius = Math.hypot(
+          Math.max(x, window.innerWidth - x),
+          Math.max(y, window.innerHeight - y)
+        );
+
+        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const canAnimate = typeof document.documentElement.animate === 'function';
+        if (!document.startViewTransition || !canAnimate || reduceMotion) {
+          document.documentElement.classList.add('theme-transitioning');
+          applyChange();
+          setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 400);
+          return;
+        }
+
+        if (activeThemeTransition && typeof activeThemeTransition.skipTransition === 'function') {
+          try { activeThemeTransition.skipTransition(); } catch (e) {}
+        }
+        const transition = document.startViewTransition(() => {
+          applyChange();
+        });
+        activeThemeTransition = transition;
+        transition.ready.then(() => {
+          document.documentElement.animate(
+            {
+              clipPath: [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${endRadius}px at ${x}px ${y}px)`
+              ]
+            },
+            {
+              duration: 480,
+              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              pseudoElement: '::view-transition-new(root)'
+            }
+          );
+        }).catch(() => {}).finally(() => {
+          if (activeThemeTransition === transition) activeThemeTransition = null;
+        });
       }
       document.getElementById('btn-theme-desktop')?.addEventListener('click', toggleTheme);
       document.getElementById('btn-theme-mobile')?.addEventListener('click', toggleTheme);
+
+      // Persist open/closed state of <details> (возражения, сопротивления, опросники) across page reloads
+      const STORAGE_OPEN_DETAILS_KEY = 'tetrika_onb_open_details_v1';
+      let isRestoringDetailsState = false;
+      function getDetailsPersistKey(detailsEl) {
+        if (!detailsEl) return '';
+        const explicit = detailsEl.getAttribute('data-details-key') || detailsEl.id;
+        if (explicit) return 'id:' + explicit;
+        const sec = detailsEl.closest('section[data-script-section], section[id]');
+        const secKey = sec ? (sec.getAttribute('data-script-section') || sec.id) : 'root';
+        const art = detailsEl.closest('article[id], article[data-stage-id]');
+        const artKey = art ? (art.id || art.getAttribute('data-stage-id')) : 'main';
+        const summaryEl = detailsEl.querySelector(':scope > summary');
+        const sumText = summaryEl ? summaryEl.textContent.replace(/\(\d+\)/g, '(#)').replace(/\s+/g, ' ').trim().slice(0, 70) : '';
+        return secKey + '::' + artKey + '::' + sumText;
+      }
+      function loadOpenDetailsMap() {
+        try {
+          const raw = localStorage.getItem(STORAGE_OPEN_DETAILS_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === 'object') return parsed;
+          }
+        } catch (e) {}
+        return {};
+      }
+      function restoreOpenDetailsState() {
+        const saved = loadOpenDetailsMap();
+        isRestoringDetailsState = true;
+        try {
+          document.querySelectorAll('details').forEach(d => {
+            const key = getDetailsPersistKey(d);
+            if (key && Object.prototype.hasOwnProperty.call(saved, key)) {
+              d.open = Boolean(saved[key]);
+            }
+          });
+        } finally {
+          isRestoringDetailsState = false;
+        }
+      }
+      document.addEventListener('toggle', (e) => {
+        if (isRestoringDetailsState) return;
+        const d = e.target;
+        if (!d || d.tagName !== 'DETAILS') return;
+        const searchInp = document.getElementById('global-search');
+        if (searchInp && searchInp.value.trim().length > 0) return;
+        const key = getDetailsPersistKey(d);
+        if (!key) return;
+        const saved = loadOpenDetailsMap();
+        saved[key] = Boolean(d.open);
+        try { localStorage.setItem(STORAGE_OPEN_DETAILS_KEY, JSON.stringify(saved)); } catch (err) {}
+      }, true);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', restoreOpenDetailsState);
+      } else {
+        restoreOpenDetailsState();
+      }
 
       // =========================================================================
       // ФИКСАЦИЯ ЗАПИСЕЙ И ТАБЛИЦА ПЕРЕЗВОНОВ (180 ЛИДОВ, АВТОСОХРАНЕНИЕ НА ПК)
@@ -9192,6 +9353,7 @@
           });
           nsStagesEditor.appendChild(card);
         });
+        if (typeof restoreOpenDetailsState === 'function') restoreOpenDetailsState();
       }
 
       function openNewScriptModal(editId) {
@@ -10543,18 +10705,7 @@
               spans[1].textContent = btn.getAttribute('data-default-title');
             }
           }
-          if (tabId !== 'all' && tabId !== 'tracker' && tabId !== 'plan' && tabId !== 'schedule' && !btn.querySelector('.tab-rename-pencil')) {
-            const pencil = document.createElement('span');
-            pencil.className = 'tab-rename-pencil ml-0.5 w-3.5 h-3.5 inline-flex items-center justify-center rounded-sm hover:bg-indigo-100 dark:hover:bg-indigo-800/70 text-[8px] leading-none opacity-35 hover:opacity-100 transition-all cursor-pointer';
-            pencil.textContent = '✏️';
-            pencil.title = 'Переименовать скрипт';
-            pencil.addEventListener('click', (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              openRenameTabModal(tabId);
-            });
-            btn.appendChild(pencil);
-          }
+
         });
 
         // 2. Заголовки H2 на баннерах встроенных скриптов + кнопка "✏️ Переименовать"
