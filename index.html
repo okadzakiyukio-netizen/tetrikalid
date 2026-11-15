@@ -482,7 +482,7 @@
           <input id="lock-new-password" type="text" placeholder="Новый пароль..." class="flex-1 min-w-0 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           <button id="lock-save-password-btn" type="button" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shrink-0">Сохранить</button>
         </div>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400">Пароль по умолчанию: <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono font-bold">onb2026</code></p>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400">Пароль по умолчанию: <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-sans tabular-nums font-bold">onb2026</code></p>
       </div>
 
       <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex gap-2">
@@ -599,7 +599,7 @@
       </div>
       <div class="flex items-center justify-between">
         <span class="text-slate-500 dark:text-slate-400">Номер телефона:</span>
-        <span id="cb-alert-phone" class="font-mono font-bold text-indigo-600 dark:text-indigo-400">+7 999 000-00-00</span>
+        <span id="cb-alert-phone" class="font-sans tabular-nums font-bold text-indigo-600 dark:text-indigo-400">+7 999 000-00-00</span>
       </div>
       <div id="cb-alert-note-row" class="text-slate-600 dark:text-slate-300 italic pt-0.5 border-t border-amber-200/60 dark:border-amber-900/40">
         <span id="cb-alert-note">Комментарий к звонку</span>
@@ -642,7 +642,7 @@
                   Предложил менеджер (по МСК):
                 </label>
               </div>
-              <input id="tz-manager-time-input" type="time" value="16:00" class="w-full px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono font-bold text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs" />
+              <input id="tz-manager-time-input" type="time" value="16:00" class="w-full px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs" />
               <p class="text-[10px] text-slate-400">Свободное окно в расписании (МСК)</p>
             </div>
 
@@ -653,7 +653,7 @@
                   Время клиента (местное):
                 </label>
               </div>
-              <input id="tz-time-input" type="time" value="18:00" class="w-full px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono font-bold text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs" />
+              <input id="tz-time-input" type="time" value="18:00" class="w-full px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs" />
               <p class="text-[10px] text-slate-400">Сколько будет времени у клиента</p>
             </div>
           </div>
@@ -698,7 +698,7 @@
         <span class="w-8 h-8 rounded-xl bg-violet-100 dark:bg-violet-950 text-violet-600 dark:text-violet-300 flex items-center justify-center text-base shrink-0 animate-bounce">🔔</span>
         <div>
           <div class="text-[11px] font-black uppercase tracking-wider text-violet-600 dark:text-violet-400">Напоминание</div>
-          <div id="rem-alert-time" class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">—</div>
+          <div id="rem-alert-time" class="text-xs font-sans tabular-nums font-bold text-slate-500 dark:text-slate-400">—</div>
         </div>
       </div>
       <button id="btn-close-rem-alert" type="button" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center text-sm">✕</button>
@@ -738,7 +738,7 @@
   <!-- Global Floating Custom Time Picker Popover (fixed, never clipped) -->
   <div id="rem-time-popover" class="hidden fixed z-[9999] w-56 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl p-3 space-y-2.5">
     <div class="flex items-center gap-1.5">
-      <input id="rem-time-manual" type="text" maxlength="5" placeholder="ЧЧ:ММ" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold text-center text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/40" />
+      <input id="rem-time-manual" type="text" maxlength="5" placeholder="ЧЧ:ММ" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-center text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/40" />
       <button id="rem-time-ok" type="button" class="px-2.5 py-1.5 rounded-xl bg-violet-600 text-white font-bold text-[11px] hover:bg-violet-700 transition">Ок</button>
     </div>
     <div class="grid grid-cols-2 gap-2 text-xs">
@@ -857,7 +857,7 @@
           <div class="p-3.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/70 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-300">Аккаунт подключён</span>
-              <span id="cloud-sync-time" class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">—</span>
+              <span id="cloud-sync-time" class="text-[10px] font-sans tabular-nums text-emerald-600 dark:text-emerald-400">—</span>
             </div>
             <div id="cloud-user-email" class="text-sm font-extrabold text-slate-900 dark:text-white truncate">—</div>
           </div>
@@ -874,11 +874,11 @@
           <div class="mt-2.5 space-y-2">
             <div>
               <label for="cloud-url-input" class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Project URL:</label>
-              <input id="cloud-url-input" type="text" placeholder="https://xxxxxxxxxxxx.supabase.co" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono text-[11px]" />
+              <input id="cloud-url-input" type="text" placeholder="https://xxxxxxxxxxxx.supabase.co" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums text-[11px]" />
             </div>
             <div>
               <label for="cloud-key-input" class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Anon Public Key:</label>
-              <input id="cloud-key-input" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono text-[11px]" />
+              <input id="cloud-key-input" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums text-[11px]" />
             </div>
             <button id="cloud-save-config-btn" type="button" class="w-full py-1.5 rounded-lg bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white font-bold text-[11px] transition">Сохранить подключение</button>
           </div>
@@ -928,14 +928,14 @@
             <!-- Custom Date Picker (uses global fixed popover) -->
             <div>
               <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Дата:</label>
-              <input id="rem-date-input" type="date" value="" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono font-bold text-xs" />
+              <input id="rem-date-input" type="date" value="" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-xs" />
             </div>
 
             <!-- Custom Time Picker (uses global fixed popover) -->
             <div>
               <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Время:</label>
               <input id="rem-time-input" type="hidden" value="" />
-              <button id="rem-time-trigger" type="button" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-violet-400 dark:hover:border-violet-500 text-slate-900 dark:text-white font-mono font-bold text-xs flex items-center justify-between transition shadow-2xs">
+              <button id="rem-time-trigger" type="button" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-violet-400 dark:hover:border-violet-500 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-xs flex items-center justify-between transition shadow-2xs">
                 <span id="rem-time-display">—</span>
                 <span class="text-violet-500 text-sm">🕒</span>
               </button>
@@ -1067,14 +1067,14 @@
 
             <!-- 2. Ниже: Рассвет и Закат -->
             <div class="flex items-center gap-2 text-[11px] text-amber-600 dark:text-amber-400 font-semibold leading-snug mt-1">
-              <span class="flex items-center gap-1"><span>🌅</span><span id="weather-sunrise-brief" class="font-mono font-bold">05:47</span></span>
+              <span class="flex items-center gap-1"><span>🌅</span><span id="weather-sunrise-brief" class="font-sans tabular-nums font-bold">05:47</span></span>
               <span class="text-slate-300 dark:text-slate-600">•</span>
-              <span class="flex items-center gap-1"><span>🌇</span><span id="weather-sunset-brief" class="font-mono font-bold">17:14</span></span>
+              <span class="flex items-center gap-1"><span>🌇</span><span id="weather-sunset-brief" class="font-sans tabular-nums font-bold">17:14</span></span>
               <span class="text-[10px] text-slate-400 font-medium ml-auto hidden sm:inline" id="weather-location-chip">Дананг</span>
             </div>
 
             <!-- 3. Ниже: Время (МСК и Местное) -->
-            <div class="flex items-center gap-2.5 text-[11px] font-mono leading-snug mt-1 pt-1 border-t border-slate-100 dark:border-slate-700/80">
+            <div class="flex items-center gap-2.5 text-[11px] font-sans tabular-nums leading-snug mt-1 pt-1 border-t border-slate-100 dark:border-slate-700/80">
               <span class="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-bold" title="Время по Москве (МСК)">
                 <span class="text-[10px] uppercase font-bold text-slate-400">МСК</span>
                 <span id="clock-msk-time" class="tracking-tight">--:--:--</span>
@@ -1104,13 +1104,13 @@
                 <div class="text-[10px] text-slate-400 font-semibold flex items-center justify-center gap-1">
                   <span>🌅</span> Рассвет
                 </div>
-                <div id="weather-sunrise-val" class="font-mono font-bold text-sm text-amber-600 dark:text-amber-400 mt-0.5">05:47</div>
+                <div id="weather-sunrise-val" class="font-sans tabular-nums font-bold text-sm text-amber-600 dark:text-amber-400 mt-0.5">05:47</div>
               </div>
               <div>
                 <div class="text-[10px] text-slate-400 font-semibold flex items-center justify-center gap-1">
                   <span>🌇</span> Закат
                 </div>
-                <div id="weather-sunset-val" class="font-mono font-bold text-sm text-indigo-500 dark:text-indigo-400 mt-0.5">17:14</div>
+                <div id="weather-sunset-val" class="font-sans tabular-nums font-bold text-sm text-indigo-500 dark:text-indigo-400 mt-0.5">17:14</div>
               </div>
             </div>
 
@@ -2829,7 +2829,7 @@
           <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-3">
             <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
               <span class="flex items-center gap-1.5"><span>🎯</span> Норма часов</span>
-              <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-950 px-2 py-0.5 rounded-md">План</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">План</span>
             </div>
             <div class="flex items-center gap-2 pt-1">
               <input id="schedule-norm-hours-input" type="number" step="0.5" min="1" max="300" value="168" class="w-32 px-3 py-1.5 rounded-xl text-2xl font-bold font-sans bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs transition" title="Норма часов (можно с шагом 0.5)" />
@@ -2842,7 +2842,7 @@
           <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-3">
             <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
               <span class="flex items-center gap-1.5"><span>⏱️</span> Отработано по факту</span>
-              <span id="schedule-fact-percent" class="text-xs font-black px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">0%</span>
+              <span id="schedule-fact-percent" class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">0%</span>
             </div>
             <div class="flex items-baseline gap-2">
               <span id="schedule-fact-hours" class="text-3xl font-black text-emerald-600 dark:text-emerald-400">0</span>
@@ -2855,7 +2855,7 @@
           <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-3">
             <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
               <span class="flex items-center gap-1.5"><span>⚖️</span> Баланс часов</span>
-              <span id="schedule-balance-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">Баланс</span>
+              <span id="schedule-balance-badge" class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">Баланс</span>
             </div>
             <div class="flex items-baseline gap-2">
               <span id="schedule-diff-hours" class="text-3xl font-black text-indigo-600 dark:text-indigo-400">0</span>
@@ -3006,11 +3006,11 @@
                 <div class="grid grid-cols-2 gap-3">
                   <div>
                     <label for="shift-time-start" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Начало смены:</label>
-                    <input id="shift-time-start" type="time" value="09:00" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono font-bold" />
+                    <input id="shift-time-start" type="time" value="09:00" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold" />
                   </div>
                   <div>
                     <label for="shift-time-end" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Конец смены:</label>
-                    <input id="shift-time-end" type="time" value="21:00" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono font-bold" />
+                    <input id="shift-time-end" type="time" value="21:00" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold" />
                   </div>
                 </div>
 
@@ -3033,7 +3033,7 @@
                 <!-- Net Hours Summary -->
                 <div class="pt-2 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs">
                   <span class="text-slate-500 dark:text-slate-400">Чистые рабочие часы:</span>
-                  <span id="shift-net-hours-badge" class="font-mono font-black text-sm text-emerald-600 dark:text-emerald-400">11.0 часов</span>
+                  <span id="shift-net-hours-badge" class="font-sans tabular-nums font-black text-sm text-emerald-600 dark:text-emerald-400">11.0 часов</span>
                 </div>
               </div>
 
@@ -5904,7 +5904,7 @@
           row.innerHTML =
             '<div class="min-w-0 flex-1">' +
               '<div class="flex items-center gap-1.5">' +
-                '<span class="font-mono font-bold px-1.5 py-0.5 rounded bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 text-[11px]">' + esc(prettyDate) + ' ' + esc(rem.time) + '</span>' +
+                '<span class="font-sans tabular-nums font-bold px-1.5 py-0.5 rounded bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 text-[11px]">' + esc(prettyDate) + ' ' + esc(rem.time) + '</span>' +
                 (rem.fired && !rem.done ? '<span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">● Прозвучало</span>' : '') +
               '</div>' +
               '<div class="mt-1 font-semibold text-slate-800 dark:text-slate-100 break-words ' + (rem.done ? 'line-through text-slate-400' : '') + '">' + esc(rem.text) + '</div>' +
@@ -6032,7 +6032,7 @@
             const hh = String(h).padStart(2, '0');
             const b = document.createElement('button');
             b.type = 'button';
-            b.className = 'w-full py-1 rounded-lg font-mono font-bold text-center transition ' +
+            b.className = 'w-full py-1 rounded-lg font-sans tabular-nums font-bold text-center transition ' +
               (hh === curH ? 'bg-violet-600 text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300');
             b.textContent = hh;
             b.addEventListener('click', (e) => {
@@ -6050,7 +6050,7 @@
             const mm = String(m).padStart(2, '0');
             const b = document.createElement('button');
             b.type = 'button';
-            b.className = 'w-full py-1 rounded-lg font-mono font-bold text-center transition ' +
+            b.className = 'w-full py-1 rounded-lg font-sans tabular-nums font-bold text-center transition ' +
               (mm === curM ? 'bg-violet-600 text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300');
             b.textContent = mm;
             b.addEventListener('click', (e) => {
@@ -7415,7 +7415,7 @@
           if (shift.type === 'work') {
             badgeHtml = 
               '<div class="space-y-0.5 min-w-0">' +
-                '<div class="text-[9px] sm:text-[11px] leading-tight font-black text-emerald-800 dark:text-emerald-200 font-mono tracking-tighter sm:tracking-tight truncate">' + (shift.start || '09:00') + '–' + (shift.end || '21:00') + '</div>' +
+                '<div class="text-[9px] sm:text-[11px] leading-tight font-black text-emerald-800 dark:text-emerald-200 font-sans tabular-nums tracking-tighter sm:tracking-tight truncate">' + (shift.start || '09:00') + '–' + (shift.end || '21:00') + '</div>' +
                 '<div class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-between">' +
                   '<span>' + (shift.netHours || 11) + ' ч</span>' +
                   '<span class="hidden sm:inline text-[9px] font-normal text-slate-400">пер ' + (shift.breakMinutes || 60) + 'м</span>' +
@@ -7480,7 +7480,7 @@
         }
         if (balanceBadgeEl) {
           balanceBadgeEl.textContent = diff >= 0 ? 'Переработка' : 'Недоработка';
-          balanceBadgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-md ' + 
+          balanceBadgeEl.className = 'text-[11px] font-bold px-2 py-0.5 rounded-md ' + 
             (diff >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300');
         }
       }
