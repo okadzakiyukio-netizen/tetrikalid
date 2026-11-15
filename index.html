@@ -2421,36 +2421,6 @@
             <!-- Rendered via JS -->
           </div>
 
-          <!-- Модальное окно быстрого редактирования ЗП по клику на столбец -->
-          <div id="salary-chart-quick-editor" class="hidden fixed inset-0 z-[9980] bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
-            <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl p-5 space-y-4">
-              <div class="flex items-center justify-between gap-2">
-                <div class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>✏️</span>
-                  <span>ЗП за <span id="salary-qe-month-label" class="text-indigo-600 dark:text-indigo-400"></span></span>
-                </div>
-                <button id="salary-qe-close" type="button" class="text-sm text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-2 py-1 rounded-lg">✕</button>
-              </div>
-              <div class="space-y-3">
-                <div>
-                  <label for="salary-qe-base" class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Фиксированный оклад (₽)</label>
-                  <input id="salary-qe-base" type="number" min="0" step="500" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                </div>
-                <div>
-                  <label for="salary-qe-bonus" class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Премия (₽)</label>
-                  <input id="salary-qe-bonus" type="number" min="0" step="500" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-                </div>
-                <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-600 dark:text-slate-300">
-                  <span>Итого за месяц:</span>
-                  <span id="salary-qe-total" class="text-base font-black text-emerald-600 dark:text-emerald-400">30 000 ₽</span>
-                </div>
-              </div>
-              <div class="flex gap-2">
-                <button id="salary-qe-save" type="button" class="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">💾 Сохранить ЗП</button>
-              </div>
-            </div>
-          </div>
-
           <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
             <div class="flex flex-wrap items-center gap-4">
               <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-indigo-500 inline-block"></span> Фиксированный оклад (30 000 ₽)</span>
@@ -7327,7 +7297,18 @@
         if (!grid || !monthLabel) return;
 
         monthLabel.textContent = monthNamesRu[currentScheduleMonth] + ' ' + currentScheduleYear;
-        if (typeof window.syncSalaryInputsForScheduleMonth === 'function') window.syncSalaryInputsForScheduleMonth();
+        window.getScheduleMonthYear = function () {
+          return { year: currentScheduleYear, month: currentScheduleMonth };
+        };
+        window.setScheduleMonthYear = function (y, m) {
+          currentScheduleYear = y;
+          currentScheduleMonth = m;
+          saveScheduleView(currentScheduleYear, currentScheduleMonth);
+          renderScheduleCalendar();
+        };
+        if (typeof window.syncSalaryInputsForScheduleMonth === 'function') {
+          window.syncSalaryInputsForScheduleMonth(currentScheduleYear, currentScheduleMonth);
+        }
         grid.innerHTML = '';
 
         const firstDay = new Date(currentScheduleYear, currentScheduleMonth, 1);
@@ -10876,8 +10857,9 @@
         const qeSave = document.getElementById('salary-qe-save');
         const qeClose = document.getElementById('salary-qe-close');
 
-        let activeSalaryYear = typeof currentScheduleYear === 'number' ? currentScheduleYear : new Date().getFullYear();
-        let activeSalaryMonth = typeof currentScheduleMonth === 'number' ? currentScheduleMonth : new Date().getMonth();
+        const initSchedMY = typeof window.getScheduleMonthYear === 'function' ? window.getScheduleMonthYear() : null;
+        let activeSalaryYear = initSchedMY ? initSchedMY.year : new Date().getFullYear();
+        let activeSalaryMonth = initSchedMY ? initSchedMY.month : new Date().getMonth();
         let qeEditingKey = null;
 
         function formatRub(val) {
@@ -10931,9 +10913,15 @@
           updateTotalPreview();
         }
 
-        window.syncSalaryInputsForScheduleMonth = function () {
-          if (typeof currentScheduleYear === 'number') activeSalaryYear = currentScheduleYear;
-          if (typeof currentScheduleMonth === 'number') activeSalaryMonth = currentScheduleMonth;
+        window.syncSalaryInputsForScheduleMonth = function (y, m) {
+          if (typeof y === 'number' && typeof m === 'number') {
+            activeSalaryYear = y;
+            activeSalaryMonth = m;
+          } else if (typeof window.getScheduleMonthYear === 'function') {
+            const my = window.getScheduleMonthYear();
+            activeSalaryYear = my.year;
+            activeSalaryMonth = my.month;
+          }
           loadInputsForActiveSalaryMonth();
         };
 
@@ -11019,15 +11007,11 @@
               activeSalaryMonth = 11;
               activeSalaryYear--;
             }
-            if (typeof currentScheduleMonth === 'number' && typeof currentScheduleYear === 'number') {
-              currentScheduleMonth = activeSalaryMonth;
-              currentScheduleYear = activeSalaryYear;
-              if (typeof renderScheduleCalendar === 'function') {
-                renderScheduleCalendar();
-                return;
-              }
+            if (typeof window.setScheduleMonthYear === 'function') {
+              window.setScheduleMonthYear(activeSalaryYear, activeSalaryMonth);
+            } else {
+              loadInputsForActiveSalaryMonth();
             }
-            loadInputsForActiveSalaryMonth();
           });
         }
         if (nextMonthBtn) {
@@ -11037,15 +11021,11 @@
               activeSalaryMonth = 0;
               activeSalaryYear++;
             }
-            if (typeof currentScheduleMonth === 'number' && typeof currentScheduleYear === 'number') {
-              currentScheduleMonth = activeSalaryMonth;
-              currentScheduleYear = activeSalaryYear;
-              if (typeof renderScheduleCalendar === 'function') {
-                renderScheduleCalendar();
-                return;
-              }
+            if (typeof window.setScheduleMonthYear === 'function') {
+              window.setScheduleMonthYear(activeSalaryYear, activeSalaryMonth);
+            } else {
+              loadInputsForActiveSalaryMonth();
             }
-            loadInputsForActiveSalaryMonth();
           });
         }
 
@@ -11108,5 +11088,36 @@
       })();
 
       </script>
+          <!-- Модальное окно быстрого редактирования ЗП по клику на столбец -->
+          <div id="salary-chart-quick-editor" class="hidden fixed inset-0 z-[9980] bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl p-5 space-y-4">
+              <div class="flex items-center justify-between gap-2">
+                <div class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>✏️</span>
+                  <span>ЗП за <span id="salary-qe-month-label" class="text-indigo-600 dark:text-indigo-400"></span></span>
+                </div>
+                <button id="salary-qe-close" type="button" class="text-sm text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-2 py-1 rounded-lg">✕</button>
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <label for="salary-qe-base" class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Фиксированный оклад (₽)</label>
+                  <input id="salary-qe-base" type="number" min="0" step="500" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                </div>
+                <div>
+                  <label for="salary-qe-bonus" class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Премия (₽)</label>
+                  <input id="salary-qe-bonus" type="number" min="0" step="500" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                </div>
+                <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-600 dark:text-slate-300">
+                  <span>Итого за месяц:</span>
+                  <span id="salary-qe-total" class="text-base font-black text-emerald-600 dark:text-emerald-400">30 000 ₽</span>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button id="salary-qe-save" type="button" class="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">💾 Сохранить ЗП</button>
+              </div>
+            </div>
+          </div>
+
+
 </body>
 </html>
