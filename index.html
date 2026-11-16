@@ -1779,11 +1779,11 @@
         </article>
 
         <!-- Этап 9: Закрытие + Общий блок отработки сложных возражений -->
-        <article id="shp-stage-9" data-stage-title="ШП • Этап 9: Закрытие и сложные возражения" class="searchable-block bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+        <article id="shp-stage-9" data-stage-title="ШП • Этап 7: Закрытие и сложные возражения" class="searchable-block bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
           <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
             <div class="flex items-center gap-2.5">
               <input type="checkbox" class="stage-check w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer" aria-label="Отметить этап пройденным" />
-              <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 whitespace-nowrap shrink-0">Этап 9</span>
+              <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 whitespace-nowrap shrink-0">Этап 7</span>
               <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Закрытие и общий блок сложных возражений</h3>
             </div>
           </div>
@@ -9267,7 +9267,7 @@
                   (sc.subtitle ? '<p class="text-white/85 text-xs sm:text-sm mt-1">' + escapeHtmlCustom(sc.subtitle) + '</p>' : '') +
                 '</div>' +
                 '<div class="flex flex-wrap items-center gap-2">' +
-                  '<button type="button" data-add-stage-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-white text-xs font-bold transition">➕ Новый этап</button>' +
+                  '<button type="button" data-add-stage-custom-script="' + safeScId + '" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-white text-xs font-bold transition"><svg class="w-3.5 h-3.5 text-white shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg><span>Новый этап</span></button>' +
                   '<button type="button" data-edit-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-xs font-bold transition">✏️ Изменить</button>' +
                   '<button type="button" data-del-custom-script="' + safeScId + '" class="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-white text-xs font-bold transition">🗑️ Удалить</button>' +
                 '</div>' +
@@ -10745,7 +10745,7 @@
               const addStBtn = document.createElement('button');
               addStBtn.type = 'button';
               addStBtn.className = 'btn-add-stage-banner inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-[11px] font-bold text-white transition cursor-pointer';
-              addStBtn.innerHTML = '<span>➕</span><span>Новый этап</span>';
+              addStBtn.innerHTML = '<svg class="w-3.5 h-3.5 text-white shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg><span>Новый этап</span>';
               addStBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
