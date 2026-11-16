@@ -6863,13 +6863,13 @@
         const targetRecs = getFilteredRecordsForPlan();
         const currentPeopleTotal = targetRecs.length;
 
+        const escPlanHtml = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         planItems.forEach((item) => {
           let currentTarget = Number(item.target) || 0;
 
-          // Rule: Рефералы считаются строго от плана на месяц - ровно 20%!
+          // Rule: Рефералы считаются динамически — ровно 20% от количества записанных людей!
           if (item.id === 'plan-ref') {
-            const monthlyPeopleTarget = Number(planKpiTargets.peopleTarget) || 100;
-            const refNorm = Math.max(1, Math.round(monthlyPeopleTarget * 0.20));
+            const refNorm = Math.round(currentPeopleTotal * 0.20);
             currentTarget = refNorm;
             item.target = refNorm;
           }
@@ -6880,7 +6880,7 @@
             totalCurrent += fact;
           }
 
-          const percent = currentTarget > 0 ? Math.min(100, Math.round((fact / currentTarget) * 100)) : 0;
+          const percent = currentTarget > 0 ? Math.min(100, Math.round((fact / currentTarget) * 100)) : (fact > 0 ? 100 : 0);
 
           const card = document.createElement('div');
           card.className = 'p-4 rounded-2xl border transition-all ' + 
@@ -6892,7 +6892,7 @@
             '<div class="flex items-center justify-between gap-2 mb-3">' +
               '<div class="flex items-center gap-2">' +
                 '<input type="checkbox" id="check-' + item.id + '" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer" ' + (item.enabled ? 'checked' : '') + ' />' +
-                '<label for="check-' + item.id + '" class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white cursor-pointer select-none">' + item.name + '</label>' +
+                '<label for="check-' + escPlanHtml(item.id) + '" class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white cursor-pointer select-none">' + escPlanHtml(item.name) + '</label>' +
               '</div>' +
               '<span class="text-xs font-black ' + (percent >= 100 ? 'text-emerald-600' : 'text-indigo-600 dark:text-indigo-400') + '">' + percent + '%</span>' +
             '</div>' +
@@ -6904,11 +6904,11 @@
             '<div class="flex items-center justify-between gap-2 text-xs">' +
               '<div class="text-slate-500 dark:text-slate-400">' +
                 'Факт: <strong class="text-slate-900 dark:text-white">' + fact + '</strong>' +
-                (item.id === 'plan-ref' ? ' <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">(20% от плана)</span>' : '') +
+                (item.id === 'plan-ref' ? ' <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">(20% от записанных)</span>' : '') +
               '</div>' +
               '<div class="flex items-center gap-1.5">' +
                 '<span class="text-slate-400">План:</span>' +
-                '<input type="number" id="input-' + item.id + '" min="1" value="' + currentTarget + '" class="w-16 px-2 py-0.5 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-center focus:outline-none focus:ring-1 focus:ring-indigo-500" />' +
+                '<input type="number" id="input-' + item.id + '" min="0" value="' + currentTarget + '"' + (item.id === 'plan-ref' ? ' readonly title="Считается автоматически: 20% от записанных людей"' : '') + ' class="w-16 px-2 py-0.5 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-center focus:outline-none focus:ring-1 focus:ring-indigo-500" />' +
               '</div>' +
             '</div>';
 
@@ -6920,16 +6920,18 @@
             renderPlanMonthModule();
           });
 
-          // Listener for target input change
+          // Listener for target input change (plan-ref is strictly dynamic)
           const inputEl = card.querySelector('#input-' + item.id);
-          inputEl.addEventListener('change', (e) => {
-            const v = parseInt(e.target.value, 10);
-            if (!isNaN(v) && v > 0) {
-              item.target = v;
-              savePlanItems(planItems);
-              renderPlanMonthModule();
-            }
-          });
+          if (item.id !== 'plan-ref' && inputEl) {
+            inputEl.addEventListener('change', (e) => {
+              const v = parseInt(e.target.value, 10);
+              if (!isNaN(v) && v > 0) {
+                item.target = v;
+                savePlanItems(planItems);
+                renderPlanMonthModule();
+              }
+            });
+          }
 
           grid.appendChild(card);
         });
