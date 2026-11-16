@@ -7072,12 +7072,13 @@
 
           const isRef = isRecordRef(r);
           const isMvu = isRecordMvu(r);
+          const isVzrComment = /(?:взрослый|взр)/i.test(String(r.comment || ''));
 
           if (isRef) {
             refCount++;
-          } else {
+          } else if (isMvu || !isVzrComment) {
+            // ПРИ РАСЧЕТЕ МВУ НЕ УЧИТЫВАЕМ РЕФ, А ТАКЖЕ "НЕ МВУ" С КОММЕНТАРИЕМ "взр"
             baseNonRefPeopleCount++;
-            // ПРИ РАСЧЕТЕ МВУ СТРОГО НЕ УЧИТЫВАЕМ С ПОМЕТКОЙ РЕФ!
             if (isMvu) {
               mvuCount++;
             }
