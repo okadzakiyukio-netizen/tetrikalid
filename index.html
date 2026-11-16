@@ -8636,7 +8636,7 @@
 
         // 2. Местное время автоматически подстраивается под часовой пояс устройства каждого менеджера
         try {
-          const targetTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Moscow';
+          const targetTz = window.__weatherTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Moscow';
           const localTimeStr = new Intl.DateTimeFormat('ru-RU', {
             timeZone: targetTz,
             hour: '2-digit',
@@ -8703,7 +8703,7 @@
       function getFallbackCityByTimezone() {
         try {
           const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          if (tz && TZ_DEFAULT_CITIES[tz]) return TZ_DEFAULT_CITIES[tz];
+          if (tz && TZ_DEFAULT_CITIES[tz]) return { ...TZ_DEFAULT_CITIES[tz], timezone: tz };
         } catch (e) {}
         return { name: 'Москва', lat: 55.7558, lon: 37.6173 };
       }
@@ -8717,9 +8717,15 @@
       function loadWeatherLocation() {
         try {
           const raw = localStorage.getItem(STORAGE_WEATHER_CITY_KEY);
-          if (raw) return JSON.parse(raw);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.timezone) window.__weatherTimezone = parsed.timezone;
+            return parsed;
+          }
         } catch (e) {}
-        return getFallbackCityByTimezone();
+        const fb = getFallbackCityByTimezone();
+        if (fb && fb.timezone) window.__weatherTimezone = fb.timezone;
+        return fb;
       }
 
       function saveWeatherLocation(loc) {
@@ -8778,6 +8784,14 @@
           const res = await fetchWithTimeout(url, 8000);
           if (!res.ok) throw new Error('HTTP ' + res.status);
           const data = await res.json();
+          if (data && typeof data.timezone === 'string' && data.timezone) {
+            window.__weatherTimezone = data.timezone;
+            if (currentWeatherLoc) {
+              currentWeatherLoc.timezone = data.timezone;
+              if (hasSavedWeatherLocation()) saveWeatherLocation(currentWeatherLoc);
+            }
+            updateDualClocks();
+          }
 
           const cur = data.current || {};
           const temp = cur.temperature_2m !== undefined ? Math.round(cur.temperature_2m) : 24;
