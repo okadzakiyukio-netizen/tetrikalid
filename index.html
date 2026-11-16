@@ -3726,7 +3726,11 @@
           btn.appendChild(dot);
           btn.appendChild(label);
           btn.addEventListener('click', () => {
-            art.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const headerEl = document.querySelector('header');
+            const isSticky = headerEl && getComputedStyle(headerEl).position === 'sticky';
+            const offset = (isSticky ? headerEl.getBoundingClientRect().height : 0) + 16;
+            const targetTop = art.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
           });
 
           li.appendChild(btn);
