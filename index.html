@@ -4284,26 +4284,28 @@
 
             let loadedComponents = [];
 
+            const isPlainObj = (v) => Boolean(v && typeof v === 'object' && !Array.isArray(v));
+
             // 1. Обновление Лидов (в переменной records и в хранилище)
             if (Array.isArray(parsed)) {
-              records = parsed;
+              records = parsed.filter(isPlainObj);
               saveStorage(STORAGE_RECORDS_KEY, records);
               loadedComponents.push('Лиды (' + records.length + ')');
             } else if (Array.isArray(parsed.records)) {
-              records = parsed.records;
+              records = parsed.records.filter(isPlainObj);
               saveStorage(STORAGE_RECORDS_KEY, records);
               loadedComponents.push('Лиды (' + records.length + ')');
             }
 
             // 2. Обновление Перезвонов (в переменной callbacks и в хранилище)
             if (parsed && Array.isArray(parsed.callbacks)) {
-              callbacks = parsed.callbacks;
+              callbacks = parsed.callbacks.filter(isPlainObj);
               saveStorage(STORAGE_CALLBACKS_KEY, callbacks);
               loadedComponents.push('Перезвоны (' + callbacks.length + ')');
             }
 
             // 3. Обновление Графика смен и нормы (в переменной shiftsData и в хранилище)
-            if (parsed && parsed.shifts && typeof parsed.shifts === 'object') {
+            if (parsed && isPlainObj(parsed.shifts)) {
               shiftsData = parsed.shifts;
               if (typeof saveShiftsData === 'function') {
                 saveShiftsData(shiftsData);
@@ -4312,7 +4314,7 @@
               }
               loadedComponents.push('График смен');
             }
-            if (parsed && parsed.normHoursByMonth && typeof parsed.normHoursByMonth === 'object') {
+            if (parsed && isPlainObj(parsed.normHoursByMonth)) {
               normHoursByMonth = parsed.normHoursByMonth;
               if (typeof setPersistentValue === 'function') {
                 setPersistentValue('tetrika_onb_norm_by_month_v1', normHoursByMonth);
@@ -7072,7 +7074,8 @@
 
           const isRef = isRecordRef(r);
           const isMvu = isRecordMvu(r);
-          const isVzrComment = /(?:взрослый|взр)/i.test(String(r.comment || ''));
+          const commentText = String(r.comment || '');
+          const isVzrComment = /(?:взрослый|взр|дош)/i.test(commentText) || /(?:^|[^\p{L}\p{N}])то(?=$|[^\p{L}\p{N}])/iu.test(commentText);
 
           if (isRef) {
             refCount++;
