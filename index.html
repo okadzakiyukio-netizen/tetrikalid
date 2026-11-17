@@ -4163,7 +4163,7 @@
             needRenderPlan = true;
           }
 
-          if (!localStorage.getItem('tetrika_onb_norm_by_month_v1') && idbNormMap && typeof idbNormMap === 'object') {
+          if ((!localStorage.getItem('tetrika_onb_norm_by_month_v1') || (typeof normHoursByMonth === 'object' && Object.keys(normHoursByMonth || {}).length === 0)) && idbNormMap && typeof idbNormMap === 'object' && Object.keys(idbNormMap).length > 0) {
             normHoursByMonth = idbNormMap;
             try { localStorage.setItem('tetrika_onb_norm_by_month_v1', JSON.stringify(normHoursByMonth)); } catch(e){}
             needRenderSchedule = true;
@@ -7660,7 +7660,7 @@
         const balanceBadgeEl = document.getElementById('schedule-balance-badge');
 
         const monthNorm = getNormHours(currentScheduleYear, currentScheduleMonth);
-        if (normHoursInput) {
+        if (normHoursInput && document.activeElement !== normHoursInput) {
           normHoursInput.value = monthNorm;
         }
         const normHours = monthNorm;
@@ -7948,7 +7948,8 @@
           isCloudSyncInFlight = true;
           if (!reloadOnUpdate && !isAccountSwitch) {
             const lastMut = Number(localStorage.getItem(LAST_LOCAL_MUTATION_KEY) || 0);
-            if (lastMut && (Date.now() - lastMut) < 2500) return;
+            if (lastMut && (Date.now() - lastMut) < 6000) return;
+            if (document.activeElement && document.activeElement.id === 'schedule-norm-hours-input') return;
           }
           try {
             const prevUid = localStorage.getItem(LAST_UID_KEY);
@@ -8410,6 +8411,7 @@
 
       if (btnSchedPrev) {
         btnSchedPrev.addEventListener('click', () => {
+          if (typeof syncNormHoursFromInput === 'function') syncNormHoursFromInput();
           currentScheduleMonth--;
           if (currentScheduleMonth < 0) {
             currentScheduleMonth = 11;
@@ -8422,6 +8424,7 @@
 
       if (btnSchedNext) {
         btnSchedNext.addEventListener('click', () => {
+          if (typeof syncNormHoursFromInput === 'function') syncNormHoursFromInput();
           currentScheduleMonth++;
           if (currentScheduleMonth > 11) {
             currentScheduleMonth = 0;
@@ -8566,6 +8569,12 @@
         schedNormInput.addEventListener('change', () => {
           syncNormHoursFromInput();
           renderScheduleCalendar();
+          if (typeof window.forcePushToCloud === 'function') window.forcePushToCloud();
+        });
+        schedNormInput.addEventListener('blur', () => {
+          syncNormHoursFromInput();
+          renderScheduleCalendar();
+          if (typeof window.forcePushToCloud === 'function') window.forcePushToCloud();
         });
       }
 
@@ -8574,6 +8583,7 @@
           const savedNorm = syncNormHoursFromInput();
           saveShiftsData(shiftsData);
           renderScheduleCalendar();
+          if (typeof window.forcePushToCloud === 'function') window.forcePushToCloud();
           showToast('✅ График смен и норма ' + savedNorm + ' ч сохранены в памяти!');
         });
       }
