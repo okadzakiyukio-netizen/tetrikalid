@@ -8977,9 +8977,26 @@
         });
       }
 
+      let lastWeatherFetchAt = 0;
+      const WEATHER_REFRESH_MS = 30 * 60 * 1000;
+      const origFetchWeather = fetchWeatherForecast;
+      fetchWeatherForecast = async function () {
+        lastWeatherFetchAt = Date.now();
+        return origFetchWeather.apply(this, arguments);
+      };
+
       fetchWeatherForecast();
-      // Автоматическое динамическое обновление ровно каждый час (60 минут):
-      setInterval(() => { if (!document.hidden) fetchWeatherForecast(); }, 60 * 60 * 1000);
+      // Автоматическое обновление каждые 30 минут + сразу при возврате на вкладку, если прошло >= 30 минут
+      setInterval(() => {
+        if (!document.hidden && (Date.now() - lastWeatherFetchAt >= WEATHER_REFRESH_MS)) {
+          fetchWeatherForecast();
+        }
+      }, WEATHER_REFRESH_MS);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && (Date.now() - lastWeatherFetchAt >= WEATHER_REFRESH_MS)) {
+          fetchWeatherForecast();
+        }
+      });
 
 
       window.addEventListener('beforeunload', () => {
