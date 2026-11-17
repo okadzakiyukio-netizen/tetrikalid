@@ -2562,7 +2562,7 @@
             </div>
 
             <div class="p-4 text-center">
-              <div class="text-xs font-medium text-slate-400">Всего в базе</div>
+              <div id="kpi-month-label" class="text-xs font-medium text-slate-400">Всего в базе</div>
               <div id="kpi-month" class="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400 mt-1">180</div>
               <div id="kpi-month-sub" class="text-[11px] text-slate-400 mt-0.5">записей</div>
             </div>
@@ -4872,8 +4872,15 @@
         document.getElementById('kpi-week').textContent = weekRecs.length;
         document.getElementById('kpi-week-sub').textContent = weekSubjects + ' предметов';
 
-        document.getElementById('kpi-month').textContent = records.length;
-        document.getElementById('kpi-month-sub').textContent = totalSubjectsAll + ' предметов';
+        const hasActiveFilter = (activePeriod !== 'all') || Boolean(filterDateFromEl && filterDateFromEl.value) || Boolean(filterDateToEl && filterDateToEl.value) || Boolean(trackerSearchEl && trackerSearchEl.value.trim());
+        const kpiMonthLabelEl = document.getElementById('kpi-month-label');
+        if (kpiMonthLabelEl) {
+          kpiMonthLabelEl.textContent = hasActiveFilter ? 'За период' : 'Всего в базе';
+        }
+        document.getElementById('kpi-month').textContent = hasActiveFilter ? filtered.length : records.length;
+        document.getElementById('kpi-month-sub').textContent = hasActiveFilter
+          ? (filteredSubjectsSum + ' предм. • всего ' + records.length)
+          : (totalSubjectsAll + ' предметов');
 
         document.getElementById('kpi-avg-per-day').textContent = avgSubjectsPerDay.toFixed(1);
         document.getElementById('kpi-avg-per-day-sub').textContent = 'Ср. записей/день: ' + avgRecordsPerDay.toFixed(1) + ' (' + (filtered.length > 0 ? activeDaysCount : 0) + ' смен)';
@@ -4889,6 +4896,7 @@
 
         const pillsContainer = document.getElementById('subject-avg-pills');
         pillsContainer.innerHTML = [
+          '<span class="px-2.5 py-1 rounded-lg bg-slate-200/70 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-bold">Записей: ' + filtered.length + ' • Предм.: ' + filteredSubjectsSum + '</span>',
           '<span class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold">Ср. предметов/день: ' + avgSubjectsPerDay.toFixed(1) + '</span>',
           '<span class="px-2.5 py-1 rounded-lg bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300 border border-violet-200 dark:border-violet-800 font-semibold">Ср. записей/день: ' + avgRecordsPerDay.toFixed(1) + '</span>',
           '<span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">IT: ' + (itCount / activeDaysCount).toFixed(1) + '/день (' + itCount + ')</span>',
@@ -5038,22 +5046,35 @@
         });
       }
 
+      function updatePeriodPillsUI() {
+        document.querySelectorAll('.period-pill').forEach((b) => {
+          if (b.getAttribute('data-period') === activePeriod) {
+            b.className = 'period-pill px-3 py-1.5 rounded-lg font-semibold bg-indigo-600 text-white shadow-sm';
+          } else {
+            b.className = 'period-pill px-3 py-1.5 rounded-lg font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700';
+          }
+        });
+      }
+
       document.querySelectorAll('.period-pill').forEach((btn) => {
         btn.addEventListener('click', () => {
           activePeriod = btn.getAttribute('data-period');
-          document.querySelectorAll('.period-pill').forEach((b) => {
-            if (b.getAttribute('data-period') === activePeriod) {
-              b.className = 'period-pill px-3 py-1.5 rounded-lg font-semibold bg-indigo-600 text-white shadow-sm';
-            } else {
-              b.className = 'period-pill px-3 py-1.5 rounded-lg font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700';
-            }
-          });
+          if (filterDateFromEl) filterDateFromEl.value = '';
+          if (filterDateToEl) filterDateToEl.value = '';
+          updatePeriodPillsUI();
           renderTrackerAll();
         });
       });
 
-      if (filterDateFromEl) filterDateFromEl.addEventListener('change', renderTrackerAll);
-      if (filterDateToEl) filterDateToEl.addEventListener('change', renderTrackerAll);
+      function onDateRangeFilterChange() {
+        if ((filterDateFromEl && filterDateFromEl.value) || (filterDateToEl && filterDateToEl.value)) {
+          activePeriod = 'all';
+          updatePeriodPillsUI();
+        }
+        renderTrackerAll();
+      }
+      if (filterDateFromEl) filterDateFromEl.addEventListener('change', onDateRangeFilterChange);
+      if (filterDateToEl) filterDateToEl.addEventListener('change', onDateRangeFilterChange);
       let trackerSearchTimer = null;
       if (trackerSearchEl) {
         trackerSearchEl.addEventListener('input', () => {
