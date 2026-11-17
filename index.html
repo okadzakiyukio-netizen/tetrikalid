@@ -2581,7 +2581,7 @@
           </div>
 
           <!-- Integrated Subtle Direction Stats Strip -->
-          <div class="px-4 py-2.5 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="px-3.5 py-1.5 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-1.5 text-[11px]">
             <span class="text-slate-400 font-medium">Статистика направлений:</span>
             <div id="subject-avg-pills" class="flex flex-wrap items-center gap-1.5">
               <!-- Populated by JS -->
@@ -4892,18 +4892,15 @@
         const sftCount = filtered.filter((r) => (r.dirs || []).includes('SFT')).length;
         const aiCount = filtered.filter((r) => (r.dirs || []).includes('ИИ')).length;
         const refCount = filtered.filter((r) => r.ref === 'Да').length;
-        const mvuCount = filtered.filter((r) => r.mvu === 'Да').length;
-
         const pillsContainer = document.getElementById('subject-avg-pills');
         pillsContainer.innerHTML = [
-          '<span class="px-2.5 py-1 rounded-lg bg-slate-200/70 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-bold">Записей: ' + filtered.length + ' • Предм.: ' + filteredSubjectsSum + '</span>',
-          '<span class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold">Ср. предметов/день: ' + avgSubjectsPerDay.toFixed(1) + '</span>',
-          '<span class="px-2.5 py-1 rounded-lg bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300 border border-violet-200 dark:border-violet-800 font-semibold">Ср. записей/день: ' + avgRecordsPerDay.toFixed(1) + '</span>',
-          '<span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">IT: ' + (itCount / activeDaysCount).toFixed(1) + '/день (' + itCount + ')</span>',
-          '<span class="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300 border border-teal-200 dark:border-teal-800">ИИ: ' + (aiCount / activeDaysCount).toFixed(1) + '/день (' + aiCount + ')</span>',
-          '<span class="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800">SFT: ' + (sftCount / activeDaysCount).toFixed(1) + '/день (' + sftCount + ')</span>',
-          '<span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800">РЕФ: ' + (refCount / activeDaysCount).toFixed(1) + '/день (' + refCount + ')</span>',
-          '<span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">МВУ: ' + (mvuCount / activeDaysCount).toFixed(1) + '/день (' + mvuCount + ')</span>'
+          '<span class="px-2 py-0.5 rounded-md bg-slate-200/70 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-bold">Записей: ' + filtered.length + ' • Предм.: ' + filteredSubjectsSum + '</span>',
+          '<span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold">Ср. предм./день: ' + avgSubjectsPerDay.toFixed(1) + '</span>',
+          '<span class="px-2 py-0.5 rounded-md bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300 border border-violet-200 dark:border-violet-800 font-semibold">Ср. зап./день: ' + avgRecordsPerDay.toFixed(1) + '</span>',
+          '<span class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">IT: ' + (itCount / activeDaysCount).toFixed(1) + '/д (' + itCount + ')</span>',
+          '<span class="px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300 border border-teal-200 dark:border-teal-800">ИИ: ' + (aiCount / activeDaysCount).toFixed(1) + '/д (' + aiCount + ')</span>',
+          '<span class="px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800">SFT: ' + (sftCount / activeDaysCount).toFixed(1) + '/д (' + sftCount + ')</span>',
+          '<span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800">РЕФ: ' + (refCount / activeDaysCount).toFixed(1) + '/д (' + refCount + ')</span>'
         ].join('');
 
         document.getElementById('tracker-found-count').textContent = 'Найдено: ' + filtered.length;
