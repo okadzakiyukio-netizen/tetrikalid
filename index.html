@@ -7949,7 +7949,8 @@
           if (!reloadOnUpdate && !isAccountSwitch) {
             const lastMut = Number(localStorage.getItem(LAST_LOCAL_MUTATION_KEY) || 0);
             if (lastMut && (Date.now() - lastMut) < 6000) return;
-            if (document.activeElement && document.activeElement.id === 'schedule-norm-hours-input') return;
+            const activeEl = document.activeElement;
+            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable)) return;
           }
           try {
             const prevUid = localStorage.getItem(LAST_UID_KEY);
@@ -8014,6 +8015,7 @@
           } catch (err) {
             showBanner('Ошибка загрузки из облака: ' + (err.message || err), 'error');
           } finally {
+            isApplyingCloudData = false;
             isCloudSyncInFlight = false;
           }
         }
@@ -8061,6 +8063,10 @@
             } catch (e) {}
             if (typeof renderScheduleCalendar === 'function') renderScheduleCalendar();
             if (typeof renderWeeklyRecordsChart === 'function') renderWeeklyRecordsChart();
+            if (typeof window.syncSalaryInputsForScheduleMonth === 'function' && typeof currentScheduleYear !== 'undefined' && typeof currentScheduleMonth !== 'undefined') {
+              window.syncSalaryInputsForScheduleMonth(currentScheduleYear, currentScheduleMonth);
+            }
+            if (typeof window.renderSalary6MonthsChart === 'function') window.renderSalary6MonthsChart();
 
             // 3. План на месяц и KPI
             if (typeof loadPlanItems === 'function') planItems = loadPlanItems();
