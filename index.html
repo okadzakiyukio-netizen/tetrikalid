@@ -2712,16 +2712,16 @@
               <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs sm:text-sm">
                   <thead>
-                    <tr class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      <th class="py-3 px-3.5">№</th>
-                      <th class="py-3 px-3.5">Дата</th>
-                      <th class="py-3 px-3.5">Номер клиента</th>
-                      <th class="py-3 px-3.5">Комментарий</th>
-                      <th class="py-3 px-2.5 text-center">Кол-во</th>
-                      <th class="py-3 px-2.5 text-center">МВУ</th>
-                      <th class="py-3 px-2.5 text-center">Напр.</th>
-                      <th class="py-3 px-2.5 text-center">Реф</th>
-                      <th class="py-3 px-3.5 text-right">Управление</th>
+                    <tr class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      <th class="py-2 px-2">№</th>
+                      <th class="py-2 px-2">Дата</th>
+                      <th class="py-2 px-2">Номер</th>
+                      <th class="py-2 px-2">Комментарий</th>
+                      <th class="py-2 px-1.5 text-center">К-во</th>
+                      <th class="py-2 px-1.5 text-center">МВУ</th>
+                      <th class="py-2 px-1.5 text-center">Напр.</th>
+                      <th class="py-2 px-1.5 text-center">Реф</th>
+                      <th class="py-2 px-2 text-right">Действ.</th>
                     </tr>
                   </thead>
                   <tbody id="records-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -4930,15 +4930,15 @@
           const groupHeaderTr = document.createElement('tr');
           groupHeaderTr.className = 'bg-indigo-50/80 dark:bg-indigo-950/40 border-y border-indigo-100 dark:border-indigo-900/60';
           groupHeaderTr.innerHTML =
-            '<td colspan="9" class="py-2.5 px-4">' +
-              '<div class="flex flex-wrap items-center justify-between gap-2">' +
-                '<div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-xs sm:text-sm">' +
+            '<td colspan="9" class="py-1.5 px-2.5">' +
+              '<div class="flex flex-wrap items-center justify-between gap-1.5">' +
+                '<div class="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white text-xs">' +
                   '<span>📅 ' + formatRuDateLong(dateKey) + '</span>' +
-                  '<span class="text-slate-500 dark:text-slate-400 font-medium text-xs">(' + dayItems.length + ' записей)</span>' +
+                  '<span class="text-slate-500 dark:text-slate-400 font-medium text-[11px]">(' + dayItems.length + ' зап.)</span>' +
                 '</div>' +
-                '<div class="flex flex-wrap items-center gap-2 text-xs">' +
-                  '<span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/70 dark:text-indigo-200 font-semibold">Сумма предметов за день: ' + daySubjectsTotal + '</span>' +
-                  '<span class="px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-800 dark:bg-violet-900/70 dark:text-violet-200 font-semibold">Ср. предметов на запись (без Лекты): ' + dayAvgPerClient + '</span>' +
+                '<div class="flex flex-wrap items-center gap-1.5 text-[11px]">' +
+                  '<span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/70 dark:text-indigo-200 font-semibold">Предм.: ' + daySubjectsTotal + '</span>' +
+                  '<span class="px-2 py-0.5 rounded-full bg-violet-100 text-violet-800 dark:bg-violet-900/70 dark:text-violet-200 font-semibold">Ср. (без Лекты): ' + dayAvgPerClient + '</span>' +
                 '</div>' +
               '</div>' +
             '</td>';
@@ -4973,28 +4973,31 @@
               ? '<button type="button" data-copy-phone="' + safePhone + '" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-800 transition" title="Скопировать номер">' + safePhone + '</button>'
               : '<span class="text-slate-400">—</span>';
 
+            const shortDateCell = item.date && item.date.includes('-') ? item.date.slice(8, 10) + '.' + item.date.slice(5, 7) : formatRuDate(item.date);
+            const safeComment = item.comment ? qaEscapeHtml(item.comment) : '—';
+            const safeId = qaEscapeHtml(String(item.id || ''));
             tr.innerHTML =
-              '<td class="py-2.5 px-3.5 text-slate-400 font-semibold">' + (rowCounter++) + '</td>' +
-              '<td class="py-2.5 px-3.5 text-slate-700 dark:text-slate-300 whitespace-nowrap">' + qaEscapeHtml(formatRuDate(item.date)) + '</td>' +
-              '<td class="py-2.5 px-3.5 whitespace-nowrap">' + phoneCellHtml + '</td>' +
-              '<td class="py-2.5 px-3.5 text-slate-800 dark:text-slate-200 font-medium">' + (item.comment ? qaEscapeHtml(item.comment) : '—') + '</td>' +
-              '<td class="py-2.5 px-2.5 text-center">' +
-                '<span class="inline-flex items-center justify-center w-7 h-6 rounded-full text-xs font-bold border ' + getQtyBadgeClass(Number(item.qty) || 1) + '">' + (Number(item.qty) || 1) + '</span>' +
+              '<td class="py-1.5 px-2 text-xs text-slate-400 font-semibold">' + (rowCounter++) + '</td>' +
+              '<td class="py-1.5 px-2 text-xs text-slate-600 dark:text-slate-300 whitespace-nowrap">' + qaEscapeHtml(shortDateCell) + '</td>' +
+              '<td class="py-1.5 px-2 text-xs whitespace-nowrap">' + phoneCellHtml + '</td>' +
+              '<td class="py-1.5 px-2 text-xs text-slate-800 dark:text-slate-200 font-medium max-w-[160px] truncate" title="' + safeComment + '">' + safeComment + '</td>' +
+              '<td class="py-1.5 px-1.5 text-center">' +
+                '<span class="inline-flex items-center justify-center w-6 h-5 rounded-full text-[11px] font-bold border ' + getQtyBadgeClass(Number(item.qty) || 1) + '">' + (Number(item.qty) || 1) + '</span>' +
               '</td>' +
-              '<td class="py-2.5 px-2.5 text-center whitespace-nowrap">' +
+              '<td class="py-1.5 px-1.5 text-center whitespace-nowrap">' +
                 (item.mvu === 'Да'
-                  ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/70">МВУ</span>'
-                  : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800/70">НЕ МВУ</span>') +
+                  ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/70">МВУ</span>'
+                  : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800/70">НЕТ</span>') +
               '</td>' +
-              '<td class="py-2.5 px-2.5 text-center whitespace-nowrap">' + (dirBadges.join('') || '<span class="text-slate-400">—</span>') + '</td>' +
-              '<td class="py-2.5 px-2.5 text-center whitespace-nowrap">' +
+              '<td class="py-1.5 px-1.5 text-center whitespace-nowrap">' + (dirBadges.join('') || '<span class="text-slate-400 text-xs">—</span>') + '</td>' +
+              '<td class="py-1.5 px-1.5 text-center whitespace-nowrap">' +
                 (item.ref === 'Да'
-                  ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800/70">✅ Да</span>'
-                  : '<span class="inline-block px-2 py-0.5 rounded-full text-slate-400 border border-slate-200 dark:border-slate-700">—</span>') +
+                  ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800/70">Да</span>'
+                  : '<span class="text-slate-400 text-xs">—</span>') +
               '</td>' +
-              '<td class="py-2.5 px-3.5 text-right whitespace-nowrap space-x-1">' +
-                '<button type="button" data-edit-rec="' + qaEscapeHtml(String(item.id || '')) + '" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Изменить</button>' +
-                '<button type="button" data-del-rec="' + qaEscapeHtml(String(item.id || '')) + '" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-rose-200 dark:border-rose-800/70 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40">Удалить</button>' +
+              '<td class="py-1.5 px-2 text-right whitespace-nowrap space-x-1">' +
+                '<button type="button" data-edit-rec="' + safeId + '" title="Изменить" class="px-1.5 py-0.5 rounded-md text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition">✏️</button>' +
+                '<button type="button" data-del-rec="' + safeId + '" title="Удалить" class="px-1.5 py-0.5 rounded-md text-xs border border-rose-200 dark:border-rose-800/70 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition">🗑️</button>' +
               '</td>';
 
             tbody.appendChild(tr);
