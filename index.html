@@ -2426,7 +2426,7 @@
                 <span class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold">🔗</span>
                 <div>
                   <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Конверсия связок</div>
-                  <h3 class="text-sm font-bold text-slate-900 dark:text-white">МВУ (без рефералов)</h3>
+                  <h3 class="text-sm font-bold text-slate-900 dark:text-white">МВУ (конверсия)</h3>
                 </div>
               </div>
               <span id="plan-mvu-fact-pct" class="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/50">0%</span>
@@ -2445,7 +2445,7 @@
             </div>
 
             <div id="plan-mvu-status" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
-              0 из 0 основных клиентов без рефералов
+              0 из 0 клиентов (без взр/дош/ТО)
             </div>
           </div>
         </div>
@@ -4888,9 +4888,10 @@
         document.getElementById('kpi-avg-per-client').textContent = avgSubjectsPerClient.toFixed(2);
         document.getElementById('kpi-avg-per-client-sub').textContent = nonLektaSubjectsSum + ' предм. / ' + nonLektaFiltered.length + ' зап. (без Лекты)';
 
-        const itCount = filtered.filter((r) => (r.dirs || []).includes('IT')).length;
-        const sftCount = filtered.filter((r) => (r.dirs || []).includes('SFT')).length;
-        const aiCount = filtered.filter((r) => (r.dirs || []).includes('ИИ')).length;
+        const normDirs = (r) => (Array.isArray(r.dirs) ? r.dirs : (typeof r.dirs === 'string' ? r.dirs.split('+') : [])).map((d) => String(d).trim().toLowerCase());
+        const itCount = filtered.filter((r) => normDirs(r).some((d) => d === 'it' || d === 'ит' || d.includes('прогр') || d.includes('roblox') || d.includes('python') || d.includes('scratch'))).length;
+        const sftCount = filtered.filter((r) => normDirs(r).some((d) => d === 'sft' || d.includes('sft') || d.includes('soft') || d.includes('лидер') || d.includes('софт') || d.includes('сфт'))).length;
+        const aiCount = filtered.filter((r) => normDirs(r).some((d) => d === 'ии' || d.includes('ии') || d.includes('нейро') || d === 'ai')).length;
         const refCount = filtered.filter((r) => r.ref === 'Да').length;
         const pillsContainer = document.getElementById('subject-avg-pills');
         pillsContainer.innerHTML = [
@@ -6866,8 +6867,8 @@
           } else if (itemId === 'plan-ref') {
             if (isRef) count += 1;
           } else if (itemId === 'plan-mvu') {
-            // МВУ не учитывает записи с пометкой РЕФ
-            if (isMvu && !isRef) count += 1;
+            // МВУ учитывает и РЕФ, если нет исключающего комментария (дош/взр/то)
+            if (isMvu) count += 1;
           }
         });
         return count;
@@ -7102,8 +7103,9 @@
 
           if (isRef) {
             refCount++;
-          } else if (isMvu || !isVzrComment) {
-            // ПРИ РАСЧЕТЕ МВУ НЕ УЧИТЫВАЕМ РЕФ, А ТАКЖЕ "НЕ МВУ" С КОММЕНТАРИЕМ "взр"
+          }
+          if (isMvu || !isVzrComment) {
+            // РЕФ учитываются в МВУ; исключаются только "НЕ МВУ" с комментарием взр/взрослый/дош/то
             baseNonRefPeopleCount++;
             if (isMvu) {
               mvuCount++;
@@ -7151,7 +7153,7 @@
         if (mvuFactPctEl) mvuFactPctEl.textContent = mvuFactPct + '%';
         if (mvuTargetInput) mvuTargetInput.value = mvuTarget;
         if (mvuStatusEl) {
-          mvuStatusEl.textContent = mvuCount + ' из ' + baseNonRefPeopleCount + ' основных клиентов без РЕФ (' + mvuFactPct + '%)';
+          mvuStatusEl.textContent = mvuCount + ' из ' + baseNonRefPeopleCount + ' клиентов (без взр/дош/ТО) (' + mvuFactPct + '%)';
         }
         if (subSecondaryCountEl) {
           subSecondaryCountEl.innerHTML = '<span>Записано человек: <strong>' + peopleCount + '</strong></span><span>План: <strong>' + peopleTarget + '</strong> предм.</span>';
