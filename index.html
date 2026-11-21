@@ -6902,7 +6902,7 @@
             totalCurrent += fact;
           }
 
-          const percent = currentTarget > 0 ? Math.min(100, Math.round((fact / currentTarget) * 100)) : (fact > 0 ? 100 : 0);
+          const percent = currentTarget > 0 ? Math.round((fact / currentTarget) * 100) : (fact > 0 ? 100 : 0);
 
           const card = document.createElement('div');
           card.className = 'p-4 rounded-2xl border transition-all ' + 
@@ -6920,7 +6920,7 @@
             '</div>' +
 
             '<div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-3">' +
-              '<div class="h-full bg-gradient-to-r from-indigo-500 to-amber-500 transition-all duration-300" style="width: ' + percent + '%"></div>' +
+              '<div class="h-full bg-gradient-to-r from-indigo-500 to-amber-500 transition-all duration-300" style="width: ' + Math.min(100, percent) + '%"></div>' +
             '</div>' +
 
             '<div class="flex items-center justify-between gap-2 text-xs">' +
@@ -7117,7 +7117,7 @@
         const avgTarget = Number(planKpiTargets.avgTarget) || 2.2;
         const mvuTarget = Number(planKpiTargets.mvuTarget) || 65;
 
-        const peoplePercent = peopleTarget > 0 ? Math.min(100, Math.round((totalSubjectsCount / peopleTarget) * 100)) : 0;
+        const peoplePercent = peopleTarget > 0 ? Math.round((totalSubjectsCount / peopleTarget) * 100) : 0;
         const avgFact = nonLektaPeopleCount > 0 ? (nonLektaSubjectsCount / nonLektaPeopleCount).toFixed(2) : '0.0';
         // МВУ % рассчитывается строго среди записей БЕЗ пометки РЕФ!
         const mvuFactPct = baseNonRefPeopleCount > 0 ? Math.round((mvuCount / baseNonRefPeopleCount) * 100) : 0;
@@ -7139,7 +7139,7 @@
         if (peopleFactEl) peopleFactEl.textContent = totalSubjectsCount;
         if (peoplePercentEl) peoplePercentEl.textContent = peoplePercent + '%';
         if (peopleTargetInput) peopleTargetInput.value = peopleTarget;
-        if (overallBarEl) overallBarEl.style.width = peoplePercent + '%';
+        if (overallBarEl) overallBarEl.style.width = Math.min(100, peoplePercent) + '%';
 
         if (avgFactEl) avgFactEl.textContent = avgFact;
         if (avgTargetInput) avgTargetInput.value = avgTarget;
