@@ -7893,9 +7893,62 @@
         let currentUser = null;
         let syncTimer = null;
         let isApplyingCloudData = false;
+        let isCloudSyncInFlight = false;
+        let isPushInFlight = false;
+        let pendingPushAgain = false;
+
+        const LAST_LOCAL_MUTATION_KEY = 'tetrika_last_local_mutation_ts';
+        const CLOUD_DIRTY_KEY = 'tetrika_cloud_dirty_v1';
+        const CLOUD_VER_KEY = 'tetrika_cloud_last_ver_v1';
+
+        const LOCAL_ONLY_KEYS = new Set([
+          CFG_URL_KEY,
+          CFG_ANON_KEY,
+          LAST_SYNC_KEY,
+          LAST_UID_KEY,
+          LAST_LOCAL_MUTATION_KEY,
+          CLOUD_DIRTY_KEY,
+          CLOUD_VER_KEY,
+          'tetrika_welcome_seen_v1',
+          'tetrika_onb_weather_cache_v1',
+          'tetrika_onb_weather_city_v1',
+          'tetrika_onb_last_tab_v1',
+          'tetrika_onb_last_scroll_v1',
+          'tetrika_onb_open_details_v1',
+          'tetrika_call_notes_size_v1',
+          'tetrika_onb_schedule_view_v1',
+          'tetrika_onb_theme_v1',
+          'tetrika_theme',
+          'tetrika_onb_lock_unlocked_session_v1',
+          'tetrika_onb_cloud_last_uid_v1'
+        ]);
+
+        // Сохраняем оригинальные методы Storage ДО любых вызовов синхронизации
+        const origSetItem = Storage.prototype.setItem;
+        const origRemoveItem = Storage.prototype.removeItem;
+
+        function safeOrigSet(k, v) {
+          try { origSetItem.call(localStorage, k, v); } catch (e) {}
+        }
+        function safeOrigRemove(k) {
+          try { origRemoveItem.call(localStorage, k); } catch (e) {}
+        }
 
         function isAppDataKey(k) {
-          return k && !k.startsWith('sb-') && k !== CFG_URL_KEY && k !== CFG_ANON_KEY && k !== LAST_SYNC_KEY && k !== LAST_UID_KEY && k !== 'tetrika_welcome_seen_v1' && k !== 'tetrika_onb_weather_cache_v1' && k !== LAST_LOCAL_MUTATION_KEY && k !== 'tetrika_onb_last_tab_v1' && k !== 'tetrika_onb_last_scroll_v1';
+          if (!k || typeof k !== 'string') return false;
+          if (k.startsWith('sb-') || LOCAL_ONLY_KEYS.has(k)) return false;
+          return k.startsWith('tetrika_') || k.startsWith('onb_');
+        }
+
+        function markLocalMutation() {
+          const nowStr = String(Date.now());
+          try { sessionStorage.setItem(LAST_LOCAL_MUTATION_KEY, nowStr); } catch (e) {}
+          safeOrigSet(LAST_LOCAL_MUTATION_KEY, nowStr);
+          safeOrigSet(CLOUD_DIRTY_KEY, '1');
+        }
+
+        function hasPendingLocalChanges() {
+          return localStorage.getItem(CLOUD_DIRTY_KEY) === '1';
         }
 
         function getConfig() {
@@ -7937,8 +7990,11 @@
             if (isAppDataKey(k)) keysToRemove.push(k);
           }
           isApplyingCloudData = true;
-          keysToRemove.forEach((k) => localStorage.removeItem(k));
-          isApplyingCloudData = false;
+          try {
+            keysToRemove.forEach((k) => safeOrigRemove(k));
+          } finally {
+            isApplyingCloudData = false;
+          }
         }
 
         function updateHeaderUI() {
@@ -7960,41 +8016,74 @@
         }
 
         async function pushToCloud(silent) {
-          if (!sbClient || !currentUser || isApplyingCloudData) return;
+          if (!sbClient || !currentUser || isApplyingCloudData) return false;
+          if (isPushInFlight) {
+            pendingPushAgain = true;
+            return false;
+          }
+          isPushInFlight = true;
+          const mutAtStart = localStorage.getItem(LAST_LOCAL_MUTATION_KEY) || '';
           try {
             const snapshot = collectLocalSnapshot();
-            const { error } = await sbClient
+            const sentIso = new Date().toISOString();
+            const { data, error } = await sbClient
               .from('user_workspace')
               .upsert({
                 user_id: currentUser.id,
                 email: currentUser.email || '',
                 data_json: snapshot,
-                updated_at: new Date().toISOString()
-              }, { onConflict: 'user_id' });
+                updated_at: sentIso
+              }, { onConflict: 'user_id' })
+              .select('updated_at')
+              .maybeSingle();
             if (error) throw error;
-            try { localStorage.setItem(LAST_UID_KEY, currentUser.id); } catch (e) {}
+
+            const savedVer = (data && data.updated_at) ? data.updated_at : sentIso;
+            safeOrigSet(CLOUD_VER_KEY, savedVer);
+            safeOrigSet(LAST_UID_KEY, currentUser.id);
+            // Снимаем флаг dirty только если за время отправки не было новых локальных правок
+            if ((localStorage.getItem(LAST_LOCAL_MUTATION_KEY) || '') === mutAtStart) {
+              safeOrigRemove(CLOUD_DIRTY_KEY);
+            } else {
+              pendingPushAgain = true;
+            }
+
             const nowStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            try { localStorage.setItem(LAST_SYNC_KEY, 'Синхр. в ' + nowStr); } catch (e) {}
+            safeOrigSet(LAST_SYNC_KEY, 'Синхр. в ' + nowStr);
             if (syncTimeEl) syncTimeEl.textContent = 'Синхр. в ' + nowStr;
             if (statusDot) statusDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
             if (btnLabel && currentUser) btnLabel.textContent = currentUser.email ? currentUser.email.split('@')[0] : 'В сети';
             if (!silent) showBanner('Данные успешно сохранены в облако!', 'success');
+            return true;
           } catch (err) {
             const errMsg = 'Ошибка сохранения: ' + (err.message || err);
             showBanner(errMsg, 'error');
             if (btnLabel) btnLabel.textContent = '⚠️ Ошибка синхр.';
             if (statusDot) statusDot.className = 'w-1.5 h-1.5 rounded-full bg-rose-500';
+            return false;
+          } finally {
+            isPushInFlight = false;
+            if (pendingPushAgain) {
+              pendingPushAgain = false;
+              setTimeout(() => pushToCloud(true), 250);
+            }
           }
         }
 
-        async function pullFromCloud(reloadOnUpdate, isAccountSwitch) {
-          if (!sbClient || !currentUser || isCloudSyncInFlight) return;
-          if (!reloadOnUpdate && !isAccountSwitch) {
-            const lastMut = Number(localStorage.getItem(LAST_LOCAL_MUTATION_KEY) || 0);
-            if (lastMut && (Date.now() - lastMut) < 6000) return;
+        async function pullFromCloud(reloadOnUpdate, isAccountSwitch, forceManual) {
+          if (!sbClient || !currentUser || isCloudSyncInFlight || isPushInFlight) return false;
+          if (!reloadOnUpdate && !isAccountSwitch && !forceManual) {
             const activeEl = document.activeElement;
-            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable)) return;
+            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable)) return false;
           }
+
+          // Если есть неотправленные локальные изменения (и мы не меняем аккаунт) — сначала отправляем их
+          if (!isAccountSwitch && hasPendingLocalChanges()) {
+            if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
+            await pushToCloud(!forceManual);
+            return false;
+          }
+
           isCloudSyncInFlight = true;
           try {
             const prevUid = localStorage.getItem(LAST_UID_KEY);
@@ -8009,24 +8098,23 @@
             if (error) throw error;
 
             if (data && data.data_json && Object.keys(data.data_json).length > 0) {
-              if (!switchedUser) {
-                const localMutTs = Number(localStorage.getItem(LAST_LOCAL_MUTATION_KEY) || sessionStorage.getItem(LAST_LOCAL_MUTATION_KEY) || 0);
-                const cloudTs = data.updated_at ? Date.parse(data.updated_at) : 0;
-                if (localMutTs && cloudTs && localMutTs > cloudTs + 500) {
-                  await pushToCloud(true);
-                  return;
-                }
+              const cloudObj = data.data_json;
+              const lastVer = localStorage.getItem(CLOUD_VER_KEY) || '';
+              if (!switchedUser && !forceManual && data.updated_at && data.updated_at === lastVer) {
+                return false;
               }
+
               if (switchedUser) {
                 clearAppLocalData();
               }
               isApplyingCloudData = true;
-              const cloudObj = data.data_json;
               let changed = switchedUser;
+
+              // 1. Применяем новые/обновлённые ключи из облака
               Object.keys(cloudObj).forEach((k) => {
                 if (typeof cloudObj[k] === 'string' && isAppDataKey(k)) {
                   if (localStorage.getItem(k) !== cloudObj[k]) {
-                    try { localStorage.setItem(k, cloudObj[k]); } catch (quotaErr) { console.warn('QuotaExceeded:', k); }
+                    safeOrigSet(k, cloudObj[k]);
                     try {
                       const parsedVal = JSON.parse(cloudObj[k]);
                       if (typeof openAppIDB === 'function') {
@@ -8041,50 +8129,66 @@
                   }
                 }
               });
+
+              // 2. Удаляем локальные ключи данных, которых больше нет в облачном снимке
+              const localKeys = [];
+              for (let i = 0; i < localStorage.length; i++) {
+                const lk = localStorage.key(i);
+                if (isAppDataKey(lk)) localKeys.push(lk);
+              }
+              localKeys.forEach((lk) => {
+                if (!Object.prototype.hasOwnProperty.call(cloudObj, lk)) {
+                  safeOrigRemove(lk);
+                  changed = true;
+                }
+              });
+
               isApplyingCloudData = false;
-              try { localStorage.setItem(LAST_UID_KEY, currentUser.id); } catch (e) {}
+              if (data.updated_at) safeOrigSet(CLOUD_VER_KEY, data.updated_at);
+              safeOrigRemove(CLOUD_DIRTY_KEY);
+              safeOrigSet(LAST_UID_KEY, currentUser.id);
+
               const nowStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-              try { localStorage.setItem(LAST_SYNC_KEY, 'Синхр. в ' + nowStr); } catch (e) {}
+              safeOrigSet(LAST_SYNC_KEY, 'Синхр. в ' + nowStr);
               if (syncTimeEl) syncTimeEl.textContent = 'Синхр. в ' + nowStr;
+              if (statusDot) statusDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
+
               if (changed) {
                 if (reloadOnUpdate) {
                   location.reload();
                 } else {
                   refreshAppStateFromLocalStorage();
                 }
+                if (forceManual) showBanner('Обновлены свежие данные из облака!', 'success');
+              } else if (forceManual) {
+                showBanner('Все данные уже актуальны.', 'success');
               }
+              return changed;
             } else {
               if (switchedUser) {
-                // Если вошёл другой пользователь и у него в облаке пусто — не смешиваем с чужими локальными данными
                 clearAppLocalData();
               }
-              try { localStorage.setItem(LAST_UID_KEY, currentUser.id); } catch (e) {}
-              await pushToCloud(true);
+              safeOrigSet(LAST_UID_KEY, currentUser.id);
+              await pushToCloud(!forceManual);
               if (switchedUser && reloadOnUpdate) {
                 location.reload();
               }
+              return false;
             }
           } catch (err) {
             showBanner('Ошибка загрузки из облака: ' + (err.message || err), 'error');
+            return false;
           } finally {
             isApplyingCloudData = false;
             isCloudSyncInFlight = false;
           }
         }
 
-        const LAST_LOCAL_MUTATION_KEY = 'tetrika_last_local_mutation_ts';
-        function markLocalMutation() {
-          try { sessionStorage.setItem(LAST_LOCAL_MUTATION_KEY, String(Date.now())); } catch (e) {}
-          try { origSetItem.call(localStorage, LAST_LOCAL_MUTATION_KEY, String(Date.now())); } catch (e) {}
-        }
-
-        let isCloudSyncInFlight = false;
         window.forcePushToCloud = async function () {
           if (!sbClient || !currentUser || isApplyingCloudData) return false;
           markLocalMutation();
           if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
-          await pushToCloud(false);
-          return true;
+          return await pushToCloud(false);
         };
 
         function scheduleAutoPush() {
@@ -8094,10 +8198,11 @@
           syncTimer = setTimeout(() => {
             syncTimer = null;
             pushToCloud(true);
-          }, 300);
+          }, 700);
         }
 
         function refreshAppStateFromLocalStorage() {
+          isApplyingCloudData = true;
           try {
             // 1. Лиды и перезвоны
             if (typeof loadStorage === 'function') {
@@ -8107,11 +8212,11 @@
             if (typeof renderTrackerAll === 'function') renderTrackerAll();
             if (typeof renderCallbacks === 'function') renderCallbacks();
 
-            // 2. График смен и норма часов
+            // 2. График смен, норма часов и зарплата
             if (typeof loadShiftsData === 'function') shiftsData = loadShiftsData();
             try {
               const normRaw = localStorage.getItem('tetrika_onb_norm_by_month_v1');
-              if (normRaw) normHoursByMonth = JSON.parse(normRaw);
+              normHoursByMonth = normRaw ? JSON.parse(normRaw) : {};
             } catch (e) {}
             if (typeof renderScheduleCalendar === 'function') renderScheduleCalendar();
             if (typeof renderWeeklyRecordsChart === 'function') renderWeeklyRecordsChart();
@@ -8120,16 +8225,27 @@
             }
             if (typeof window.renderSalary6MonthsChart === 'function') window.renderSalary6MonthsChart();
 
-            // 3. План на месяц и KPI
+            // 3. План на месяц, период и KPI
+            try {
+              const pRaw = localStorage.getItem('tetrika_plan_month_period_v1');
+              if (pRaw) {
+                const pObj = JSON.parse(pRaw);
+                const pf = document.getElementById('plan-date-from');
+                const pt = document.getElementById('plan-date-to');
+                if (pf && typeof pObj.from === 'string') pf.value = pObj.from;
+                if (pt && typeof pObj.to === 'string') pt.value = pObj.to;
+              }
+            } catch (e) {}
             if (typeof loadPlanItems === 'function') planItems = loadPlanItems();
             if (typeof loadPlanKpiTargets === 'function') planKpiTargets = loadPlanKpiTargets();
-            if (typeof renderPlan === 'function') renderPlan();
             if (typeof renderPlanMonthModule === 'function') renderPlanMonthModule();
 
-            // 4. Напоминания
-            if (typeof renderReminders === 'function') renderReminders();
+            // 4. Напоминания (точное имя функции renderRemindersList!)
+            if (typeof renderRemindersList === 'function') renderRemindersList();
+            else if (typeof updateRemindersBadge === 'function') updateRemindersBadge();
 
-            // 5. Скрипты, этапы, подэтапы и вкладки
+            // 5. Пользовательские возражения, скрипты, этапы, подэтапы и вкладки
+            if (typeof loadCustomObjections === 'function') customObjections = loadCustomObjections();
             if (typeof loadCustomScripts === 'function') customScripts = loadCustomScripts();
             if (typeof loadExtraStages === 'function') extraStages = loadExtraStages();
             if (typeof loadStageOrderMap === 'function') stageOrderMap = loadStageOrderMap();
@@ -8140,11 +8256,12 @@
             if (typeof loadTabTitles === 'function') customTabTitles = loadTabTitles();
 
             if (typeof renderAllCustomScripts === 'function') renderAllCustomScripts();
+            if (typeof setupCustomObjectionsUI === 'function') setupCustomObjectionsUI();
             if (typeof applyHiddenScripts === 'function') applyHiddenScripts();
             if (typeof applyCustomTabTitles === 'function') applyCustomTabTitles();
             if (typeof applySavedTabsOrder === 'function') applySavedTabsOrder();
 
-            // 6. Имя менеджера и текстовые правки скриптов
+            // 6. Имя менеджера и текстовые правки скриптов (правильный атрибут data-edit-id!)
             const savedAgent = localStorage.getItem('tetrika_onb_agent_name_v1');
             if (typeof varInputs !== 'undefined' && varInputs.agent && varInputs.agent.el && savedAgent !== null && document.activeElement !== varInputs.agent.el) {
               varInputs.agent.el.value = savedAgent;
@@ -8152,18 +8269,17 @@
             if (typeof loadScriptEdits === 'function' && typeof applySavedTextToElement === 'function') {
               scriptEdits = loadScriptEdits();
               Object.keys(scriptEdits).forEach((eid) => {
-                const targetEl = document.querySelector('[data-editable-id="' + eid + '"]');
+                const targetEl = document.querySelector('[data-edit-id="' + eid + '"]');
                 if (targetEl) applySavedTextToElement(targetEl, scriptEdits[eid]);
               });
             }
             if (typeof updateDynamicVars === 'function') updateDynamicVars();
             if (typeof updateCallDrawerSummary === 'function') updateCallDrawerSummary();
-
-            // 7. Тема оформления
-            const savedTheme = localStorage.getItem('tetrika_theme');
-            if (savedTheme === 'dark') document.documentElement.classList.add('dark');
-            else if (savedTheme === 'light') document.documentElement.classList.remove('dark');
-          } catch (e) {}
+          } catch (e) {
+            console.warn('refreshAppStateFromLocalStorage error:', e);
+          } finally {
+            isApplyingCloudData = false;
+          }
         }
 
         // Мгновенная синхронизация между двумя вкладками одного браузера
@@ -8174,42 +8290,45 @@
         });
 
         // Немедленная синхронизация при сворачивании/закрытии вкладки + автоподтяжка при возврате
-        document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'hidden' && syncTimer && sbClient && currentUser && !isApplyingCloudData) {
-            clearTimeout(syncTimer);
-            syncTimer = null;
+        function flushPendingSync() {
+          if ((syncTimer || hasPendingLocalChanges()) && sbClient && currentUser && !isApplyingCloudData) {
+            if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
             pushToCloud(true);
+          }
+        }
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'hidden') {
+            flushPendingSync();
           } else if (document.visibilityState === 'visible' && !syncTimer && sbClient && currentUser && !isApplyingCloudData) {
             setTimeout(() => {
-              if (!syncTimer && !isApplyingCloudData) pullFromCloud(false, false);
-            }, 900);
+              if (!syncTimer && !isApplyingCloudData) pullFromCloud(false, false, false);
+            }, 600);
           }
         });
+        window.addEventListener('pagehide', flushPendingSync);
         window.addEventListener('focus', () => {
           if (!syncTimer && sbClient && currentUser && !isApplyingCloudData) {
             setTimeout(() => {
-              if (!syncTimer && !isApplyingCloudData) pullFromCloud(false, false);
-            }, 900);
+              if (!syncTimer && !isApplyingCloudData) pullFromCloud(false, false, false);
+            }, 600);
           }
         });
         setInterval(() => {
           if (document.visibilityState === 'visible' && !syncTimer && sbClient && currentUser && !isApplyingCloudData) {
-            pullFromCloud(false, false);
+            pullFromCloud(false, false, false);
           }
-        }, 10000);
+        }, 12000);
 
-        // Перехват любых изменений localStorage для автоматической фоновой синхронизации
-        const origSetItem = Storage.prototype.setItem;
-        const origRemoveItem = Storage.prototype.removeItem;
+        // Перехват изменений только реальных ключей данных для авто-синхронизации
         Storage.prototype.setItem = function (k, v) {
           origSetItem.apply(this, arguments);
-          if (this === localStorage && isAppDataKey(k)) {
+          if (this === localStorage && !isApplyingCloudData && isAppDataKey(k)) {
             scheduleAutoPush();
           }
         };
         Storage.prototype.removeItem = function (k) {
           origRemoveItem.apply(this, arguments);
-          if (this === localStorage && isAppDataKey(k)) {
+          if (this === localStorage && !isApplyingCloudData && isAppDataKey(k)) {
             scheduleAutoPush();
           }
         };
@@ -8237,8 +8356,14 @@
             const { data } = await sbClient.auth.getSession();
             currentUser = data && data.session ? data.session.user : null;
             updateHeaderUI();
+
+            sbClient.auth.onAuthStateChange((_event, session) => {
+              currentUser = session ? session.user : null;
+              updateHeaderUI();
+            });
+
             if (currentUser) {
-              await pullFromCloud(false, false);
+              await pullFromCloud(false, false, false);
             }
           } catch (e) {
             showBanner('Ошибка инициализации Supabase: ' + (e.message || e), 'error');
@@ -8268,8 +8393,8 @@
               showBanner('Заполните оба поля: Project URL и Anon Public Key.', 'error');
               return;
             }
-            try { localStorage.setItem(CFG_URL_KEY, u); } catch (e) {}
-            try { localStorage.setItem(CFG_ANON_KEY, k); } catch (e) {}
+            safeOrigSet(CFG_URL_KEY, u);
+            safeOrigSet(CFG_ANON_KEY, k);
             if (cfgDetails) cfgDetails.open = false;
             showBanner('Подключение сохранено! Теперь можно войти или зарегистрироваться.', 'success');
             await initClient();
@@ -8289,7 +8414,7 @@
           currentUser = data.user;
           updateHeaderUI();
           showBanner('Вход выполнен! Синхронизируем данные...', 'success');
-          await pullFromCloud(true, Boolean(prevUid && prevUid !== currentUser.id));
+          await pullFromCloud(true, Boolean(prevUid && prevUid !== currentUser.id), true);
         }
 
         if (loginBtn) {
@@ -8314,7 +8439,7 @@
             if (error) { showBanner('Ошибка регистрации: ' + error.message, 'error'); return; }
             if (data.session) {
               currentUser = data.user;
-              try { localStorage.setItem(LAST_UID_KEY, currentUser.id); } catch (e) {}
+              safeOrigSet(LAST_UID_KEY, currentUser.id);
               updateHeaderUI();
               await pushToCloud(true);
               showBanner('Аккаунт создан и данные сохранены в облако!', 'success');
@@ -8326,15 +8451,19 @@
 
         if (syncNowBtn) {
           syncNowBtn.addEventListener('click', async () => {
-            await pushToCloud(false);
+            if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
+            if (hasPendingLocalChanges()) {
+              await pushToCloud(false);
+            } else {
+              await pullFromCloud(false, false, true);
+            }
           });
         }
 
         if (logoutBtn) {
           logoutBtn.addEventListener('click', async () => {
-            if (syncTimer) {
-              clearTimeout(syncTimer);
-              syncTimer = null;
+            if (syncTimer || hasPendingLocalChanges()) {
+              if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
               await pushToCloud(true);
             }
             if (sbClient) await sbClient.auth.signOut();
