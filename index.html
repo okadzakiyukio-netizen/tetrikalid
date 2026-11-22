@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Скрипты ОНБ — Тетрика / Учи.ру & Лектариум</title>
+  <meta name="description" content="Рабочее место специалиста онбординга: интерактивные скрипты звонков, база возражений, трекер лидов и перезвонов, расчёт KPI, график смен и облачная синхронизация." />
+  <meta name="theme-color" content="#4f46e5" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%25%27 y1=%270%25%27 x2=%27100%25%27 y2=%27100%25%27%3E%3Cstop offset=%270%25%27 stop-color=%27%234f46e5%27/%3E%3Cstop offset=%27100%25%27 stop-color=%27%237c3aed%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%2764%27 height=%2764%27 rx=%2716%27 fill=%27url(%23g)%27/%3E%3Crect x=%272%27 y=%272%27 width=%2760%27 height=%2760%27 rx=%2714%27 fill=%27none%27 stroke=%27rgba(255,255,255,0.22)%27 stroke-width=%272%27/%3E%3Ctext x=%2732%27 y=%2742%27 text-anchor=%27middle%27 font-family=%27system-ui,-apple-system,Segoe UI,sans-serif%27 font-weight=%27900%27 font-size=%2728%27 fill=%27%23ffffff%27 letter-spacing=%27-1%27%3E%D0%A2%D0%9B%3C/text%3E%3C/svg%3E" />
 
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -467,30 +469,26 @@
       .script-tab::after, .btn-action::after, .speech-bubble:hover { animation: none !important; transition: none !important; }
     }
 
-    /* Красивая круговая анимация переключения темы (View Transitions API + fallback) */
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation: none;
-      mix-blend-mode: normal;
+    /* Плавное переключение темы без фризов (60 FPS во всех браузерах) */
+    body, header {
+      transition: background-color 180ms ease-out, color 180ms ease-out, border-color 180ms ease-out;
     }
-    ::view-transition-new(root) {
-      z-index: 9999;
+    @keyframes themeIconSmooth {
+      0% { transform: rotate(-45deg) scale(0.84); opacity: 0.35; }
+      100% { transform: rotate(0deg) scale(1); opacity: 1; }
     }
-    ::view-transition-old(root) {
-      z-index: 1;
+    /* Доступность: единый фокус с клавиатуры и состояние disabled */
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid #6366f1;
+      outline-offset: 2px;
     }
-    html.theme-transitioning *,
-    html.theme-transitioning *::before,
-    html.theme-transitioning *::after {
-      transition: background-color 0.35s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
-    }
-    @keyframes themeIconSpin {
-      0% { transform: rotate(0deg) scale(0.75); opacity: 0.5; }
-      60% { transform: rotate(200deg) scale(1.12); opacity: 1; }
-      100% { transform: rotate(360deg) scale(1); opacity: 1; }
+    button:disabled, input:disabled, select:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
     .theme-icon-spin {
-      animation: themeIconSpin 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: themeIconSmooth 200ms cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform, opacity;
     }
 
     html { scroll-behavior: smooth; }
@@ -3982,56 +3980,10 @@
         syncThemeIcons(document.documentElement.classList.contains('dark'), false);
       })();
 
-      let activeThemeTransition = null;
-      function toggleTheme(event) {
-        const applyChange = () => {
-          const isDark = document.documentElement.classList.toggle('dark');
-          try { localStorage.setItem(STORAGE_THEME_KEY, isDark ? 'dark' : 'light'); } catch (e) {}
-          syncThemeIcons(isDark, true);
-        };
-
-        const btn = event?.currentTarget;
-        const rect = btn?.getBoundingClientRect?.();
-        const x = rect ? rect.left + rect.width / 2 : window.innerWidth - 40;
-        const y = rect ? rect.top + rect.height / 2 : 40;
-        const endRadius = Math.hypot(
-          Math.max(x, window.innerWidth - x),
-          Math.max(y, window.innerHeight - y)
-        );
-
-        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const canAnimate = typeof document.documentElement.animate === 'function';
-        if (!document.startViewTransition || !canAnimate || reduceMotion) {
-          document.documentElement.classList.add('theme-transitioning');
-          applyChange();
-          setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 400);
-          return;
-        }
-
-        if (activeThemeTransition && typeof activeThemeTransition.skipTransition === 'function') {
-          try { activeThemeTransition.skipTransition(); } catch (e) {}
-        }
-        const transition = document.startViewTransition(() => {
-          applyChange();
-        });
-        activeThemeTransition = transition;
-        transition.ready.then(() => {
-          document.documentElement.animate(
-            {
-              clipPath: [
-                `circle(0px at ${x}px ${y}px)`,
-                `circle(${endRadius}px at ${x}px ${y}px)`
-              ]
-            },
-            {
-              duration: 480,
-              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-              pseudoElement: '::view-transition-new(root)'
-            }
-          );
-        }).catch(() => {}).finally(() => {
-          if (activeThemeTransition === transition) activeThemeTransition = null;
-        });
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        try { localStorage.setItem(STORAGE_THEME_KEY, isDark ? 'dark' : 'light'); } catch (e) {}
+        syncThemeIcons(isDark, true);
       }
       document.getElementById('btn-theme-desktop')?.addEventListener('click', toggleTheme);
       document.getElementById('btn-theme-mobile')?.addEventListener('click', toggleTheme);
