@@ -469,14 +469,7 @@
       .script-tab::after, .btn-action::after, .speech-bubble:hover { animation: none !important; transition: none !important; }
     }
 
-    /* Плавное переключение темы без фризов (60 FPS во всех браузерах) */
-    body, header {
-      transition: background-color 180ms ease-out, color 180ms ease-out, border-color 180ms ease-out;
-    }
-    @keyframes themeIconSmooth {
-      0% { transform: rotate(-45deg) scale(0.84); opacity: 0.35; }
-      100% { transform: rotate(0deg) scale(1); opacity: 1; }
-    }
+    /* Мгновенное синхронное переключение темы без рассинхрона карточек и фона */
     /* Доступность: единый фокус с клавиатуры и состояние disabled */
     button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
       outline: 2px solid #6366f1;
@@ -486,10 +479,7 @@
       opacity: 0.55;
       cursor: not-allowed;
     }
-    .theme-icon-spin {
-      animation: themeIconSmooth 200ms cubic-bezier(0.22, 1, 0.36, 1);
-      will-change: transform, opacity;
-    }
+
 
     html { scroll-behavior: smooth; }
   
@@ -3964,11 +3954,7 @@
           const svg = btn.querySelector('svg');
           if (!svg) return;
           svg.innerHTML = isDark ? moonPath : sunPath;
-          if (animate) {
-            svg.classList.remove('theme-icon-spin');
-            void svg.offsetWidth;
-            svg.classList.add('theme-icon-spin');
-          }
+
         });
       }
       (function initSavedTheme() {
