@@ -393,20 +393,7 @@
       will-change: transform, opacity;
     }
 
-    /* Изоляция слоёв и пропуск рендера скрытых за экраном этапов (ускоряет скролл и смену темы) */
-    header, #mobile-bottom-nav, #btn-scroll-top, #toast, #cloud-sync-progress-bar {
-      transform: translateZ(0);
-      backface-visibility: hidden;
-    }
-    article.searchable-block {
-      content-visibility: auto;
-      contain-intrinsic-size: auto 260px;
-      contain: layout style;
-    }
-    #left-sidebar, #weather-popover, #header-settings-popover, [id$="-modal"] > div {
-      contain: layout style;
-      backface-visibility: hidden;
-    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -4005,27 +3992,11 @@
       })();
 
       function toggleTheme() {
-        let veil = document.getElementById('theme-fade-veil');
-        if (!veil) {
-          veil = document.createElement('div');
-          veil.id = 'theme-fade-veil';
-          document.body.appendChild(veil);
-        }
-        const goingDark = !document.documentElement.classList.contains('dark');
-        // Замораживаем разрозненные transition у сотен карточек на 1 кадр, чтобы вся страница сменилась синхронно
         document.documentElement.classList.add('no-theme-transitions');
         const isDark = document.documentElement.classList.toggle('dark');
         try { localStorage.setItem(STORAGE_THEME_KEY, isDark ? 'dark' : 'light'); } catch (e) {}
         syncThemeIcons(isDark, false);
-
-        // Один лёгкий GPU-слой (opacity) создаёт мягкий 60 FPS переход без нагрузки на CPU
-        veil.style.transition = 'none';
-        veil.style.backgroundColor = goingDark ? '#0f172a' : '#f8fafc';
-        veil.style.opacity = '0.45';
-        void veil.offsetWidth;
         requestAnimationFrame(() => {
-          veil.style.transition = 'opacity 260ms cubic-bezier(0.22, 1, 0.36, 1)';
-          veil.style.opacity = '0';
           requestAnimationFrame(() => {
             document.documentElement.classList.remove('no-theme-transitions');
           });
