@@ -5396,14 +5396,20 @@
         showToast('Данные подтянуты из шапки звонка');
       });
 
+      let lastCallbackSubmitTs = 0;
       document.getElementById('btn-add-callback')?.addEventListener('click', () => {
-        const name = cbNameEl.value.trim() || varInputs.client.el.value.trim() || 'Клиент';
-        const phone = cbPhoneEl.value.trim() || (varPhoneEl && varPhoneEl.value.trim()) || 'Не указан';
-        const time = cbTimeEl.value.trim() || 'В течение дня';
-        const note = cbNoteEl.value.trim();
+        if (!cbNameEl || !cbPhoneEl || !cbTimeEl || !cbNoteEl) return;
+        const nowCbTs = Date.now();
+        if ((nowCbTs - lastCallbackSubmitTs) < 350) return;
+        lastCallbackSubmitTs = nowCbTs;
+
+        const name = (cbNameEl.value.trim() || (varInputs?.client?.el?.value || '').trim() || 'Клиент').slice(0, 120);
+        const phone = (cbPhoneEl.value.trim() || (varPhoneEl && varPhoneEl.value ? varPhoneEl.value.trim() : '') || 'Не указан').slice(0, 60);
+        const time = (cbTimeEl.value.trim() || 'В течение дня').slice(0, 30);
+        const note = cbNoteEl.value.trim().slice(0, 300);
 
         callbacks.unshift({
-          id: 'cb-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+          id: 'cb-' + nowCbTs + '-' + Math.random().toString(36).slice(2, 6),
           name: name,
           phone: phone,
           time: time,
@@ -5420,9 +5426,10 @@
       });
 
       function renderCallbacks() {
+        if (!cbTbody) return;
         cbTbody.innerHTML = '';
         const activeCount = callbacks.filter((c) => !c.done).length;
-        cbCountBadge.textContent = activeCount + ' активных';
+        if (cbCountBadge) cbCountBadge.textContent = activeCount + ' активных';
 
         if (callbacks.length === 0) {
           const tr = document.createElement('tr');
