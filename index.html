@@ -469,7 +469,20 @@
       .script-tab::after, .btn-action::after, .speech-bubble:hover { animation: none !important; transition: none !important; }
     }
 
-    /* Мгновенное синхронное переключение темы без рассинхрона карточек и фона */
+    /* Единая плавная 60 FPS смена темы без рассинхрона карточек и фона */
+    html.no-theme-transitions *,
+    html.no-theme-transitions *::before,
+    html.no-theme-transitions *::after {
+      transition: none !important;
+    }
+    #theme-fade-veil {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      pointer-events: none;
+      opacity: 0;
+      will-change: opacity;
+    }
     /* Доступность: единый фокус с клавиатуры и состояние disabled */
     button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
       outline: 2px solid #6366f1;
@@ -1927,15 +1940,15 @@
               <svg class="chevron-icon w-4 h-4 text-rose-600 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
             </summary>
             <div class="p-4 pt-2 border-t border-rose-200/60 dark:border-rose-900/50 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm">
-              <div class="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800">
+              <div class="objection-card bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800">
                 <div class="font-bold text-rose-700 dark:text-rose-400 mb-1">Не оставлял заявку / Нет запроса на IT</div>
                 <p>«Понимаю, такое бывает. Но раз уж система зафиксировала ваш интерес, у вас есть отличная возможность бесплатно пройти вводный урок, где ребенок познакомится с программированием и создаст свой первый проект.»</p>
               </div>
-              <div class="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800">
+              <div class="objection-card bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800">
                 <div class="font-bold text-rose-700 dark:text-rose-400 mb-1">Каникулы</div>
                 <p>«Прекрасно понимаем! Но каникулы — это идеальное время, чтобы ребенок с пользой и интересом провел время, освоил полезные цифровые навыки без школьной нагрузки и стресса. Давайте попробуем пробный урок?»</p>
               </div>
-              <div class="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800 md:col-span-2">
+              <div class="objection-card bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800 md:col-span-2">
                 <div class="font-bold text-rose-700 dark:text-rose-400 mb-1">Другие первичные сопротивления (Вышлите в Телегу/Макс/WA, Сколько стоит?, А вы с Учи.ру?, У нас есть 5 бесплатных уроков, Перезвоните мне):</div>
                 <p class="italic text-slate-600 dark:text-slate-400">Отрабатываются в стандартном ключе с переводом на пользу бесплатного вводного занятия и фиксацией времени.</p>
               </div>
@@ -2329,13 +2342,13 @@
               <svg class="chevron-icon w-4 h-4 text-rose-600 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
             </summary>
             <div class="p-4 pt-2 border-t border-rose-200/60 dark:border-rose-900/50 space-y-3 text-xs sm:text-sm">
-              <div class="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800 space-y-1.5">
+              <div class="objection-card bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800 space-y-1.5">
                 <div class="font-bold text-rose-700 dark:text-rose-400">1. Ребенок не дома (в отъезде) / Родитель может только вечером или в определенный день</div>
                 <p>• «Вижу места в расписании у преподавателя с высокими результатами учеников. Рекомендую не упускать эту возможность, запись открыта на 3 дня. Есть вечернее время с 18 до 22. Давайте запишемся на сегодня (завтра)?»</p>
                 <p>• <em>Если родитель не может присутствовать:</em> «Подскажите, пожалуйста, кто-то другой из взрослых сможет поприсутствовать с ребенком?»</p>
                 <p>• <em>Отработка через важность:</em> «Думаю, вы согласитесь, что откладывая занятия, вы только еще больше можете запустить ситуацию. Ведь каждая последующая тема базируется на предыдущей. Ребенку важно разобраться, чтобы не накопить непонятое как снежный ком. Предлагаю пройти первый урок уже сегодня, сможете выделить 45 минут, чтобы начать двигаться к победе над трудностями с учебой?»</p>
               </div>
-              <div class="bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800 space-y-1.5">
+              <div class="objection-card bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-rose-100 dark:border-slate-800 space-y-1.5">
                 <div class="font-bold text-rose-700 dark:text-rose-400">2. Родителю неудобно на этой неделе</div>
                 <p>• «Если не секрет, подскажите, пожалуйста, что мешает вам записаться в ближайшие дни?»</p>
                 <p>• «Мы трудимся с 8 до 22 с подстройкой под ваш часовой пояс. Уроки можно назначить как в утреннее, так и в вечернее время. Вижу в расписании места у преподавателя с высокими результатами учеников. Давайте запишемся на сегодня или завтра?»</p>
@@ -3967,9 +3980,31 @@
       })();
 
       function toggleTheme() {
+        let veil = document.getElementById('theme-fade-veil');
+        if (!veil) {
+          veil = document.createElement('div');
+          veil.id = 'theme-fade-veil';
+          document.body.appendChild(veil);
+        }
+        const goingDark = !document.documentElement.classList.contains('dark');
+        // Замораживаем разрозненные transition у сотен карточек на 1 кадр, чтобы вся страница сменилась синхронно
+        document.documentElement.classList.add('no-theme-transitions');
         const isDark = document.documentElement.classList.toggle('dark');
         try { localStorage.setItem(STORAGE_THEME_KEY, isDark ? 'dark' : 'light'); } catch (e) {}
-        syncThemeIcons(isDark, true);
+        syncThemeIcons(isDark, false);
+
+        // Один лёгкий GPU-слой (opacity) создаёт мягкий 60 FPS переход без нагрузки на CPU
+        veil.style.transition = 'none';
+        veil.style.backgroundColor = goingDark ? '#0f172a' : '#f8fafc';
+        veil.style.opacity = '0.45';
+        void veil.offsetWidth;
+        requestAnimationFrame(() => {
+          veil.style.transition = 'opacity 260ms cubic-bezier(0.22, 1, 0.36, 1)';
+          veil.style.opacity = '0';
+          requestAnimationFrame(() => {
+            document.documentElement.classList.remove('no-theme-transitions');
+          });
+        });
       }
       document.getElementById('btn-theme-desktop')?.addEventListener('click', toggleTheme);
       document.getElementById('btn-theme-mobile')?.addEventListener('click', toggleTheme);
