@@ -1106,10 +1106,10 @@
                   <span>🔔</span><span>Напоминания</span>
                   <span id="reminders-count-badge" class="hidden px-1.5 py-0 rounded-full text-[10px] font-black bg-violet-600 text-white">0</span>
                 </button>
-                <button id="btn-open-cloud-modal" type="button" title="Облачная синхронизация через Supabase" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-200/80 dark:border-sky-800/70 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition cursor-pointer whitespace-nowrap">
-                  <span id="cloud-status-dot" class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                  <span>☁️</span>
-                  <span id="cloud-btn-label">Облако</span>
+                <button id="btn-open-cloud-modal" type="button" title="Облачная синхронизация через Supabase" class="inline-flex items-center justify-center gap-1 w-[124px] px-2 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-200/80 dark:border-sky-800/70 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition cursor-pointer whitespace-nowrap shrink-0">
+                  <span id="cloud-status-dot" class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></span>
+                  <span class="shrink-0">☁️</span>
+                  <span id="cloud-btn-label" class="truncate">Облако</span>
                 </button>
 
 
@@ -9028,8 +9028,16 @@
       }
       updateDualClocks();
       updateHeaderShiftStatusBadge();
-      setInterval(() => { if (!document.hidden) updateHeaderShiftStatusBadge(); }, 30000);
-      setInterval(() => { if (!document.hidden) updateDualClocks(); }, 1000); // Каждую секунду проверяем время
+      setInterval(updateHeaderShiftStatusBadge, 30000);
+      setInterval(updateDualClocks, 1000); // Каждую секунду проверяем время
+      const syncTimeAndShiftNow = () => {
+        updateDualClocks();
+        updateHeaderShiftStatusBadge();
+      };
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') syncTimeAndShiftNow();
+      });
+      window.addEventListener('focus', syncTimeAndShiftNow);
 
 
       // =========================================================================
