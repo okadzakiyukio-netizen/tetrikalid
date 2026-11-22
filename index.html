@@ -4092,6 +4092,23 @@
         setPersistentValue(key, data);
       }
 
+      async function deleteFromAppIDB(key) {
+        try {
+          const db = await openAppIDB();
+          if (!db) return;
+          const tx = db.transaction(IDB_STORE, 'readwrite');
+          tx.objectStore(IDB_STORE).delete(key);
+        } catch (e) {}
+      }
+      async function clearAppIDB() {
+        try {
+          const db = await openAppIDB();
+          if (!db) return;
+          const tx = db.transaction(IDB_STORE, 'readwrite');
+          tx.objectStore(IDB_STORE).clear();
+        } catch (e) {}
+      }
+
       // Асинхронное фоновое восстановление из IndexedDB на случай, если localStorage был очищен
       (async function restoreFromIDB() {
         try {
@@ -4562,10 +4579,16 @@
         renderFormPills();
       }
 
+      let lastRecordSubmitTs = 0;
       function submitRecordForm() {
+        if (!recDateEl || !recPhoneEl || !recCommentEl) return;
+        const nowTs = Date.now();
+        if (!editingRecordId && (nowTs - lastRecordSubmitTs) < 350) return;
+        lastRecordSubmitTs = nowTs;
+
         const dateVal = recDateEl.value || getTodayDateStr();
-        const phoneVal = recPhoneEl.value.trim() || (varPhoneEl && varPhoneEl.value.trim()) || '—';
-        const commentVal = recCommentEl.value.trim() || '—';
+        const rawPhone = (recPhoneEl.value.trim() || (varPhoneEl && varPhoneEl.value ? varPhoneEl.value.trim() : '') || '—').slice(0, 60);
+        const rawComment = (recCommentEl.value.trim() || '—').slice(0, 500);
 
         if (editingRecordId) {
           records = records.map((r) => {
@@ -4573,8 +4596,8 @@
             return {
               ...r,
               date: dateVal,
-              phone: phoneVal,
-              comment: commentVal,
+              phone: rawPhone,
+              comment: rawComment,
               qty: selectedQty,
               lekta: selectedLekta,
               mvu: selectedMvu,
@@ -4585,10 +4608,10 @@
           showToast('Запись обновлена');
         } else {
           const newRec = {
-            id: 'rec-' + Date.now(),
+            id: 'rec-' + nowTs + '-' + Math.random().toString(36).slice(2, 6),
             date: dateVal,
-            phone: phoneVal,
-            comment: commentVal,
+            phone: rawPhone,
+            comment: rawComment,
             qty: selectedQty,
             lekta: selectedLekta,
             mvu: selectedMvu,
@@ -4603,12 +4626,12 @@
         resetRecordForm();
         renderTrackerAll();
         if (typeof renderPlanMonthModule === 'function') renderPlanMonthModule();
-              }
+      }
 
-      btnAddRecord.addEventListener('click', submitRecordForm);
-      btnCancelEdit.addEventListener('click', resetRecordForm);
+      if (btnAddRecord) btnAddRecord.addEventListener('click', submitRecordForm);
+      if (btnCancelEdit) btnCancelEdit.addEventListener('click', resetRecordForm);
 
-      recCommentEl.addEventListener('keydown', (e) => {
+      if (recCommentEl) recCommentEl.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           submitRecordForm();
@@ -4940,7 +4963,7 @@
             '<td colspan="9" class="py-1.5 px-2.5">' +
               '<div class="flex flex-wrap items-center justify-between gap-1.5">' +
                 '<div class="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white text-xs">' +
-                  '<span>📅 ' + formatRuDateLong(dateKey) + '</span>' +
+                  '<span>📅 ' + qaEscapeHtml(formatRuDateLong(dateKey)) + '</span>' +
                   '<span class="text-slate-500 dark:text-slate-400 font-medium text-[11px]">(' + dayItems.length + ' зап.)</span>' +
                 '</div>' +
                 '<div class="flex flex-wrap items-center gap-1.5 text-[11px]">' +
@@ -5290,7 +5313,7 @@
         const note = cbNoteEl.value.trim();
 
         callbacks.unshift({
-          id: 'cb-' + Date.now(),
+          id: 'cb-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
           name: name,
           phone: phone,
           time: time,
@@ -5632,7 +5655,7 @@
           }
 
           const newObj = {
-            id: 'custom-obj-' + Date.now(),
+            id: 'custom-obj-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
             containerId: targetContainerIdForAdd || 'obj-container-default',
             title: title,
             text: text,
@@ -5760,6 +5783,11 @@
           }
         });
 
+        // Удаляем из DOM возражения, которые были удалены при синхронизации
+        const validObjIds = new Set(customObjections.map(o => String(o.id)));
+        document.querySelectorAll('[data-custom-obj-id]').forEach(el => {
+          if (!validObjIds.has(String(el.getAttribute('data-custom-obj-id')))) el.remove();
+        });
         // Render all saved custom objections (avoid duplicates)
         customObjections.forEach(obj => {
           if (!document.querySelector('[data-custom-obj-id="' + obj.id + '"]')) {
@@ -6150,7 +6178,7 @@
         const timeEl = document.getElementById('rem-time-input');
         if (!textEl || !dateEl || !timeEl) return;
 
-        const text = textEl.value.trim();
+        const text = textEl.value.trim().slice(0, 300);
         const date = dateEl.value;
         const time = timeEl.value;
         if (!text) {
@@ -7441,7 +7469,12 @@
             btn.classList.remove('opacity-100', 'translate-y-0');
           }
         };
-        window.addEventListener('scroll', toggle, { passive: true });
+        let scrollRafPending = false;
+        window.addEventListener('scroll', () => {
+          if (scrollRafPending) return;
+          scrollRafPending = true;
+          requestAnimationFrame(() => { scrollRafPending = false; toggle(); });
+        }, { passive: true });
         let topAnimId = null;
         const cancelTopAnim = () => {
           if (topAnimId) {
@@ -7496,7 +7529,12 @@
         };
 
         sync();
-        window.addEventListener('resize', sync, { passive: true });
+        let resizeRafPending = false;
+        window.addEventListener('resize', () => {
+          if (resizeRafPending) return;
+          resizeRafPending = true;
+          requestAnimationFrame(() => { resizeRafPending = false; sync(); });
+        }, { passive: true });
         if (typeof ResizeObserver !== 'undefined') {
           new ResizeObserver(sync).observe(header);
         }
@@ -7827,9 +7865,9 @@
           const noteVal = noteInput ? noteInput.value.trim() : '';
 
           if (type === 'work') {
-            const startVal = document.getElementById('shift-time-start').value;
-            const endVal = document.getElementById('shift-time-end').value;
-            const breakMins = parseInt(document.getElementById('shift-break-minutes').value, 10);
+            const startVal = document.getElementById('shift-time-start')?.value || '09:00';
+            const endVal = document.getElementById('shift-time-end')?.value || '21:00';
+            const breakMins = parseInt(document.getElementById('shift-break-minutes')?.value, 10) || 0;
             const netHours = recalcShiftModalHours();
 
             shiftsData[activeEditingDateStr] = {
@@ -7992,6 +8030,7 @@
           isApplyingCloudData = true;
           try {
             keysToRemove.forEach((k) => safeOrigRemove(k));
+            if (typeof clearAppIDB === 'function') clearAppIDB();
           } finally {
             isApplyingCloudData = false;
           }
@@ -8139,6 +8178,7 @@
               localKeys.forEach((lk) => {
                 if (!Object.prototype.hasOwnProperty.call(cloudObj, lk)) {
                   safeOrigRemove(lk);
+                  if (typeof deleteFromAppIDB === 'function') deleteFromAppIDB(lk);
                   changed = true;
                 }
               });
@@ -8306,6 +8346,16 @@
           }
         });
         window.addEventListener('pagehide', flushPendingSync);
+        window.addEventListener('online', () => {
+          if (currentUser) {
+            if (hasPendingLocalChanges()) flushPendingSync();
+            else pullFromCloud(false, false, false);
+          }
+        });
+        window.addEventListener('offline', () => {
+          if (statusDot) statusDot.className = 'w-1.5 h-1.5 rounded-full bg-amber-400';
+          if (btnLabel && currentUser) btnLabel.textContent = 'Офлайн';
+        });
         window.addEventListener('focus', () => {
           if (!syncTimer && sbClient && currentUser && !isApplyingCloudData) {
             setTimeout(() => {
@@ -11157,18 +11207,7 @@
         window.addEventListener('beforeunload', saveScrollNow);
       })();
     })();
-  
-      // Глобальное закрытие открытых модальных окон по клавише Escape
-      document.addEventListener('keydown', (e) => {
-        if (e.key !== 'Escape') return;
-        ['edit-modal', 'add-obj-modal', 'welcome-modal', 'cloud-modal', 'custom-script-modal'].forEach((mid) => {
-          const m = document.getElementById(mid);
-          if (m && !m.classList.contains('hidden')) {
-            m.classList.add('hidden');
-            if (m.style && m.style.display === 'flex') m.style.display = 'none';
-          }
-        });
-      });
+
 
 
       // Мгновенная отправка на сервер (Supabase) при клике на любую кнопку "Сохранить"
