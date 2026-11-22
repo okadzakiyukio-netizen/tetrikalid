@@ -556,6 +556,89 @@
   <script>
     try { if (localStorage.getItem('tetrika_onb_theme_v1') === 'dark') document.documentElement.classList.add('dark'); } catch (e) {}
   </script>
+
+  <style id="gpu-fx-styles">
+    /* === GPU FX PACK (60 FPS: без CPU-перерисовок и без конфликта transition с pointermove) === */
+
+    /* 1. Spotlight Glow + 3D-микронаклон (во время движения мыши transition выключен, плавный возврат только при уходе) */
+    .gpu-spotlight-card {
+      position: relative;
+      overflow: hidden;
+      transform: translateZ(0);
+      transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .gpu-spotlight-card.is-tilting {
+      transition: none !important;
+      will-change: transform;
+    }
+    .gpu-spotlight-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(99, 102, 241, 0.14), transparent 72%);
+      transition: opacity 160ms ease-out;
+      z-index: 1;
+    }
+    .dark .gpu-spotlight-card::before {
+      background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(129, 140, 248, 0.24), transparent 72%);
+    }
+    .gpu-spotlight-card:hover::before {
+      opacity: 1;
+    }
+
+    /* 2. Скользящий GPU-индикатор активной вкладки */
+    #main-tabs-nav {
+      position: relative;
+    }
+    #tabs-sliding-pill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      border-radius: 0.5rem;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.10), 0 0 0 1px rgba(99, 102, 241, 0.18);
+      transition: transform 190ms cubic-bezier(0.22, 1, 0.36, 1), width 190ms cubic-bezier(0.22, 1, 0.36, 1), height 190ms cubic-bezier(0.22, 1, 0.36, 1), opacity 120ms ease;
+      will-change: transform;
+      z-index: 0;
+      opacity: 0;
+    }
+    .dark #tabs-sliding-pill {
+      background: #4f46e5;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.38);
+    }
+    #main-tabs-nav .script-tab,
+    #main-tabs-nav #btn-open-new-script-modal {
+      position: relative;
+      z-index: 1;
+    }
+    #main-tabs-nav.has-sliding-pill .script-tab.bg-white,
+    .dark #main-tabs-nav.has-sliding-pill .script-tab.dark\:bg-indigo-600 {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    /* 3. Живой градиент на баннерах через чистый GPU-слой (transform3d вместо CPU background-position) */
+    section[data-script-section] > div.bg-gradient-to-r {
+      position: relative;
+      overflow: hidden;
+    }
+    section[data-script-section] > div.bg-gradient-to-r::after {
+      content: '';
+      position: absolute;
+      inset: -40% -60%;
+      pointer-events: none;
+      background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.16), transparent 55%);
+      animation: gpuBannerSheen 10s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+    @keyframes gpuBannerSheen {
+      from { transform: translate3d(-12%, 0, 0); }
+      to { transform: translate3d(18%, 0, 0); }
+    }
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200">
   <div id="cloud-sync-progress-bar" aria-hidden="true" class="fixed top-0 inset-x-0 h-[2.5px] z-[9999] pointer-events-none overflow-hidden opacity-0 transition-opacity duration-200"></div>
@@ -11927,6 +12010,123 @@
           new MutationObserver(syncMobileNavActive).observe(mainTabsNav, { subtree: true, attributes: true, attributeFilter: ['class'] });
         }
         setTimeout(syncMobileNavActive, 120);
+      }
+    })();
+  </script>
+
+  <script id="gpu-fx-script">
+    (function initGpuVisualEffects() {
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+
+      // 1. Spotlight Glow + плавный 3D-микронаклон без конфликта с CSS transition
+      if (!reduceMotion && !isTouch) {
+        const tagSpotlightCards = () => {
+          const selectors = [
+            '#section-plan .grid > div.bg-white',
+            '#section-tracker .grid > div.bg-white',
+            '#plan-directions-grid > div',
+            '#section-schedule .grid > div.bg-white'
+          ];
+          document.querySelectorAll(selectors.join(', ')).forEach((el) => {
+            if (el.offsetHeight < 420 && !el.classList.contains('gpu-spotlight-card')) {
+              el.classList.add('gpu-spotlight-card');
+            }
+          });
+        };
+
+        let activeCard = null;
+        let tiltRaf = false;
+        let lastEvt = null;
+
+        const resetCard = (card) => {
+          if (!card) return;
+          card.classList.remove('is-tilting');
+          card.style.transform = '';
+        };
+
+        const applyCardTilt = () => {
+          tiltRaf = false;
+          if (!activeCard || !lastEvt) return;
+          const rect = activeCard.getBoundingClientRect();
+          if (rect.width <= 0 || rect.height <= 0) return;
+          const x = lastEvt.clientX - rect.left;
+          const y = lastEvt.clientY - rect.top;
+          activeCard.style.setProperty('--mx', x.toFixed(1) + 'px');
+          activeCard.style.setProperty('--my', y.toFixed(1) + 'px');
+
+          const rx = (((y / rect.height) - 0.5) * -3.5).toFixed(2);
+          const ry = (((x / rect.width) - 0.5) * 3.5).toFixed(2);
+          activeCard.classList.add('is-tilting');
+          activeCard.style.transform = 'perspective(900px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateZ(0)';
+        };
+
+        document.addEventListener('pointermove', (e) => {
+          const card = e.target && e.target.closest ? e.target.closest('.gpu-spotlight-card') : null;
+          if (activeCard && activeCard !== card) {
+            resetCard(activeCard);
+          }
+          activeCard = card;
+          if (!card) return;
+          lastEvt = e;
+          if (!tiltRaf) {
+            tiltRaf = true;
+            requestAnimationFrame(applyCardTilt);
+          }
+        }, { passive: true });
+
+        document.addEventListener('pointerleave', () => {
+          resetCard(activeCard);
+          activeCard = null;
+        });
+
+        tagSpotlightCards();
+        setTimeout(tagSpotlightCards, 600);
+        const planGrid = document.getElementById('plan-directions-grid');
+        if (planGrid && typeof MutationObserver !== 'undefined') {
+          new MutationObserver(tagSpotlightCards).observe(planGrid, { childList: true });
+        }
+      }
+
+      // 2. Скользящий GPU-индикатор активной вкладки в шапке
+      const nav = document.getElementById('main-tabs-nav');
+      if (nav && !reduceMotion) {
+        let pill = document.getElementById('tabs-sliding-pill');
+        if (!pill) {
+          pill = document.createElement('div');
+          pill.id = 'tabs-sliding-pill';
+          pill.setAttribute('aria-hidden', 'true');
+          nav.insertBefore(pill, nav.firstChild);
+        }
+        nav.classList.add('has-sliding-pill');
+
+        let pillRaf = false;
+        const movePill = () => {
+          pillRaf = false;
+          const activeBtn = nav.querySelector('.script-tab.bg-white, .script-tab.dark\\:bg-indigo-600');
+          if (!activeBtn || activeBtn.offsetParent === null) {
+            pill.style.opacity = '0';
+            return;
+          }
+          pill.style.width = activeBtn.offsetWidth + 'px';
+          pill.style.height = activeBtn.offsetHeight + 'px';
+          pill.style.transform = 'translate3d(' + activeBtn.offsetLeft + 'px, ' + activeBtn.offsetTop + 'px, 0)';
+          pill.style.opacity = '1';
+        };
+
+        const schedulePill = () => {
+          if (pillRaf) return;
+          pillRaf = true;
+          requestAnimationFrame(movePill);
+        };
+
+        nav.addEventListener('click', () => setTimeout(schedulePill, 15));
+        window.addEventListener('resize', schedulePill, { passive: true });
+        if (typeof MutationObserver !== 'undefined') {
+          new MutationObserver(schedulePill).observe(nav, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+        }
+        setTimeout(schedulePill, 80);
+        setTimeout(schedulePill, 350);
       }
     })();
   </script>
