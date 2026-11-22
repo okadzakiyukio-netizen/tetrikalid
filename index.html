@@ -527,7 +527,7 @@
   </div>
 
   <!-- Модалка настройки пароля доступа -->
-  <div id="lock-settings-modal" class="hidden fixed inset-0 z-[9995] bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+  <div id="lock-settings-modal" class="hidden fixed inset-0 z-[9995] bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl p-5 space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2"><span>🔒</span><span>Пароль и доступ к демо</span></h3>
@@ -708,7 +708,7 @@
                   Предложил менеджер (по МСК):
                 </label>
               </div>
-              <input id="tz-manager-time-input" type="time" value="16:00" class="w-full px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs" />
+              <input id="tz-manager-time-input" type="time" value="16:00" class="w-full px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm" />
               <p class="text-[10px] text-slate-400">Свободное окно в расписании (МСК)</p>
             </div>
 
@@ -719,7 +719,7 @@
                   Время клиента (местное):
                 </label>
               </div>
-              <input id="tz-time-input" type="time" value="18:00" class="w-full px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs" />
+              <input id="tz-time-input" type="time" value="18:00" class="w-full px-3.5 py-2 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm" />
               <p class="text-[10px] text-slate-400">Сколько будет времени у клиента</p>
             </div>
           </div>
@@ -734,7 +734,7 @@
             <button type="button" class="tz-pill py-2 px-1 rounded-xl border border-slate-200 dark:border-slate-700 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-tz="-1">-1 <span class="block text-[10px] font-normal opacity-75">Калинингр</span></button>
             <button type="button" class="tz-pill py-2 px-1 rounded-xl border border-slate-200 dark:border-slate-700 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-tz="0">0 <span class="block text-[10px] font-normal opacity-75">МСК / СПб</span></button>
             <button type="button" class="tz-pill py-2 px-1 rounded-xl border border-slate-200 dark:border-slate-700 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-tz="+1">+1 <span class="block text-[10px] font-normal opacity-75">Самара</span></button>
-            <button type="button" class="tz-pill py-2 px-1 rounded-xl border border-indigo-500 bg-indigo-600 text-white font-bold transition shadow-xs" data-tz="+2">+2 <span class="block text-[10px] font-normal opacity-75">Екб / Урал</span></button>
+            <button type="button" class="tz-pill py-2 px-1 rounded-xl border border-indigo-500 bg-indigo-600 text-white font-bold transition shadow-sm" data-tz="+2">+2 <span class="block text-[10px] font-normal opacity-75">Екб / Урал</span></button>
             <button type="button" class="tz-pill py-2 px-1 rounded-xl border border-slate-200 dark:border-slate-700 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-tz="+3">+3 <span class="block text-[10px] font-normal opacity-75">Омск</span></button>
             <button type="button" class="tz-pill py-2 px-1 rounded-xl border border-slate-200 dark:border-slate-700 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-tz="+4">+4 <span class="block text-[10px] font-normal opacity-75">Новосибирск</span></button>
             <button type="button" class="tz-pill py-2 px-1 rounded-xl border border-slate-200 dark:border-slate-700 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-tz="+5">+5 <span class="block text-[10px] font-normal opacity-75">Иркутск</span></button>
@@ -883,7 +883,7 @@
   </div>
 
   <!-- Supabase Cloud Sync Modal -->
-  <div id="cloud-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overscroll-contain">
+  <div id="cloud-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overscroll-contain">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
       <div class="px-5 py-4 bg-gradient-to-r from-sky-50/90 via-white to-indigo-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-sky-950/30 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
         <div class="flex items-center gap-2.5 min-w-0">
@@ -911,7 +911,7 @@
               <input id="cloud-password-input" type="password" placeholder="••••••" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500/40" />
             </div>
             <div class="flex items-center gap-2 pt-1">
-              <button id="cloud-login-btn" type="button" class="flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold transition shadow-xs">Войти</button>
+              <button id="cloud-login-btn" type="button" class="flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold transition shadow-sm">Войти</button>
               <button id="cloud-signup-btn" type="button" class="flex-1 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold transition">Регистрация</button>
             </div>
           </div>
@@ -929,7 +929,7 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <button id="cloud-sync-now-btn" type="button" class="flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold transition shadow-xs">🔄 Синхронизировать сейчас</button>
+            <button id="cloud-sync-now-btn" type="button" class="flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold transition shadow-sm">🔄 Синхронизировать сейчас</button>
             <button id="cloud-logout-btn" type="button" class="px-3.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800 font-bold transition">Выйти</button>
           </div>
         </div>
@@ -954,7 +954,7 @@
   </div>
 
   <!-- Reminders Modal -->
-  <div id="reminders-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overscroll-contain">
+  <div id="reminders-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overscroll-contain">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
       <!-- Header -->
       <div class="px-5 py-4 bg-gradient-to-r from-violet-50/80 via-white to-indigo-50/60 dark:from-slate-900 dark:via-slate-900 dark:to-violet-950/30 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
@@ -966,10 +966,10 @@
           </div>
         </div>
         <div class="flex items-center gap-1.5 shrink-0">
-          <button id="btn-test-reminder-sound" type="button" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white dark:bg-slate-800 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800 hover:bg-violet-50 dark:hover:bg-violet-950/60 transition whitespace-nowrap shadow-2xs" title="Прослушать звук напоминания">
+          <button id="btn-test-reminder-sound" type="button" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white dark:bg-slate-800 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800 hover:bg-violet-50 dark:hover:bg-violet-950/60 transition whitespace-nowrap shadow-sm" title="Прослушать звук напоминания">
             🎵 Тест
           </button>
-          <button id="btn-toggle-rem-sound" type="button" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition whitespace-nowrap shadow-2xs" title="Включить/выключить звук напоминаний">
+          <button id="btn-toggle-rem-sound" type="button" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition whitespace-nowrap shadow-sm" title="Включить/выключить звук напоминаний">
             🔊 Вкл
           </button>
           <button id="btn-close-reminders-modal" type="button" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-slate-200 flex items-center justify-center text-base transition">✕</button>
@@ -1001,7 +1001,7 @@
             <div>
               <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Время:</label>
               <input id="rem-time-input" type="hidden" value="" />
-              <button id="rem-time-trigger" type="button" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-violet-400 dark:hover:border-violet-500 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-xs flex items-center justify-between transition shadow-2xs">
+              <button id="rem-time-trigger" type="button" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-violet-400 dark:hover:border-violet-500 text-slate-900 dark:text-white font-sans tabular-nums font-bold text-xs flex items-center justify-between transition shadow-sm">
                 <span id="rem-time-display">—</span>
                 <span class="text-violet-500 text-sm">🕒</span>
               </button>
@@ -1030,7 +1030,7 @@
   </div>
 
     <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 bg-slate-900 dark:bg-indigo-600 text-white px-4 py-3 rounded-xl shadow-xl text-sm font-medium transition-all duration-200">
+  <div id="toast" role="status" aria-live="polite" class="fixed bottom-5 right-5 z-[10000] hidden items-center gap-2.5 bg-slate-900 dark:bg-indigo-600 text-white px-4 py-3 rounded-xl shadow-xl text-sm font-medium transition-all duration-200">
     <svg class="w-4 h-4 text-emerald-400 dark:text-white shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
     </svg>
@@ -1044,7 +1044,7 @@
         <!-- Brand & Title -->
         <div class="flex items-center justify-between gap-3">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 min-w-[36px] max-w-[36px] h-9 min-h-[36px] max-h-[36px] aspect-square rounded-lg bg-indigo-600 text-white font-black text-sm flex items-center justify-center select-none shadow-xs shrink-0" style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; aspect-ratio: 1/1;">
+            <div class="w-9 h-9 min-w-[36px] max-w-[36px] h-9 min-h-[36px] max-h-[36px] aspect-square rounded-lg bg-indigo-600 text-white font-black text-sm flex items-center justify-center select-none shadow-sm shrink-0" style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; aspect-ratio: 1/1;">
               ТЛ
             </div>
             <div class="flex flex-col">
@@ -1084,7 +1084,7 @@
 
         <!-- Script Selector Tabs: Перетаскивание порядка + добавление новых скриптов по образцу -->
         <nav id="main-tabs-nav" class="flex flex-nowrap lg:flex-wrap items-center gap-1 min-w-0 overflow-x-auto lg:overflow-visible no-scrollbar bg-slate-100/90 dark:bg-slate-800/90 p-1.5 rounded-xl border border-slate-200/80 dark:border-slate-700/70" aria-label="Выбор скрипта">
-          <button type="button" draggable="true" data-tab="shp" title="Клик — открыть • Перетащите для смены порядка" class="script-tab cursor-grab active:cursor-grabbing inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] xl:text-xs font-semibold whitespace-nowrap transition-all bg-white dark:bg-indigo-600 text-indigo-700 dark:text-white shadow-xs">
+          <button type="button" draggable="true" data-tab="shp" title="Клик — открыть • Перетащите для смены порядка" class="script-tab cursor-grab active:cursor-grabbing inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] xl:text-xs font-semibold whitespace-nowrap transition-all bg-white dark:bg-indigo-600 text-indigo-700 dark:text-white shadow-sm">
             <span class="text-xs">🏫</span>
             <span>1. Скрипт ОНБ ШП</span>
           </button>
@@ -1119,7 +1119,7 @@
         <!-- Right Side Controls: Сверху Погода, ниже Рассвет/Закат, ниже Время (МСК и Местное) -->
         <div class="flex items-center gap-2 relative">
           <!-- 3-уровневый комфортный инфоблок (Погода, Солнце, Время) -->
-          <button id="weather-widget-btn" type="button" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-left transition shadow-xs hover:shadow-sm flex flex-col justify-center" title="Кликните для деталей, обновления и смены города">
+          <button id="weather-widget-btn" type="button" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-left transition shadow-sm hover:shadow-sm flex flex-col justify-center" title="Кликните для деталей, обновления и смены города">
             <!-- 1. Сверху: Погода (крупнее и четче) -->
             <div class="flex items-center gap-2 text-xs leading-snug font-medium whitespace-nowrap">
               <span id="weather-icon" class="text-sm">🌧️</span>
@@ -1210,7 +1210,7 @@
           <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/>
           </svg>
-          <input id="global-search" type="text" placeholder="Быстрый поиск по всем скриптам, фразам, возражениям и регламентам..." class="w-full pl-10 pr-9 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70 text-slate-900 dark:text-white shadow-xs focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-400" />
+          <input id="global-search" type="text" placeholder="Быстрый поиск по всем скриптам, фразам, возражениям и регламентам..." class="w-full pl-10 pr-9 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70 text-slate-900 dark:text-white shadow-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-400" />
           <button id="clear-search" type="button" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-bold text-sm" title="Очистить поиск">
             ✕
           </button>
@@ -1228,11 +1228,11 @@
             <span class="text-[11px] text-slate-400 hidden sm:inline">(нажмите, чтобы свернуть / развернуть)</span>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" class="btn-calc-tz-trigger px-2.5 py-1 rounded-lg text-[11px] font-bold border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-700 transition shadow-xs flex items-center gap-1" title="Калькулятор часовых поясов (±МСК)">
+            <button type="button" class="btn-calc-tz-trigger px-2.5 py-1 rounded-lg text-[11px] font-bold border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-700 transition shadow-sm flex items-center gap-1" title="Калькулятор часовых поясов (±МСК)">
               <span>🕔</span>
               <span class="hidden sm:inline">Пояса</span>
             </button>
-            <button id="btn-pin-drawer" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-300 transition shadow-xs" title="Закрепить панель">
+            <button id="btn-pin-drawer" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-300 transition shadow-sm" title="Закрепить панель">
               📌 Закрепить
             </button>
             <span id="call-drawer-chevron" class="text-xs text-slate-400 transition-transform duration-200">▼</span>
@@ -2321,7 +2321,7 @@
           </div>
           <div class="flex flex-wrap items-center gap-2 max-w-full min-w-0">
             <!-- Панель выбора даты / смены -->
-            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 max-w-full w-full sm:w-auto bg-slate-50 dark:bg-slate-800 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs shadow-xs">
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 max-w-full w-full sm:w-auto bg-slate-50 dark:bg-slate-800 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs shadow-sm">
               <span class="text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
                 <span>📅</span>
                 <span>Смена / период:</span>
@@ -2819,7 +2819,7 @@
 
               <div class="flex items-center justify-between gap-2 text-xs">
                 <div class="inline-flex rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5">
-                  <button id="weekly-mode-subjects" type="button" class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition">Предметы</button>
+                  <button id="weekly-mode-subjects" type="button" class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-sm transition">Предметы</button>
                   <button id="weekly-mode-records" type="button" class="px-2.5 py-1 rounded-md text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition">Люди</button>
                 </div>
                 <span id="weekly-chart-total-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/60">0 за 7 смен</span>
@@ -2859,7 +2859,7 @@
             <button id="btn-schedule-prev-month" type="button" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition flex items-center gap-1" title="Предыдущий месяц">
               ◀ <span class="text-xs hidden sm:inline">Пред.</span>
             </button>
-            <div id="schedule-current-month-label" class="px-4 py-1.5 rounded-xl font-black text-sm bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 min-w-[160px] text-center shadow-xs">
+            <div id="schedule-current-month-label" class="px-4 py-1.5 rounded-xl font-black text-sm bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 min-w-[160px] text-center shadow-sm">
               Октябрь 2026
             </div>
             <button id="btn-schedule-next-month" type="button" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition flex items-center gap-1" title="Следующий месяц">
@@ -2893,7 +2893,7 @@
               <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">План</span>
             </div>
             <div class="flex items-center gap-2 pt-1">
-              <input id="schedule-norm-hours-input" type="text" inputmode="decimal" value="168" class="w-32 px-3 py-1.5 rounded-xl text-2xl font-bold font-sans bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs transition" title="Норма часов (можно с шагом 0.5)" />
+              <input id="schedule-norm-hours-input" type="text" inputmode="decimal" value="168" class="w-32 px-3 py-1.5 rounded-xl text-2xl font-bold font-sans bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm transition" title="Норма часов (можно с шагом 0.5)" />
               <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">ч. в месяц</span>
             </div>
             <p class="text-[11px] text-slate-400">Рекомендуемый план рабочего времени</p>
@@ -2995,7 +2995,7 @@
 </main>
 
           <!-- Модальное окно быстрого редактирования ЗП по клику на столбец -->
-          <div id="salary-chart-quick-editor" class="hidden fixed inset-0 z-[9980] bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div id="salary-chart-quick-editor" class="hidden fixed inset-0 z-[9980] bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl p-5 space-y-4">
               <div class="flex items-center justify-between gap-2">
                 <div class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
@@ -3035,7 +3035,7 @@
   </button>
 
 
-  <div id="schedule-shift-editor-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+  <div id="schedule-shift-editor-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-2xl max-w-md w-full space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <div>
@@ -3122,7 +3122,7 @@
         <div class="text-[11px] text-slate-300">Можно восстановить в течение <span id="undo-delete-countdown" class="font-bold text-amber-300">30</span> сек.</div>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
-        <button id="btn-undo-delete-script" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-white transition shadow-xs">↩️ Восстановить</button>
+        <button id="btn-undo-delete-script" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-white transition shadow-sm">↩️ Восстановить</button>
         <button id="btn-close-undo-toast" type="button" class="text-slate-400 hover:text-white text-base font-bold px-1.5" title="Закрыть">&times;</button>
       </div>
     </div>
@@ -3132,7 +3132,7 @@
   </div>
 
   <!-- Модальное окно переименования скрипта / вкладки -->
-  <div id="rename-tab-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+  <div id="rename-tab-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-2xl max-w-md w-full space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div>
@@ -3174,7 +3174,7 @@
   </div>
 
   <!-- Модальное окно редактирования любого этапа (метка, заголовок, реплика) -->
-  <div id="edit-stage-meta-modal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" style="display: none;">
+  <div id="edit-stage-meta-modal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-2xl max-w-lg w-full space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <h3 class="text-base font-bold text-slate-900 dark:text-white">✏️ Редактировать этап</h3>
@@ -3204,7 +3204,7 @@
   </div>
 
   <!-- Модальное окно добавления нового этапа в любой скрипт -->
-  <div id="extra-stage-modal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" style="display: none;">
+  <div id="extra-stage-modal" class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-2xl max-w-lg w-full space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div>
@@ -3239,7 +3239,7 @@
   </div>
 
   <!-- Модальное окно добавления / редактирования подэтапа -->
-  <div id="substage-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+  <div id="substage-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-2xl max-w-lg w-full space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div>
@@ -3286,14 +3286,14 @@
           <input id="substage-color-input" type="hidden" value="auto" />
           <div id="substage-color-picker" class="flex flex-wrap items-center gap-2">
             <button type="button" data-sub-color="auto" class="sub-color-btn px-2.5 py-1 rounded-lg text-[11px] font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 ring-2 ring-indigo-500">Авто</button>
-            <button type="button" data-sub-color="indigo" class="sub-color-btn w-7 h-7 rounded-full bg-indigo-500 border-2 border-white dark:border-slate-900 shadow-xs" title="Индиго"></button>
-            <button type="button" data-sub-color="emerald" class="sub-color-btn w-7 h-7 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 shadow-xs" title="Изумрудный"></button>
-            <button type="button" data-sub-color="amber" class="sub-color-btn w-7 h-7 rounded-full bg-amber-500 border-2 border-white dark:border-slate-900 shadow-xs" title="Янтарный"></button>
-            <button type="button" data-sub-color="sky" class="sub-color-btn w-7 h-7 rounded-full bg-sky-500 border-2 border-white dark:border-slate-900 shadow-xs" title="Голубой"></button>
-            <button type="button" data-sub-color="violet" class="sub-color-btn w-7 h-7 rounded-full bg-violet-500 border-2 border-white dark:border-slate-900 shadow-xs" title="Фиолетовый"></button>
-            <button type="button" data-sub-color="rose" class="sub-color-btn w-7 h-7 rounded-full bg-rose-500 border-2 border-white dark:border-slate-900 shadow-xs" title="Розовый"></button>
-            <button type="button" data-sub-color="teal" class="sub-color-btn w-7 h-7 rounded-full bg-teal-500 border-2 border-white dark:border-slate-900 shadow-xs" title="Бирюзовый"></button>
-            <button type="button" data-sub-color="slate" class="sub-color-btn w-7 h-7 rounded-full bg-slate-500 border-2 border-white dark:border-slate-900 shadow-xs" title="Графитовый"></button>
+            <button type="button" data-sub-color="indigo" class="sub-color-btn w-7 h-7 rounded-full bg-indigo-500 border-2 border-white dark:border-slate-900 shadow-sm" title="Индиго"></button>
+            <button type="button" data-sub-color="emerald" class="sub-color-btn w-7 h-7 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 shadow-sm" title="Изумрудный"></button>
+            <button type="button" data-sub-color="amber" class="sub-color-btn w-7 h-7 rounded-full bg-amber-500 border-2 border-white dark:border-slate-900 shadow-sm" title="Янтарный"></button>
+            <button type="button" data-sub-color="sky" class="sub-color-btn w-7 h-7 rounded-full bg-sky-500 border-2 border-white dark:border-slate-900 shadow-sm" title="Голубой"></button>
+            <button type="button" data-sub-color="violet" class="sub-color-btn w-7 h-7 rounded-full bg-violet-500 border-2 border-white dark:border-slate-900 shadow-sm" title="Фиолетовый"></button>
+            <button type="button" data-sub-color="rose" class="sub-color-btn w-7 h-7 rounded-full bg-rose-500 border-2 border-white dark:border-slate-900 shadow-sm" title="Розовый"></button>
+            <button type="button" data-sub-color="teal" class="sub-color-btn w-7 h-7 rounded-full bg-teal-500 border-2 border-white dark:border-slate-900 shadow-sm" title="Бирюзовый"></button>
+            <button type="button" data-sub-color="slate" class="sub-color-btn w-7 h-7 rounded-full bg-slate-500 border-2 border-white dark:border-slate-900 shadow-sm" title="Графитовый"></button>
           </div>
         </div>
         <label class="flex items-center gap-2 pt-1 cursor-pointer select-none">
@@ -3310,7 +3310,7 @@
   </div>
 
   <!-- Модальное окно конструктора нового скрипта по образцу -->
-  <div id="new-script-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+  <div id="new-script-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col gap-4">
       <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 shrink-0">
         <div>
@@ -3643,7 +3643,7 @@
         tabButtons.forEach((btn) => {
           const isMatch = btn.getAttribute('data-tab') === tabId;
           if (isMatch) {
-            btn.className = 'script-tab inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] xl:text-xs font-semibold whitespace-nowrap transition-all bg-white dark:bg-indigo-600 text-indigo-700 dark:text-white shadow-xs';
+            btn.className = 'script-tab inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] xl:text-xs font-semibold whitespace-nowrap transition-all bg-white dark:bg-indigo-600 text-indigo-700 dark:text-white shadow-sm';
           } else {
             btn.className = 'script-tab inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] xl:text-xs font-semibold whitespace-nowrap transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
           }
@@ -4805,7 +4805,7 @@
 
         const updateModeButtons = () => {
           if (!modeRecBtn || !modeSubjBtn) return;
-          const activeCls = 'px-2.5 py-1 rounded-md text-[11px] font-bold bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-xs transition';
+          const activeCls = 'px-2.5 py-1 rounded-md text-[11px] font-bold bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-sm transition';
           const idleCls = 'px-2.5 py-1 rounded-md text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition';
           modeRecBtn.className = weeklyChartMode === 'records' ? activeCls : idleCls;
           modeSubjBtn.className = weeklyChartMode === 'subjects' ? activeCls : idleCls;
@@ -4918,11 +4918,17 @@
           return;
         }
 
-        const groupedDates = Array.from(new Set(filtered.map((r) => r.date))).sort().reverse();
+        const byDateMap = new Map();
+        for (const r of filtered) {
+          if (!byDateMap.has(r.date)) byDateMap.set(r.date, []);
+          byDateMap.get(r.date).push(r);
+        }
+        const groupedDates = Array.from(byDateMap.keys()).sort().reverse();
+        const tableFrag = document.createDocumentFragment();
         let rowCounter = 1;
 
         groupedDates.forEach((dateKey) => {
-          const dayItems = filtered.filter((r) => r.date === dateKey);
+          const dayItems = byDateMap.get(dateKey) || [];
           const daySubjectsTotal = dayItems.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
           const dayNonLektaItems = dayItems.filter((r) => !r.lekta);
           const dayNonLektaSubjects = dayNonLektaItems.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
@@ -4943,7 +4949,7 @@
                 '</div>' +
               '</div>' +
             '</td>';
-          tbody.appendChild(groupHeaderTr);
+          tableFrag.appendChild(groupHeaderTr);
 
           dayItems.forEach((item) => {
             const tr = document.createElement('tr');
@@ -5001,9 +5007,10 @@
                 '<button type="button" data-del-rec="' + safeId + '" title="Удалить" class="px-1.5 py-0.5 rounded-md text-xs border border-rose-200 dark:border-rose-800/70 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition">🗑️</button>' +
               '</td>';
 
-            tbody.appendChild(tr);
+            tableFrag.appendChild(tr);
           });
         });
+        tbody.appendChild(tableFrag);
 
         tbody.querySelectorAll('[data-copy-phone]').forEach((btn) => {
           btn.addEventListener('click', () => {
@@ -5492,8 +5499,7 @@
           .replace(/&lt;Имя ребенка&gt;/gi, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
           .replace(/&lt;Цель обучения&gt;/gi, '<span class="dyn-var" data-var="goal">&lt;Цель обучения&gt;</span>')
           .replace(/&lt;ИМЯ РОДИТЕЛЯ&gt;/g, '<span class="dyn-var" data-var="client">&lt;Имя клиента&gt;</span>')
-          .replace(/&lt;ИМЯ ребёнка&gt;/gi, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>')
-          .replace(/Юкио/g, '<span class="dyn-var" data-var="agent">&lt;Имя менеджера&gt;</span>');
+          .replace(/&lt;ИМЯ ребёнка&gt;/gi, '<span class="dyn-var" data-var="child">&lt;Имя ребенка&gt;</span>');
 
         // Render cleanly
         el.innerHTML = '<div class="leading-relaxed">' + formatted.replace(/\n/g, '<br>') + '</div>';
@@ -6129,9 +6135,9 @@
               '<div class="mt-1 font-semibold text-slate-800 dark:text-slate-100 break-words ' + (rem.done ? 'line-through text-slate-400' : '') + '">' + esc(rem.text) + '</div>' +
             '</div>' +
             '<div class="flex items-center gap-1 shrink-0">' +
-              '<button type="button" data-rem-action="toggle" data-rem-id="' + rem.id + '" title="' + (rem.done ? 'Вернуть в активные' : 'Отметить выполненным') + '" class="px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-bold">' + (rem.done ? '↩' : '✓') + '</button>' +
-              (!rem.done ? '<button type="button" data-rem-action="snooze" data-rem-id="' + rem.id + '" title="Отложить на 10 мин" class="px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-violet-50 dark:hover:bg-violet-950/50 text-violet-600 dark:text-violet-300 font-bold">+10м</button>' : '') +
-              '<button type="button" data-rem-action="delete" data-rem-id="' + rem.id + '" title="Удалить" class="px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-500 font-bold">✕</button>' +
+              '<button type="button" data-rem-action="toggle" data-rem-id="' + esc(rem.id) + '" aria-label="' + (rem.done ? 'Вернуть в активные' : 'Отметить выполненным') + '" title="' + (rem.done ? 'Вернуть в активные' : 'Отметить выполненным') + '" class="px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-bold">' + (rem.done ? '↩' : '✓') + '</button>' +
+              (!rem.done ? '<button type="button" data-rem-action="snooze" data-rem-id="' + esc(rem.id) + '" aria-label="Отложить на 10 минут" title="Отложить на 10 мин" class="px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-violet-50 dark:hover:bg-violet-950/50 text-violet-600 dark:text-violet-300 font-bold">+10м</button>' : '') +
+              '<button type="button" data-rem-action="delete" data-rem-id="' + esc(rem.id) + '" aria-label="Удалить напоминание" title="Удалить" class="px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-500 font-bold">✕</button>' +
             '</div>';
 
           listEl.appendChild(row);
@@ -6610,7 +6616,7 @@
         document.querySelectorAll('.tz-pill').forEach((p) => {
           const pVal = parseInt(p.getAttribute('data-tz'), 10);
           if (pVal === activeTzOffset) {
-            p.className = 'tz-pill py-1.5 px-1 rounded-xl border border-indigo-500 bg-indigo-600 text-white font-bold transition shadow-xs';
+            p.className = 'tz-pill py-1.5 px-1 rounded-xl border border-indigo-500 bg-indigo-600 text-white font-bold transition shadow-sm';
           } else {
             p.className = 'tz-pill py-1.5 px-1 rounded-xl border border-slate-200 dark:border-slate-700 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-700 dark:text-slate-300';
           }
@@ -6907,13 +6913,13 @@
           const card = document.createElement('div');
           card.className = 'p-4 rounded-2xl border transition-all ' + 
             (item.enabled 
-              ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-xs' 
+              ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm' 
               : 'bg-slate-50/60 dark:bg-slate-800/30 border-dashed border-slate-300 dark:border-slate-700 opacity-60');
 
           card.innerHTML = 
             '<div class="flex items-center justify-between gap-2 mb-3">' +
               '<div class="flex items-center gap-2">' +
-                '<input type="checkbox" id="check-' + item.id + '" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer" ' + (item.enabled ? 'checked' : '') + ' />' +
+                '<input type="checkbox" id="check-' + escPlanHtml(item.id) + '" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer" ' + (item.enabled ? 'checked' : '') + ' />' +
                 '<label for="check-' + escPlanHtml(item.id) + '" class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white cursor-pointer select-none">' + escPlanHtml(item.name) + '</label>' +
               '</div>' +
               '<span class="text-xs font-black ' + (percent >= 100 ? 'text-emerald-600' : 'text-indigo-600 dark:text-indigo-400') + '">' + percent + '%</span>' +
@@ -6930,12 +6936,12 @@
               '</div>' +
               '<div class="flex items-center gap-1.5">' +
                 '<span class="text-slate-400">План:</span>' +
-                '<input type="number" id="input-' + item.id + '" min="0" value="' + currentTarget + '"' + (item.id === 'plan-ref' ? ' readonly title="Считается автоматически: 20% от записанных людей"' : '') + ' class="w-16 px-2 py-0.5 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-center focus:outline-none focus:ring-1 focus:ring-indigo-500" />' +
+                '<input type="number" id="input-' + escPlanHtml(item.id) + '" min="0" value="' + currentTarget + '"' + (item.id === 'plan-ref' ? ' readonly title="Считается автоматически: 20% от записанных людей"' : '') + ' class="w-16 px-2 py-0.5 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-center focus:outline-none focus:ring-1 focus:ring-indigo-500" />' +
               '</div>' +
             '</div>';
 
           // Listener for checkbox toggle
-          const checkEl = card.querySelector('#check-' + item.id);
+          const checkEl = card.querySelector('input[type="checkbox"]');
           checkEl.addEventListener('change', (e) => {
             item.enabled = e.target.checked;
             savePlanItems(planItems);
@@ -6943,7 +6949,7 @@
           });
 
           // Listener for target input change (plan-ref is strictly dynamic)
-          const inputEl = card.querySelector('#input-' + item.id);
+          const inputEl = card.querySelector('input[type="number"]');
           if (item.id !== 'plan-ref' && inputEl) {
             inputEl.addEventListener('change', (e) => {
               const v = parseInt(e.target.value, 10);
@@ -7031,7 +7037,7 @@
           : (remainingToTarget > 0 ? remainingToTarget.toFixed(1) : '0.0');
 
         const forecastCard = document.createElement('div');
-        forecastCard.className = 'p-4 rounded-2xl border border-indigo-200 dark:border-indigo-800/80 bg-gradient-to-br from-indigo-50/70 via-white to-violet-50/50 dark:from-slate-900 dark:to-indigo-950/40 shadow-xs space-y-3';
+        forecastCard.className = 'p-4 rounded-2xl border border-indigo-200 dark:border-indigo-800/80 bg-gradient-to-br from-indigo-50/70 via-white to-violet-50/50 dark:from-slate-900 dark:to-indigo-950/40 shadow-sm space-y-3';
 
         forecastCard.innerHTML = 
           '<div class="flex items-center justify-between gap-2">' +
@@ -7530,10 +7536,12 @@
 
         const startStr = shift.start || '09:00';
         const endStr = shift.end || '21:00';
-        const [sh, sm] = startStr.split(':').map(Number);
-        const [eh, em] = endStr.split(':').map(Number);
-        const startMins = sh * 60 + sm;
-        let endMins = eh * 60 + em;
+        const parseHm = (str, fallback) => {
+          const m = String(str || '').match(/^(\d{1,2}):(\d{2})$/);
+          return m ? Number(m[1]) * 60 + Number(m[2]) : fallback;
+        };
+        const startMins = parseHm(startStr, 9 * 60);
+        let endMins = parseHm(endStr, 21 * 60);
         if (endMins <= startMins) endMins += 24 * 60;
 
         const fmtDur = (m) => {
@@ -7619,7 +7627,7 @@
           if (isToday) {
             borderClasses = 'ring-2 ring-rose-500 border-rose-500 dark:border-rose-400 shadow-md shadow-rose-500/10 ';
           } else if (shift.type === 'work') {
-            borderClasses = 'border-emerald-300 dark:border-emerald-800 hover:border-emerald-500 hover:shadow-xs ';
+            borderClasses = 'border-emerald-300 dark:border-emerald-800 hover:border-emerald-500 hover:shadow-sm ';
           } else if (shift.type === 'vacation') {
             borderClasses = 'border-amber-300 dark:border-amber-800 hover:border-amber-500 ';
           } else {
@@ -7637,12 +7645,16 @@
 
           let badgeHtml = '';
           if (shift.type === 'work') {
+            const safeShiftStart = qaEscapeHtml(shift.start || '09:00');
+            const safeShiftEnd = qaEscapeHtml(shift.end || '21:00');
+            const safeNetHours = Number(shift.netHours) || 11;
+            const safeBreakMins = Number(shift.breakMinutes) || 60;
             badgeHtml = 
               '<div class="space-y-0.5 min-w-0">' +
-                '<div class="text-[9px] sm:text-[11px] leading-tight font-black text-emerald-800 dark:text-emerald-200 font-sans tabular-nums tracking-tighter sm:tracking-tight truncate">' + (shift.start || '09:00') + '–' + (shift.end || '21:00') + '</div>' +
+                '<div class="text-[9px] sm:text-[11px] leading-tight font-black text-emerald-800 dark:text-emerald-200 font-sans tabular-nums tracking-tighter sm:tracking-tight truncate">' + safeShiftStart + '–' + safeShiftEnd + '</div>' +
                 '<div class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-between">' +
-                  '<span>' + (shift.netHours || 11) + ' ч</span>' +
-                  '<span class="hidden sm:inline text-[9px] font-normal text-slate-400">пер ' + (shift.breakMinutes || 60) + 'м</span>' +
+                  '<span>' + safeNetHours + ' ч</span>' +
+                  '<span class="hidden sm:inline text-[9px] font-normal text-slate-400">пер ' + safeBreakMins + 'м</span>' +
                 '</div>' +
               '</div>';
           } else if (shift.type === 'vacation') {
@@ -7660,14 +7672,23 @@
             '<div class="flex items-center justify-between">' +
               '<div class="flex items-center gap-1.5">' +
                 '<span class="font-black text-xs ' + (isToday ? 'text-rose-600 dark:text-rose-400' : (shift.type === 'work' ? 'text-emerald-900 dark:text-emerald-200' : 'text-slate-700 dark:text-slate-300')) + '">' + day + '</span>' +
-                (isToday ? '<span class="hidden sm:inline px-1.5 py-0.2 rounded-md bg-rose-500 text-white font-bold text-[9px] uppercase tracking-wider shadow-2xs">Сегодня</span><span class="sm:hidden w-1.5 h-1.5 rounded-full bg-rose-500 inline-block" title="Сегодня"></span>' : '') +
+                (isToday ? '<span class="hidden sm:inline px-1.5 py-0.5 rounded-md bg-rose-500 text-white font-bold text-[9px] uppercase tracking-wider shadow-sm">Сегодня</span><span class="sm:hidden w-1.5 h-1.5 rounded-full bg-rose-500 inline-block" title="Сегодня"></span>' : '') +
               '</div>' +
               (shift.type === 'work' ? '<span class="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-200 dark:ring-emerald-900"></span>' : '') +
             '</div>' +
             '<div class="mt-1">' + badgeHtml + noteHtml + '</div>';
 
+          cell.setAttribute('tabindex', '0');
+          cell.setAttribute('role', 'button');
+          cell.setAttribute('aria-label', 'Смена ' + dateStr);
           cell.addEventListener('click', () => {
             openShiftEditorModal(dateStr, day);
+          });
+          cell.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openShiftEditorModal(dateStr, day);
+            }
           });
 
           grid.appendChild(cell);
@@ -7968,13 +7989,13 @@
 
         async function pullFromCloud(reloadOnUpdate, isAccountSwitch) {
           if (!sbClient || !currentUser || isCloudSyncInFlight) return;
-          isCloudSyncInFlight = true;
           if (!reloadOnUpdate && !isAccountSwitch) {
             const lastMut = Number(localStorage.getItem(LAST_LOCAL_MUTATION_KEY) || 0);
             if (lastMut && (Date.now() - lastMut) < 6000) return;
             const activeEl = document.activeElement;
             if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable)) return;
           }
+          isCloudSyncInFlight = true;
           try {
             const prevUid = localStorage.getItem(LAST_UID_KEY);
             const switchedUser = Boolean(isAccountSwitch || (prevUid && prevUid !== currentUser.id));
@@ -8005,7 +8026,7 @@
               Object.keys(cloudObj).forEach((k) => {
                 if (typeof cloudObj[k] === 'string' && isAppDataKey(k)) {
                   if (localStorage.getItem(k) !== cloudObj[k]) {
-                    localStorage.setItem(k, cloudObj[k]);
+                    try { localStorage.setItem(k, cloudObj[k]); } catch (quotaErr) { console.warn('QuotaExceeded:', k); }
                     try {
                       const parsedVal = JSON.parse(cloudObj[k]);
                       if (typeof openAppIDB === 'function') {
@@ -8394,8 +8415,12 @@
           'cloud-modal',
           'schedule-shift-editor-modal',
           'rename-tab-modal',
+          'edit-stage-meta-modal',
+          'extra-stage-modal',
           'substage-modal',
-          'new-script-modal'
+          'new-script-modal',
+          'lock-settings-modal',
+          'salary-chart-quick-editor'
         ];
         const modals = modalIds.map((id) => document.getElementById(id)).filter(Boolean);
 
@@ -8415,6 +8440,8 @@
         syncBodyScrollLock();
         modals.forEach((m) => {
           m.classList.add('overscroll-contain');
+          m.setAttribute('role', 'dialog');
+          m.setAttribute('aria-modal', 'true');
           observer.observe(m, { attributes: true, attributeFilter: ['class'] });
 
           // Закрытие при клике на тёмный фон вокруг окна
@@ -10048,7 +10075,7 @@
           const addStageBtnRow = document.createElement('div');
           addStageBtnRow.className = 'flex items-center justify-center pt-1';
           addStageBtnRow.innerHTML =
-            '<button type="button" class="btn-add-extra-stage inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold border-2 border-dashed border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 transition shadow-2xs">' +
+            '<button type="button" class="btn-add-extra-stage inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold border-2 border-dashed border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 transition shadow-sm">' +
               '<span>➕</span>' +
               '<span>Добавить новый этап в этот скрипт</span>' +
             '</button>';
@@ -11399,7 +11426,7 @@
                   '<span class="hidden sm:inline">' + formatRub(item.total) + '</span>' +
                   '<span class="sm:hidden">' + totalLabel + '</span>' +
                 '</div>' +
-                '<div class="w-full max-w-[44px] flex flex-col justify-end rounded-t-lg overflow-hidden shadow-xs border border-slate-200/70 dark:border-slate-700/70 bg-slate-100/60 dark:bg-slate-800/50 transition-transform">' +
+                '<div class="w-full max-w-[44px] flex flex-col justify-end rounded-t-lg overflow-hidden shadow-sm border border-slate-200/70 dark:border-slate-700/70 bg-slate-100/60 dark:bg-slate-800/50 transition-transform">' +
                   (bonusPx > 0
                     ? '<div style="height:' + bonusPx + 'px" class="w-full bg-emerald-500 dark:bg-emerald-500 transition-all duration-300"></div>'
                     : '') +
