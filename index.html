@@ -383,14 +383,7 @@
       box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.08), 0 4px 12px -4px rgba(0, 0, 0, 0.22) !important;
     }
 
-    /* GPU-ускоренные 60 FPS анимации (только compositor: transform3d + opacity) */
-    @keyframes tabFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    .tab-fade-in {
-      animation: tabFadeIn 140ms ease-out;
-    }
+
 
 
     @media (prefers-reduced-motion: reduce) {
@@ -486,14 +479,7 @@
     html.no-theme-transitions *::after {
       transition: none !important;
     }
-    #theme-fade-veil {
-      position: fixed;
-      inset: 0;
-      z-index: 9998;
-      pointer-events: none;
-      opacity: 0;
-      will-change: opacity;
-    }
+
     /* Доступность: единый фокус с клавиатуры и состояние disabled */
     button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
       outline: 2px solid #6366f1;
@@ -619,24 +605,7 @@
       box-shadow: none !important;
     }
 
-    /* 3. Живой градиент на баннерах через чистый GPU-слой (transform3d вместо CPU background-position) */
-    section[data-script-section] > div.bg-gradient-to-r {
-      position: relative;
-      overflow: hidden;
-    }
-    section[data-script-section] > div.bg-gradient-to-r::after {
-      content: '';
-      position: absolute;
-      inset: -40% -60%;
-      pointer-events: none;
-      background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.16), transparent 55%);
-      animation: gpuBannerSheen 10s ease-in-out infinite alternate;
-      will-change: transform;
-    }
-    @keyframes gpuBannerSheen {
-      from { transform: translate3d(-12%, 0, 0); }
-      to { transform: translate3d(18%, 0, 0); }
-    }
+
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200">
@@ -4957,22 +4926,7 @@
         if (modeSubjBtn) modeSubjBtn.addEventListener('click', () => { weeklyChartMode = 'subjects'; updateModeButtons(); renderWeeklyRecordsChart(); });
       })();
 
-      // Плавное появление вкладки без двойного мерцания (без setTimeout и вертикального прыжка)
-      (function setupTabFadeAnimation() {
-        const tabsNav = document.getElementById('main-tabs-nav');
-        if (!tabsNav) return;
-        tabsNav.addEventListener('click', (e) => {
-          const btn = e.target.closest('.script-tab');
-          if (!btn) return;
-          document.querySelectorAll('section[data-script-section]').forEach(sec => {
-            if (!sec.classList.contains('hidden')) {
-              sec.classList.remove('tab-fade-in');
-              void sec.offsetWidth;
-              sec.classList.add('tab-fade-in');
-            }
-          });
-        });
-      })();
+
       function renderTrackerAll() {
         if (typeof renderWeeklyRecordsChart === 'function') renderWeeklyRecordsChart();
         const todayStr = getTodayDateStr();
