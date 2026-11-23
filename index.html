@@ -8378,7 +8378,6 @@
           'tetrika_onb_confetti_milestone_v1',
           'tetrika_onb_banner_compact_v1',
           'tetrika_onb_daily_goal_v1',
-          'tetrika_onb_sidebar_tz_v1',
           'tetrika_onb_accent_v1',
           'tetrika_theme',
           'tetrika_onb_lock_unlocked_session_v1',
@@ -12805,7 +12804,7 @@
         document.querySelectorAll('section[data-script-section] > div.bg-gradient-to-r').forEach((banner) => {
           banner.classList.toggle('script-banner-compact', isBannerCompact);
           // Скрываем описание, верхний бейдж, кнопки действий и правую плашку («Бесплатных уроков: 3–5 ВУ» / «Старт цены») в компактном режиме
-          banner.querySelectorAll('p, span.inline-block.rounded-full, .banner-actions-wrap, div.mt-4, div.mt-3, div.bg-white\/15, div.bg-white\/10').forEach((el) => {
+          banner.querySelectorAll('p, span.inline-block.rounded-full, .banner-actions-wrap, div.mt-4, div.mt-3, div[class*="bg-white/"]').forEach((el) => {
             if (!el.closest('.banner-compact-toggle-btn') && !el.querySelector('h2')) el.classList.add('banner-collapsible-part');
           });
           // Добавляем кнопку сворачивания, если её ещё нет
