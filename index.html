@@ -750,25 +750,23 @@
       transform: rotate(-90deg);
     }
 
-    /* Scroll-Spy активный этап в левой навигации */
+    /* Scroll-Spy активный этап в левой навигации — чистый современный стиль без кривой рамки */
     .stage-nav-spy-active {
-      background-color: rgba(99, 102, 241, 0.14) !important;
-      color: #4f46e5 !important;
-      font-weight: 700 !important;
-      box-shadow: inset 3px 0 0 #6366f1;
+      background-color: rgba(99, 102, 241, 0.10) !important;
+      color: #4338ca !important;
+      font-weight: 600 !important;
     }
     .dark .stage-nav-spy-active {
-      background-color: rgba(99, 102, 241, 0.24) !important;
+      background-color: rgba(99, 102, 241, 0.20) !important;
       color: #c7d2fe !important;
-      box-shadow: inset 3px 0 0 #818cf8;
     }
     .stage-nav-spy-active > span:first-child {
-      transform: scale(1.35);
       background-color: #4f46e5 !important;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+      box-shadow: 0 0 0 2.5px rgba(99, 102, 241, 0.22);
     }
     .dark .stage-nav-spy-active > span:first-child {
       background-color: #818cf8 !important;
+      box-shadow: 0 0 0 2.5px rgba(129, 140, 248, 0.28);
     }
   </style>
 </head>
@@ -13024,57 +13022,90 @@
       }
       setTimeout(updateSidebarTodayRing, 180);
 
-      // Плавная rAF-анимация цифр KPI при переходе на вкладку «План на месяц»
+      // Плавная rAF-анимация цифр KPI «как в банке» — только 1 раз после загрузки/обновления страницы
+      let planBankAnimPlayed = false;
+      function playPlanBankAnimOnce() {
+        if (planBankAnimPlayed) return;
+        planBankAnimPlayed = true;
+        setTimeout(() => {
+          const pFact = document.getElementById('plan-people-fact');
+          const mFact = document.getElementById('plan-mvu-count-fact');
+          if (pFact) {
+            const target = parseInt(pFact.textContent || '0', 10) || 0;
+            pFact.setAttribute('data-anim-val', '0');
+            animateCounter(pFact, target, '');
+          }
+          if (mFact) {
+            const target = parseInt(mFact.textContent || '0', 10) || 0;
+            mFact.setAttribute('data-anim-val', '0');
+            animateCounter(mFact, target, '');
+          }
+        }, 40);
+      }
+      // Если пользователь обновил страницу прямо на вкладке «План на месяц» — проигрываем 1 раз при загрузке
+      const planSecInit = document.getElementById('section-plan');
+      if (planSecInit && !planSecInit.classList.contains('hidden')) {
+        setTimeout(playPlanBankAnimOnce, 180);
+      }
       document.getElementById('main-tabs-nav')?.addEventListener('click', (e) => {
         const btn = e.target.closest('.script-tab');
         if (!btn) return;
         if (btn.getAttribute('data-tab') === 'plan') {
-          setTimeout(() => {
-            const pFact = document.getElementById('plan-people-fact');
-            const mFact = document.getElementById('plan-mvu-count-fact');
-            if (pFact) {
-              const target = parseInt(pFact.textContent || '0', 10) || 0;
-              pFact.setAttribute('data-anim-val', '0');
-              animateCounter(pFact, target, '');
-            }
-            if (mFact) {
-              const target = parseInt(mFact.textContent || '0', 10) || 0;
-              mFact.setAttribute('data-anim-val', '0');
-              animateCounter(mFact, target, '');
-            }
-          }, 40);
+          playPlanBankAnimOnce();
         }
         setTimeout(applyCompactToAllBanners, 60);
       });
 
-      // === 4. ЖИВОЙ SCROLL-SPY В «НАВИГАЦИЯ ПО ЭТАПАМ» ===
+      // === 4. ЖИВОЙ SCROLL-SPY В «НАВИГАЦИЯ ПО ЭТАПАМ» (работает на ВСЕХ скриптах любой высоты) ===
       (function initStageScrollSpy() {
         const navList = document.getElementById('stage-nav-list');
-        if (!navList || typeof IntersectionObserver === 'undefined') return;
-        let currentObs = null;
+        if (!navList) return;
+        let rafPending = false;
 
-        const bindSpy = () => {
-          if (currentObs) currentObs.disconnect();
+        const updateActiveStage = () => {
+          rafPending = false;
           const links = Array.from(navList.querySelectorAll('a[href^="#"], button[data-target-stage]'));
           if (!links.length) return;
-          const visibleArticles = Array.from(document.querySelectorAll('section[data-script-section]:not(.hidden) article.searchable-block[id]'));
+          const visibleArticles = Array.from(document.querySelectorAll('article[data-stage-title][id]')).filter(
+            (art) => {
+              const sec = art.closest('section');
+              return sec && !sec.classList.contains('hidden') && !art.classList.contains('hidden');
+            }
+          );
           if (!visibleArticles.length) return;
 
-          currentObs = new IntersectionObserver((entries) => {
-            const topEntry = entries.filter(en => en.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-            if (!topEntry) return;
-            const activeId = topEntry.target.id;
-            links.forEach((lnk) => {
-              const hrefId = (lnk.getAttribute('href') || '').replace(/^#/, '') || lnk.getAttribute('data-target-stage');
-              lnk.classList.toggle('stage-nav-spy-active', hrefId === activeId);
-            });
-          }, { rootMargin: '-18% 0px -58% 0px', threshold: 0.05 });
+          const headerEl = document.querySelector('header');
+          const headerH = headerEl ? headerEl.getBoundingClientRect().height : 72;
+          const triggerY = headerH + 96;
 
-          visibleArticles.forEach((art) => currentObs.observe(art));
+          let activeId = visibleArticles[0].id;
+          for (let i = 0; i < visibleArticles.length; i++) {
+            const rect = visibleArticles[i].getBoundingClientRect();
+            if (rect.top <= triggerY) {
+              activeId = visibleArticles[i].id;
+            } else {
+              break;
+            }
+          }
+
+          links.forEach((lnk) => {
+            const targetId = lnk.getAttribute('data-target-stage') || (lnk.getAttribute('href') || '').replace(/^#/, '');
+            lnk.classList.toggle('stage-nav-spy-active', targetId === activeId);
+          });
         };
 
-        new MutationObserver(bindSpy).observe(navList, { childList: true });
-        setTimeout(bindSpy, 250);
+        const scheduleUpdate = () => {
+          if (rafPending) return;
+          rafPending = true;
+          requestAnimationFrame(updateActiveStage);
+        };
+
+        window.addEventListener('scroll', scheduleUpdate, { passive: true });
+        window.addEventListener('resize', scheduleUpdate, { passive: true });
+        if (typeof MutationObserver !== 'undefined') {
+          new MutationObserver(scheduleUpdate).observe(navList, { childList: true });
+        }
+        setTimeout(updateActiveStage, 150);
       })();
     })();
   </script>
