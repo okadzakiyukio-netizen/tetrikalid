@@ -669,6 +669,51 @@
     .cmd-jump-flash {
       animation: cmdHighlightFlash 1.2s ease-out;
     }
+
+    /* GPU-волна (Ripple) при клике на .speech-bubble */
+    .speech-bubble {
+      position: relative;
+      overflow: hidden;
+    }
+    .gpu-ripple-wave {
+      position: absolute;
+      border-radius: 9999px;
+      background: rgba(99, 102, 241, 0.24);
+      pointer-events: none;
+      transform: translate3d(-50%, -50%, 0) scale3d(0, 0, 1);
+      animation: gpuRippleAnim 340ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      will-change: transform, opacity;
+    }
+    .dark .gpu-ripple-wave {
+      background: rgba(129, 140, 248, 0.28);
+    }
+    @keyframes gpuRippleAnim {
+      0% { transform: translate3d(-50%, -50%, 0) scale3d(0, 0, 1); opacity: 0.75; }
+      100% { transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1); opacity: 0; }
+    }
+
+    /* Компактный свёрнутый режим цветных баннеров скрипта */
+    .script-banner-compact {
+      padding: 0.75rem 1.25rem !important;
+    }
+    .script-banner-compact .banner-collapsible-part {
+      display: none !important;
+    }
+    .script-banner-compact h2 {
+      font-size: 1.05rem !important;
+      line-height: 1.3 !important;
+    }
+
+    /* Scroll-Spy активный этап в левой навигации */
+    .stage-nav-spy-active {
+      background-color: rgba(99, 102, 241, 0.12) !important;
+      color: #4f46e5 !important;
+      font-weight: 700 !important;
+    }
+    .dark .stage-nav-spy-active {
+      background-color: rgba(99, 102, 241, 0.22) !important;
+      color: #a5b4fc !important;
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200">
@@ -1229,14 +1274,11 @@
               <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white whitespace-nowrap leading-tight">
                 Рабочее место ОНБ
               </h1>
-              <div class="mt-0.5 flex flex-wrap items-center gap-1.5">
+              <div class="mt-0.5 flex flex-nowrap items-center gap-1.5">
                 <button id="header-shift-status-badge" type="button" title="Открыть График смен" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700 transition cursor-pointer whitespace-nowrap">
                   <span>📅</span><span>Загрузка смены...</span>
                 </button>
-                <button id="btn-open-reminders-modal" type="button" title="Напоминания со звуковым уведомлением" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-violet-50 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300 border border-violet-200/80 dark:border-violet-800/70 hover:bg-violet-100 dark:hover:bg-violet-900/60 transition cursor-pointer whitespace-nowrap">
-                  <span>🔔</span><span>Напоминания</span>
-                  <span id="reminders-count-badge" class="hidden px-1.5 py-0 rounded-full text-[10px] font-black bg-violet-600 text-white">0</span>
-                </button>
+
                 <button id="btn-open-cloud-modal" type="button" title="Облачная синхронизация через Supabase" class="inline-flex items-center justify-center gap-1 w-[124px] px-2 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-200/80 dark:border-sky-800/70 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition cursor-pointer whitespace-nowrap shrink-0">
                   <span id="cloud-status-dot" class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></span>
                   <span class="shrink-0">☁️</span>
@@ -1367,6 +1409,10 @@
             </div>
           </div>
 
+          <button id="btn-open-reminders-modal" type="button" aria-label="Напоминания" title="Напоминания со звуковым уведомлением" class="relative inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-950/50 hover:border-violet-300 dark:hover:border-violet-700 transition shadow-sm shrink-0">
+            <span class="text-sm leading-none">🔔</span>
+            <span id="reminders-count-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-black bg-rose-500 text-white flex items-center justify-center shadow-sm">0</span>
+          </button>
           <div class="relative shrink-0">
             <button id="btn-header-settings" type="button" aria-label="Настройки и инструменты" aria-expanded="false" class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shadow-sm" title="Настройки, тема, доступ и гид">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -1524,20 +1570,48 @@
         <textarea id="call-notes" rows="4" placeholder="Фиксируйте ответы клиента: оценки, интересы (Roblox/Scratch/Python), часовой пояс, наличие MAX..." class="w-full min-w-full p-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize relative z-20" style="min-height: 88px; max-width: 85vw;"></textarea>
       </div>
 
-      <!-- Legend Card -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm text-xs space-y-2">
-        <div class="font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Обозначения в скрипте</div>
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-sm bg-indigo-600 inline-block"></span>
-          <span class="text-slate-600 dark:text-slate-300">Прямая речь оператора (клик — копировать)</span>
+      <!-- Карточка «Сегодня на смене» с GPU-кольцом прогресса + сворачиваемая легенда (i) -->
+      <div id="sidebar-today-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm text-xs space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <div class="font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Сегодня на смене</div>
+          <button id="btn-toggle-script-legend" type="button" aria-label="Обозначения цветов в скрипте" title="Обозначения цветов в скрипте" class="w-5 h-5 rounded-full border border-slate-200 dark:border-slate-700 text-[10px] font-black text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 flex items-center justify-center transition">i</button>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-sm bg-amber-500 inline-block"></span>
-          <span class="text-slate-600 dark:text-slate-300">Важное правило / контроль связки и MAX</span>
+
+        <div class="flex items-center gap-3.5">
+          <div class="relative w-14 h-14 shrink-0">
+            <svg class="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
+              <circle cx="28" cy="28" r="22" fill="none" stroke="currentColor" stroke-width="5" class="text-slate-100 dark:text-slate-800" />
+              <circle id="sidebar-today-ring" cx="28" cy="28" r="22" fill="none" stroke="#6366f1" stroke-width="5" stroke-linecap="round" stroke-dasharray="138.23" stroke-dashoffset="138.23" style="transition: stroke-dashoffset 450ms cubic-bezier(0.22, 1, 0.36, 1), stroke 220ms ease;" />
+            </svg>
+            <div id="sidebar-today-pct" class="absolute inset-0 flex items-center justify-center text-[11px] font-black text-slate-800 dark:text-white tabular-nums">0%</div>
+          </div>
+          <div class="min-w-0 flex-1 space-y-1">
+            <div class="flex items-baseline gap-1.5">
+              <span id="sidebar-today-recs" class="text-xl font-black text-slate-900 dark:text-white tabular-nums">0</span>
+              <span class="text-slate-400 font-medium">зап.</span>
+              <span class="text-slate-300 dark:text-slate-600">•</span>
+              <span id="sidebar-today-subjs" class="font-bold text-indigo-600 dark:text-indigo-400 tabular-nums">0 предм.</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+              <span>Цель дня:</span>
+              <input id="sidebar-daily-goal-input" type="number" min="1" max="99" value="10" class="w-10 px-1.5 py-0.5 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center font-bold text-slate-800 dark:text-white text-[11px] focus:outline-none focus:ring-1 focus:ring-indigo-500" title="Дневная цель по записям" />
+            </div>
+          </div>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-sm bg-rose-500 inline-block"></span>
-          <span class="text-slate-600 dark:text-slate-300">Отработка возражений и сопротивлений</span>
+
+        <div id="sidebar-script-legend" class="hidden pt-2.5 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-[11px]">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-sm bg-indigo-600 shrink-0"></span>
+            <span class="text-slate-600 dark:text-slate-300">Прямая речь (клик — копировать)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-sm bg-amber-500 shrink-0"></span>
+            <span class="text-slate-600 dark:text-slate-300">Важное правило / контроль связки</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-sm bg-rose-500 shrink-0"></span>
+            <span class="text-slate-600 dark:text-slate-300">Отработка возражений</span>
+          </div>
         </div>
       </div>
     </aside>
@@ -4118,6 +4192,7 @@
         const isDark = document.documentElement.classList.toggle('dark');
         try { localStorage.setItem(STORAGE_THEME_KEY, isDark ? 'dark' : 'light'); } catch (e) {}
         syncThemeIcons(isDark, false);
+        if (typeof window.__redrawWeeklyChartCanvas === 'function') window.__redrawWeeklyChartCanvas();
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             document.documentElement.classList.remove('no-theme-transitions');
@@ -4946,32 +5021,181 @@
         }
 
         barsEl.innerHTML = '';
-        barsEl.className = 'grid gap-2 items-end pt-3 pb-1 min-h-[168px]';
-        barsEl.style.gridTemplateColumns = 'repeat(' + Math.max(1, shiftsList.length) + ', minmax(0, 1fr))';
+        barsEl.className = 'relative w-full h-[176px] pt-2 select-none';
+        barsEl.style.gridTemplateColumns = '';
 
-        shiftsList.forEach(d => {
-          const pct = d.val > 0 ? Math.max(12, Math.round((d.val / maxVal) * 100)) : 4;
-          const col = document.createElement('div');
-          col.className = 'flex flex-col items-center gap-1.5 group cursor-default';
-          col.title = d.shortDate + ' (' + d.label + '): ' + d.recCount + ' зап., ' + d.subjCount + ' предм.';
+        const canvas = document.createElement('canvas');
+        canvas.className = 'w-full h-full block';
+        const tip = document.createElement('div');
+        tip.className = 'hidden pointer-events-none absolute z-20 px-2.5 py-1.5 rounded-xl bg-slate-900/95 dark:bg-slate-800 text-white text-[11px] font-semibold shadow-lg border border-slate-700/80 whitespace-nowrap';
+        barsEl.appendChild(canvas);
+        barsEl.appendChild(tip);
 
-          const barColor = d.val === 0
-            ? 'bg-slate-200 dark:bg-slate-800'
-            : (d.isToday
-                ? 'bg-gradient-to-t from-indigo-600 to-violet-500 shadow-sm shadow-indigo-500/30'
-                : 'bg-gradient-to-t from-indigo-400 to-sky-400 dark:from-indigo-500 dark:to-sky-500 group-hover:from-indigo-500 group-hover:to-violet-500');
+        const state = { hoverIdx: -1, points: [] };
 
-          col.innerHTML =
-            '<span class="text-[11px] font-extrabold ' + (d.val > 0 ? (d.isToday ? 'text-indigo-600 dark:text-indigo-300' : 'text-slate-700 dark:text-slate-200') : 'text-slate-400 dark:text-slate-600') + '">' + d.val + '</span>' +
-            '<div class="w-full h-20 flex items-end justify-center px-1">' +
-              '<div class="w-full max-w-[30px] rounded-t-lg transition-all duration-300 ' + barColor + '" style="height: ' + pct + '%"></div>' +
-            '</div>' +
-            '<div class="text-center leading-tight">' +
-              '<div class="text-[11px] font-bold ' + (d.isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-300') + '">' + d.shortDate + '</div>' +
-              '<div class="text-[9px] text-slate-400">' + d.label + '</div>' +
-            '</div>';
-          barsEl.appendChild(col);
+        function drawCurve() {
+          const rect = barsEl.getBoundingClientRect();
+          const cssW = Math.max(240, Math.floor(rect.width || 320));
+          const cssH = Math.max(150, Math.floor(rect.height || 170));
+          const dpr = Math.min(2, window.devicePixelRatio || 1);
+          if (canvas.width !== cssW * dpr || canvas.height !== cssH * dpr) {
+            canvas.width = cssW * dpr;
+            canvas.height = cssH * dpr;
+          }
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, cssW, cssH);
+
+          const isDark = document.documentElement.classList.contains('dark');
+          const padL = 22, padR = 22, padT = 26, padB = 34;
+          const plotW = Math.max(10, cssW - padL - padR);
+          const plotH = Math.max(10, cssH - padT - padB);
+          const n = shiftsList.length;
+
+          // Subtle horizontal grid lines
+          ctx.strokeStyle = isDark ? 'rgba(148,163,184,0.12)' : 'rgba(148,163,184,0.22)';
+          ctx.lineWidth = 1;
+          for (let g = 0; g <= 2; g++) {
+            const gy = padT + (plotH * g) / 2;
+            ctx.beginPath();
+            ctx.moveTo(padL, gy);
+            ctx.lineTo(cssW - padR, gy);
+            ctx.stroke();
+          }
+
+          const pts = shiftsList.map((d, idx) => {
+            const x = n === 1 ? padL + plotW / 2 : padL + (plotW * idx) / (n - 1);
+            const ratio = maxVal > 0 ? (d.val / maxVal) : 0;
+            const y = padT + plotH * (1 - ratio * 0.88);
+            return { x, y, d, idx };
+          });
+          state.points = pts;
+
+          if (pts.length > 0) {
+            // Smooth bezier curve path
+            const buildPath = () => {
+              ctx.beginPath();
+              ctx.moveTo(pts[0].x, pts[0].y);
+              for (let i = 0; i < pts.length - 1; i++) {
+                const curr = pts[i];
+                const next = pts[i + 1];
+                const cx = (curr.x + next.x) / 2;
+                ctx.bezierCurveTo(cx, curr.y, cx, next.y, next.x, next.y);
+              }
+            };
+
+            // Area gradient fill
+            buildPath();
+            ctx.lineTo(pts[pts.length - 1].x, padT + plotH);
+            ctx.lineTo(pts[0].x, padT + plotH);
+            ctx.closePath();
+            const grad = ctx.createLinearGradient(0, padT, 0, padT + plotH);
+            grad.addColorStop(0, isDark ? 'rgba(99,102,241,0.34)' : 'rgba(99,102,241,0.24)');
+            grad.addColorStop(1, 'rgba(99,102,241,0.0)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Curve stroke
+            buildPath();
+            ctx.strokeStyle = isDark ? '#818cf8' : '#4f46e5';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+          }
+
+          // Draw points, value labels, and X-axis dates
+          pts.forEach((p, idx) => {
+            const isHover = idx === state.hoverIdx;
+            const isToday = p.d.isToday;
+
+            if (isHover) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, padT);
+              ctx.lineTo(p.x, padT + plotH);
+              ctx.strokeStyle = isDark ? 'rgba(129,140,248,0.35)' : 'rgba(79,70,229,0.28)';
+              ctx.setLineDash([3, 3]);
+              ctx.lineWidth = 1;
+              ctx.stroke();
+              ctx.setLineDash([]);
+            }
+
+            // Outer glow ring ONLY when cursor is actually over this point
+            if (isHover) {
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
+              ctx.fillStyle = isDark ? 'rgba(129,140,248,0.28)' : 'rgba(79,70,229,0.18)';
+              ctx.fill();
+            }
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, isHover ? 5.2 : (isToday ? 4.5 : 3.6), 0, Math.PI * 2);
+            ctx.fillStyle = isHover ? '#6366f1' : (isToday ? '#7c3aed' : (isDark ? '#0f172a' : '#ffffff'));
+            ctx.fill();
+            ctx.lineWidth = 2.2;
+            ctx.strokeStyle = isToday ? '#7c3aed' : (isDark ? '#818cf8' : '#4f46e5');
+            ctx.stroke();
+
+            // Value above point
+            ctx.font = '700 11px Inter, system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = isHover || isToday ? (isDark ? '#a5b4fc' : '#4f46e5') : (isDark ? '#cbd5e1' : '#334155');
+            ctx.fillText(String(p.d.val), p.x, p.y - 10);
+
+            // Date & weekday below
+            ctx.font = (isToday ? '800 ' : '600 ') + '10.5px Inter, system-ui, sans-serif';
+            ctx.fillStyle = isToday ? (isDark ? '#818cf8' : '#4f46e5') : (isDark ? '#94a3b8' : '#475569');
+            ctx.fillText(p.d.shortDate, p.x, padT + plotH + 15);
+            ctx.font = '500 9.5px Inter, system-ui, sans-serif';
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText(p.d.label, p.x, padT + plotH + 27);
+          });
+        }
+
+        // Strict point/hit-radius hover detection (no premature color change!)
+        canvas.addEventListener('pointermove', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const mx = e.clientX - rect.left;
+          const my = e.clientY - rect.top;
+          let found = -1;
+          for (const p of state.points) {
+            const dist = Math.hypot(mx - p.x, my - p.y);
+            if (dist <= 22) { found = p.idx; break; }
+          }
+          if (found !== state.hoverIdx) {
+            state.hoverIdx = found;
+            drawCurve();
+          }
+          if (found >= 0) {
+            const p = state.points[found];
+            tip.textContent = p.d.shortDate + ' (' + p.d.label + '): ' + p.d.recCount + ' зап. • ' + p.d.subjCount + ' предм.';
+            tip.classList.remove('hidden');
+            const left = Math.min(Math.max(8, p.x - tip.offsetWidth / 2), Math.max(8, rect.width - tip.offsetWidth - 8));
+            const top = Math.max(4, p.y - 38);
+            tip.style.left = left + 'px';
+            tip.style.top = top + 'px';
+            canvas.style.cursor = 'pointer';
+          } else {
+            tip.classList.add('hidden');
+            canvas.style.cursor = 'default';
+          }
         });
+        canvas.addEventListener('pointerleave', () => {
+          if (state.hoverIdx !== -1) {
+            state.hoverIdx = -1;
+            drawCurve();
+          }
+          tip.classList.add('hidden');
+        });
+
+        window.__redrawWeeklyChartCanvas = () => requestAnimationFrame(drawCurve);
+        requestAnimationFrame(drawCurve);
+        if (typeof ResizeObserver !== 'undefined') {
+          if (window.__weeklyChartResizeObs) {
+            try { window.__weeklyChartResizeObs.disconnect(); } catch (e) {}
+          }
+          window.__weeklyChartResizeObs = new ResizeObserver(() => requestAnimationFrame(drawCurve));
+          window.__weeklyChartResizeObs.observe(barsEl);
+        }
       }
 
       (function bindWeeklyChartControls() {
@@ -8134,6 +8358,9 @@
           'tetrika_call_notes_size_v1',
           'tetrika_onb_schedule_view_v1',
           'tetrika_onb_theme_v1',
+          'tetrika_onb_confetti_milestone_v1',
+          'tetrika_onb_banner_compact_v1',
+          'tetrika_onb_daily_goal_v1',
           'tetrika_onb_accent_v1',
           'tetrika_theme',
           'tetrika_onb_lock_unlocked_session_v1',
@@ -12318,16 +12545,24 @@
         confettiRafId = requestAnimationFrame(tick);
       };
 
+      const CONFETTI_MILESTONE_KEY = 'tetrika_onb_confetti_milestone_v1';
       const planPctEl = document.getElementById('plan-people-percent');
       if (planPctEl && typeof MutationObserver !== 'undefined') {
         new MutationObserver(() => {
           const num = parseInt(planPctEl.textContent || '0', 10);
-          const planSec = document.getElementById('section-plan');
-          if (num >= 100 && !confettiFiredForPlan && planSec && !planSec.classList.contains('hidden')) {
-            confettiFiredForPlan = true;
+          if (!Number.isFinite(num) || num < 100) return;
+          const milestone = Math.floor(num / 10) * 10; // 100, 110, 120, 130...
+          const curYm = new Date().toISOString().slice(0, 7);
+          let lastMilestone = 0;
+          try {
+            const rawM = localStorage.getItem(CONFETTI_MILESTONE_KEY) || '';
+            const [savedYm, savedVal] = rawM.split(':');
+            if (savedYm === curYm) lastMilestone = parseInt(savedVal || '0', 10) || 0;
+          } catch (e) {}
+          if (milestone > lastMilestone) {
+            try { localStorage.setItem(CONFETTI_MILESTONE_KEY, curYm + ':' + milestone); } catch (e) {}
             window.fireGpuConfetti();
-          } else if (num < 100) {
-            confettiFiredForPlan = false;
+            if (typeof showToast === 'function') showToast('🎉 План выполнен на ' + milestone + '%!');
           }
         }).observe(planPctEl, { childList: true, characterData: true, subtree: true });
       }
@@ -12514,6 +12749,191 @@
           }
         });
       }
+    })();
+  </script>
+
+  <script id="ux-gpu-pack-v2">
+    (function initUxGpuPackV2() {
+      // === 1. GPU-ВОЛНА (RIPPLE) ПРИ КЛИКЕ НА .speech-bubble ===
+      document.addEventListener('click', (e) => {
+        const bubble = e.target && e.target.closest ? e.target.closest('.speech-bubble') : null;
+        if (!bubble || e.target.closest('button, input, textarea, select')) return;
+        const rect = bubble.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 1.4;
+        const wave = document.createElement('span');
+        wave.className = 'gpu-ripple-wave';
+        wave.style.width = size + 'px';
+        wave.style.height = size + 'px';
+        wave.style.left = (e.clientX - rect.left) + 'px';
+        wave.style.top = (e.clientY - rect.top) + 'px';
+        bubble.appendChild(wave);
+        wave.addEventListener('animationend', () => wave.remove(), { once: true });
+      });
+
+      // === 2. СВОРАЧИВАЕМЫЕ БАННЕРЫ СКРИПТОВ (С СОХРАНЕНИЕМ В localStorage) ===
+      const BANNER_COMPACT_KEY = 'tetrika_onb_banner_compact_v1';
+      let isBannerCompact = false;
+      try { isBannerCompact = localStorage.getItem(BANNER_COMPACT_KEY) === '1'; } catch (e) {}
+
+      function applyCompactToAllBanners() {
+        document.querySelectorAll('section[data-script-section] > div.bg-gradient-to-r').forEach((banner) => {
+          banner.classList.toggle('script-banner-compact', isBannerCompact);
+          // Помечаем второстепенные элементы баннера для скрытия в компактном режиме
+          banner.querySelectorAll('p, span.inline-block.rounded-full, .banner-actions-wrap, div.mt-4, div.mt-3').forEach((el) => {
+            if (!el.closest('.banner-compact-toggle-btn')) el.classList.add('banner-collapsible-part');
+          });
+          // Добавляем кнопку сворачивания, если её ещё нет
+          if (!banner.querySelector('.banner-compact-toggle-btn')) {
+            banner.style.position = 'relative';
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'banner-compact-toggle-btn absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 text-white text-[11px] font-bold transition z-10';
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              isBannerCompact = !isBannerCompact;
+              try { localStorage.setItem(BANNER_COMPACT_KEY, isBannerCompact ? '1' : '0'); } catch (err) {}
+              applyCompactToAllBanners();
+            });
+            banner.appendChild(btn);
+          }
+          const toggleBtn = banner.querySelector('.banner-compact-toggle-btn');
+          if (toggleBtn) {
+            toggleBtn.textContent = isBannerCompact ? '▸ Развернуть' : '▾ Свернуть';
+            toggleBtn.title = isBannerCompact ? 'Развернуть шапку скрипта' : 'Свернуть шапку скрипта в 1 строку';
+          }
+        });
+      }
+      applyCompactToAllBanners();
+      setTimeout(applyCompactToAllBanners, 500);
+
+      // === 3. КАРТОЧКА «СЕГОДНЯ НА СМЕНЕ» + GPU-КОЛЬЦО + КНОПКА ЛЕГЕНДЫ (i) ===
+      const DAILY_GOAL_KEY = 'tetrika_onb_daily_goal_v1';
+      const goalInput = document.getElementById('sidebar-daily-goal-input');
+      const legendBtn = document.getElementById('btn-toggle-script-legend');
+      const legendBox = document.getElementById('sidebar-script-legend');
+      if (legendBtn && legendBox) {
+        legendBtn.addEventListener('click', () => {
+          legendBox.classList.toggle('hidden');
+        });
+      }
+      if (goalInput) {
+        try {
+          const savedG = parseInt(localStorage.getItem(DAILY_GOAL_KEY) || '10', 10);
+          if (savedG >= 1 && savedG <= 99) goalInput.value = String(savedG);
+        } catch (e) {}
+        goalInput.addEventListener('input', () => {
+          const v = Math.max(1, Math.min(99, parseInt(goalInput.value, 10) || 10));
+          try { localStorage.setItem(DAILY_GOAL_KEY, String(v)); } catch (e) {}
+          updateSidebarTodayRing();
+        });
+      }
+
+      function animateCounter(el, targetVal, suffix) {
+        if (!el) return;
+        if (el.__animRafId) {
+          cancelAnimationFrame(el.__animRafId);
+          el.__animRafId = null;
+        }
+        const fromVal = parseInt(el.getAttribute('data-anim-val') || el.textContent || '0', 10) || 0;
+        const toVal = Math.max(0, Math.round(Number(targetVal) || 0));
+        if (fromVal === toVal) {
+          el.textContent = toVal + (suffix || '');
+          el.setAttribute('data-anim-val', String(toVal));
+          return;
+        }
+        el.setAttribute('data-anim-val', String(toVal));
+        const start = performance.now();
+        const dur = 360;
+        const step = (now) => {
+          const t = Math.min(1, (now - start) / dur);
+          const ease = 1 - Math.pow(1 - t, 3);
+          const cur = Math.round(fromVal + (toVal - fromVal) * ease);
+          el.textContent = cur + (suffix || '');
+          if (t < 1) el.__animRafId = requestAnimationFrame(step);
+          else el.__animRafId = null;
+        };
+        el.__animRafId = requestAnimationFrame(step);
+      }
+
+      function updateSidebarTodayRing() {
+        const ring = document.getElementById('sidebar-today-ring');
+        const pctEl = document.getElementById('sidebar-today-pct');
+        const recsEl = document.getElementById('sidebar-today-recs');
+        const subjsEl = document.getElementById('sidebar-today-subjs');
+        if (!ring || !pctEl) return;
+
+        const todayKpi = parseInt(document.getElementById('kpi-today')?.textContent || '0', 10) || 0;
+        const todaySubTxt = document.getElementById('kpi-today-sub')?.textContent || '0 предм.';
+        const goal = Math.max(1, parseInt(goalInput ? goalInput.value : '10', 10) || 10);
+        const pct = Math.round((todayKpi / goal) * 100);
+        const clamped = Math.min(100, Math.max(0, pct));
+        const circ = 138.23;
+        ring.style.strokeDashoffset = String(circ * (1 - clamped / 100));
+        ring.style.stroke = pct >= 100 ? '#10b981' : '#6366f1';
+        animateCounter(pctEl, pct, '%');
+        animateCounter(recsEl, todayKpi, '');
+        if (subjsEl) subjsEl.textContent = todaySubTxt;
+      }
+
+      // Наблюдаем за #kpi-today чтобы кольцо обновлялось автоматически при добавлении/синке записей
+      const kpiTodayNode = document.getElementById('kpi-today');
+      if (kpiTodayNode && typeof MutationObserver !== 'undefined') {
+        new MutationObserver(updateSidebarTodayRing).observe(kpiTodayNode, { childList: true, characterData: true, subtree: true });
+      }
+      setTimeout(updateSidebarTodayRing, 180);
+
+      // Плавная rAF-анимация цифр KPI при переходе на вкладку «План на месяц»
+      document.getElementById('main-tabs-nav')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.script-tab');
+        if (!btn) return;
+        if (btn.getAttribute('data-tab') === 'plan') {
+          setTimeout(() => {
+            const pFact = document.getElementById('plan-people-fact');
+            const mFact = document.getElementById('plan-mvu-count-fact');
+            if (pFact) {
+              const target = parseInt(pFact.textContent || '0', 10) || 0;
+              pFact.setAttribute('data-anim-val', '0');
+              animateCounter(pFact, target, '');
+            }
+            if (mFact) {
+              const target = parseInt(mFact.textContent || '0', 10) || 0;
+              mFact.setAttribute('data-anim-val', '0');
+              animateCounter(mFact, target, '');
+            }
+          }, 40);
+        }
+        setTimeout(applyCompactToAllBanners, 60);
+      });
+
+      // === 4. ЖИВОЙ SCROLL-SPY В «НАВИГАЦИЯ ПО ЭТАПАМ» ===
+      (function initStageScrollSpy() {
+        const navList = document.getElementById('stage-nav-list');
+        if (!navList || typeof IntersectionObserver === 'undefined') return;
+        let currentObs = null;
+
+        const bindSpy = () => {
+          if (currentObs) currentObs.disconnect();
+          const links = Array.from(navList.querySelectorAll('a[href^="#"], button[data-target-stage]'));
+          if (!links.length) return;
+          const visibleArticles = Array.from(document.querySelectorAll('section[data-script-section]:not(.hidden) article.searchable-block[id]'));
+          if (!visibleArticles.length) return;
+
+          currentObs = new IntersectionObserver((entries) => {
+            const topEntry = entries.filter(en => en.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+            if (!topEntry) return;
+            const activeId = topEntry.target.id;
+            links.forEach((lnk) => {
+              const hrefId = (lnk.getAttribute('href') || '').replace(/^#/, '') || lnk.getAttribute('data-target-stage');
+              lnk.classList.toggle('stage-nav-spy-active', hrefId === activeId);
+            });
+          }, { rootMargin: '-18% 0px -58% 0px', threshold: 0.05 });
+
+          visibleArticles.forEach((art) => currentObs.observe(art));
+        };
+
+        new MutationObserver(bindSpy).observe(navList, { childList: true });
+        setTimeout(bindSpy, 250);
+      })();
     })();
   </script>
 </body>
