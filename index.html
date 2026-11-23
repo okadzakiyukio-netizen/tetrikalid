@@ -678,23 +678,29 @@
     .gpu-ripple-wave {
       position: absolute;
       border-radius: 9999px;
-      background: rgba(99, 102, 241, 0.24);
+      background: radial-gradient(circle, rgba(79, 70, 229, 0.36) 0%, rgba(99, 102, 241, 0.18) 60%, transparent 100%);
+      border: 1.5px solid rgba(99, 102, 241, 0.45);
       pointer-events: none;
       transform: translate3d(-50%, -50%, 0) scale3d(0, 0, 1);
-      animation: gpuRippleAnim 340ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation: gpuRippleAnim 460ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
       will-change: transform, opacity;
+      z-index: 5;
     }
     .dark .gpu-ripple-wave {
-      background: rgba(129, 140, 248, 0.28);
+      background: radial-gradient(circle, rgba(129, 140, 248, 0.42) 0%, rgba(99, 102, 241, 0.20) 60%, transparent 100%);
+      border-color: rgba(165, 180, 252, 0.55);
     }
     @keyframes gpuRippleAnim {
-      0% { transform: translate3d(-50%, -50%, 0) scale3d(0, 0, 1); opacity: 0.75; }
+      0% { transform: translate3d(-50%, -50%, 0) scale3d(0.05, 0.05, 1); opacity: 0.95; }
       100% { transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1); opacity: 0; }
     }
 
-    /* Компактный свёрнутый режим цветных баннеров скрипта */
+    /* Компактный свёрнутый режим цветных баннеров скрипта (без наложений!) */
+    section[data-script-section] > div.bg-gradient-to-r {
+      padding-right: 7.5rem !important;
+    }
     .script-banner-compact {
-      padding: 0.75rem 1.25rem !important;
+      padding: 0.7rem 7.5rem 0.7rem 1.25rem !important;
     }
     .script-banner-compact .banner-collapsible-part {
       display: none !important;
@@ -706,13 +712,23 @@
 
     /* Scroll-Spy активный этап в левой навигации */
     .stage-nav-spy-active {
-      background-color: rgba(99, 102, 241, 0.12) !important;
+      background-color: rgba(99, 102, 241, 0.14) !important;
       color: #4f46e5 !important;
       font-weight: 700 !important;
+      box-shadow: inset 3px 0 0 #6366f1;
     }
     .dark .stage-nav-spy-active {
-      background-color: rgba(99, 102, 241, 0.22) !important;
-      color: #a5b4fc !important;
+      background-color: rgba(99, 102, 241, 0.24) !important;
+      color: #c7d2fe !important;
+      box-shadow: inset 3px 0 0 #818cf8;
+    }
+    .stage-nav-spy-active > span:first-child {
+      transform: scale(1.35);
+      background-color: #4f46e5 !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+    .dark .stage-nav-spy-active > span:first-child {
+      background-color: #818cf8 !important;
     }
   </style>
 </head>
@@ -1612,6 +1628,50 @@
             <span class="w-2.5 h-2.5 rounded-sm bg-rose-500 shrink-0"></span>
             <span class="text-slate-600 dark:text-slate-300">Отработка возражений</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Раскрытый калькулятор часовых поясов (±МСК) прямо под «Сегодня на смене» -->
+      <div id="sidebar-tz-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm text-xs space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <div class="font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+            <span>🕒</span><span>Пояса (±МСК)</span>
+          </div>
+          <span id="sb-tz-diff-badge" class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 text-[10px] font-black tabular-nums">+2 ч</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 space-y-1">
+            <div class="text-[10px] font-bold text-slate-400 uppercase">По МСК</div>
+            <div class="flex items-center justify-between gap-1">
+              <button type="button" id="sb-tz-msk-minus" class="w-5 h-5 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-200 font-bold hover:bg-indigo-50 dark:hover:bg-slate-600 flex items-center justify-center">−</button>
+              <input id="sb-tz-msk-input" type="text" inputmode="numeric" value="16:00" maxlength="5" class="w-12 bg-transparent text-center font-black text-sm text-slate-900 dark:text-white tabular-nums focus:outline-none cursor-pointer" data-custom-timepicker="1" title="Нажмите для выбора времени" />
+              <button type="button" id="sb-tz-msk-plus" class="w-5 h-5 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-200 font-bold hover:bg-indigo-50 dark:hover:bg-slate-600 flex items-center justify-center">+</button>
+            </div>
+          </div>
+          <div class="p-2 rounded-xl bg-indigo-50/60 dark:bg-indigo-950/35 border border-indigo-200/80 dark:border-indigo-800/70 space-y-1">
+            <div class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase">У клиента</div>
+            <div class="flex items-center justify-between gap-1">
+              <button type="button" id="sb-tz-cli-minus" class="w-5 h-5 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 font-bold hover:bg-indigo-100 dark:hover:bg-slate-700 flex items-center justify-center">−</button>
+              <input id="sb-tz-cli-input" type="text" inputmode="numeric" value="18:00" maxlength="5" class="w-12 bg-transparent text-center font-black text-sm text-indigo-700 dark:text-indigo-200 tabular-nums focus:outline-none cursor-pointer" data-custom-timepicker="1" title="Нажмите для выбора времени" />
+              <button type="button" id="sb-tz-cli-plus" class="w-5 h-5 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 font-bold hover:bg-indigo-100 dark:hover:bg-slate-700 flex items-center justify-center">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="sb-tz-pills" class="grid grid-cols-3 gap-1">
+          <button type="button" data-sb-tz="-1" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">-1 Клд</button>
+          <button type="button" data-sb-tz="0" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">0 МСК</button>
+          <button type="button" data-sb-tz="1" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">+1 Сам</button>
+          <button type="button" data-sb-tz="2" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 text-white border border-indigo-600 transition">+2 Екб</button>
+          <button type="button" data-sb-tz="3" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">+3 Омск</button>
+          <button type="button" data-sb-tz="4" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">+4 Нск</button>
+          <button type="button" data-sb-tz="5" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">+5 Ирк</button>
+          <button type="button" data-sb-tz="6" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">+6 Якт</button>
+          <button type="button" data-sb-tz="7" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">+7 Влд</button>
+          <button type="button" data-sb-tz="8" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">+8 Маг</button>
+          <button type="button" data-sb-tz="9" class="sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition">+9 Камч</button>
+          <button type="button" id="sb-tz-now-btn" class="px-1.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition" title="Поставить текущее время МСК">Сейчас</button>
         </div>
       </div>
     </aside>
@@ -3344,11 +3404,11 @@
                 <div class="grid grid-cols-2 gap-3">
                   <div>
                     <label for="shift-time-start" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Начало смены:</label>
-                    <input id="shift-time-start" type="time" value="09:00" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold" />
+                    <input id="shift-time-start" type="text" inputmode="numeric" maxlength="5" data-custom-timepicker="1" placeholder="09:00" value="09:00" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold" />
                   </div>
                   <div>
                     <label for="shift-time-end" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Конец смены:</label>
-                    <input id="shift-time-end" type="time" value="21:00" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold" />
+                    <input id="shift-time-end" type="text" inputmode="numeric" maxlength="5" data-custom-timepicker="1" placeholder="09:00" value="21:00" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-sans tabular-nums font-bold" />
                   </div>
                 </div>
 
@@ -3992,6 +4052,7 @@
               ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-medium'
               : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300');
 
+          if (art.id) btn.setAttribute('data-target-stage', art.id);
           const dot = document.createElement('span');
           dot.className = 'w-2 h-2 rounded-full shrink-0 ' + (isChecked ? 'bg-emerald-500' : 'bg-indigo-400');
 
@@ -8361,6 +8422,7 @@
           'tetrika_onb_confetti_milestone_v1',
           'tetrika_onb_banner_compact_v1',
           'tetrika_onb_daily_goal_v1',
+          'tetrika_onb_sidebar_tz_v1',
           'tetrika_onb_accent_v1',
           'tetrika_theme',
           'tetrika_onb_lock_unlocked_session_v1',
@@ -9027,8 +9089,10 @@
           if (!anyOpen) {
             const gPop = document.getElementById('global-date-popover');
             const tPop = document.getElementById('rem-time-popover');
+            const cPop = document.getElementById('custom-time-popover');
             if (gPop) gPop.classList.add('hidden');
             if (tPop) tPop.classList.add('hidden');
+            if (cPop) cPop.classList.add('hidden');
           }
         }
 
@@ -9052,6 +9116,11 @@
         // Закрытие верхней открытой модалки по Esc
         document.addEventListener('keydown', (e) => {
           if (e.key !== 'Escape') return;
+          const cPop = document.getElementById('custom-time-popover');
+          if (cPop && !cPop.classList.contains('hidden')) {
+            cPop.classList.add('hidden');
+            return;
+          }
           for (let i = modals.length - 1; i >= 0; i--) {
             if (!modals[i].classList.contains('hidden')) {
               modals[i].classList.add('hidden');
@@ -12754,12 +12823,12 @@
 
   <script id="ux-gpu-pack-v2">
     (function initUxGpuPackV2() {
-      // === 1. GPU-ВОЛНА (RIPPLE) ПРИ КЛИКЕ НА .speech-bubble ===
-      document.addEventListener('click', (e) => {
+      // === 1. GPU-ВОЛНА (RIPPLE) ПРИ НАЖАТИИ НА .speech-bubble ===
+      document.addEventListener('pointerdown', (e) => {
         const bubble = e.target && e.target.closest ? e.target.closest('.speech-bubble') : null;
         if (!bubble || e.target.closest('button, input, textarea, select')) return;
         const rect = bubble.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height) * 1.4;
+        const size = Math.max(rect.width, rect.height) * 1.35;
         const wave = document.createElement('span');
         wave.className = 'gpu-ripple-wave';
         wave.style.width = size + 'px';
@@ -12768,9 +12837,10 @@
         wave.style.top = (e.clientY - rect.top) + 'px';
         bubble.appendChild(wave);
         wave.addEventListener('animationend', () => wave.remove(), { once: true });
-      });
+        setTimeout(() => { if (wave.parentNode) wave.remove(); }, 550);
+      }, true);
 
-      // === 2. СВОРАЧИВАЕМЫЕ БАННЕРЫ СКРИПТОВ (С СОХРАНЕНИЕМ В localStorage) ===
+      // === 2. СВОРАЧИВАЕМЫЕ БАННЕРЫ СКРИПТОВ (С СОХРАНЕНИЕМ В localStorage, БЕЗ НАЛОЖЕНИЙ) ===
       const BANNER_COMPACT_KEY = 'tetrika_onb_banner_compact_v1';
       let isBannerCompact = false;
       try { isBannerCompact = localStorage.getItem(BANNER_COMPACT_KEY) === '1'; } catch (e) {}
@@ -12778,9 +12848,9 @@
       function applyCompactToAllBanners() {
         document.querySelectorAll('section[data-script-section] > div.bg-gradient-to-r').forEach((banner) => {
           banner.classList.toggle('script-banner-compact', isBannerCompact);
-          // Помечаем второстепенные элементы баннера для скрытия в компактном режиме
-          banner.querySelectorAll('p, span.inline-block.rounded-full, .banner-actions-wrap, div.mt-4, div.mt-3').forEach((el) => {
-            if (!el.closest('.banner-compact-toggle-btn')) el.classList.add('banner-collapsible-part');
+          // Скрываем описание, верхний бейдж, кнопки действий и правую плашку («Бесплатных уроков: 3–5 ВУ» / «Старт цены») в компактном режиме
+          banner.querySelectorAll('p, span.inline-block.rounded-full, .banner-actions-wrap, div.mt-4, div.mt-3, div.bg-white\/15, div.bg-white\/10').forEach((el) => {
+            if (!el.closest('.banner-compact-toggle-btn') && !el.querySelector('h2')) el.classList.add('banner-collapsible-part');
           });
           // Добавляем кнопку сворачивания, если её ещё нет
           if (!banner.querySelector('.banner-compact-toggle-btn')) {
@@ -12934,6 +13004,211 @@
         new MutationObserver(bindSpy).observe(navList, { childList: true });
         setTimeout(bindSpy, 250);
       })();
+    })();
+  </script>
+
+  <!-- Красивый кастомный выбор времени (вместо стандартного колеса Firefox) -->
+  <div id="custom-time-popover" class="hidden fixed z-[9998] w-64 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl text-xs space-y-2.5">
+    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-1.5">
+      <span class="font-bold text-slate-700 dark:text-slate-200">Выбор времени</span>
+      <button type="button" id="ctp-close-btn" class="text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold px-1">✕</button>
+    </div>
+    <div>
+      <div class="text-[10px] font-bold uppercase text-slate-400 mb-1">Часы</div>
+      <div id="ctp-hours-grid" class="grid grid-cols-6 gap-1"></div>
+    </div>
+    <div>
+      <div class="text-[10px] font-bold uppercase text-slate-400 mb-1">Минуты</div>
+      <div id="ctp-mins-grid" class="grid grid-cols-4 gap-1"></div>
+    </div>
+  </div>
+
+  <script id="sidebar-tz-and-timepicker-script">
+    (function initSidebarTzAndTimePicker() {
+      // === 1. КАСТОМНЫЙ КРАСИВЫЙ ВЫБОР ВРЕМЕНИ ===
+      const pop = document.getElementById('custom-time-popover');
+      const hGrid = document.getElementById('ctp-hours-grid');
+      const mGrid = document.getElementById('ctp-mins-grid');
+      const closeBtn = document.getElementById('ctp-close-btn');
+      let targetInput = null;
+      let curH = '16';
+      let curM = '00';
+
+      if (pop && hGrid && mGrid) {
+        const parseVal = (v) => {
+          const m = String(v || '').match(/^(\d{1,2}):(\d{2})$/);
+          if (m) return [m[1].padStart(2, '0'), m[2].padStart(2, '0')];
+          return ['16', '00'];
+        };
+
+        const applyToInput = () => {
+          if (!targetInput) return;
+          targetInput.value = curH + ':' + curM;
+          targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+          targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+        };
+
+        const renderGrids = () => {
+          hGrid.innerHTML = '';
+          for (let h = 0; h < 24; h++) {
+            const hs = String(h).padStart(2, '0');
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = hs;
+            b.className = hs === curH
+              ? 'py-1 rounded-lg font-black bg-indigo-600 text-white shadow-sm'
+              : 'py-1 rounded-lg font-semibold text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 transition';
+            b.addEventListener('click', () => { curH = hs; applyToInput(); renderGrids(); });
+            hGrid.appendChild(b);
+          }
+          mGrid.innerHTML = '';
+          ['00', '15', '30', '45'].forEach((ms) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = ':' + ms;
+            b.className = ms === curM
+              ? 'py-1.5 rounded-lg font-black bg-indigo-600 text-white shadow-sm'
+              : 'py-1.5 rounded-lg font-semibold text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 transition';
+            b.addEventListener('click', () => { curM = ms; applyToInput(); pop.classList.add('hidden'); });
+            mGrid.appendChild(b);
+          });
+        };
+
+        const openFor = (inp) => {
+          targetInput = inp;
+          const [h, m] = parseVal(inp.value);
+          curH = h;
+          curM = m;
+          renderGrids();
+          pop.classList.remove('hidden');
+          const r = inp.getBoundingClientRect();
+          const left = Math.min(Math.max(8, r.left), Math.max(8, window.innerWidth - 268));
+          const top = (r.bottom + 240 > window.innerHeight) ? Math.max(8, r.top - 236) : (r.bottom + 6);
+          pop.style.left = left + 'px';
+          pop.style.top = top + 'px';
+        };
+
+        document.addEventListener('click', (e) => {
+          const inp = e.target && e.target.closest ? e.target.closest('input[data-custom-timepicker="1"]') : null;
+          if (inp) {
+            e.stopPropagation();
+            openFor(inp);
+            return;
+          }
+          if (!pop.classList.contains('hidden') && !pop.contains(e.target)) {
+            pop.classList.add('hidden');
+          }
+        });
+        if (closeBtn) closeBtn.addEventListener('click', () => pop.classList.add('hidden'));
+        window.addEventListener('scroll', () => {
+          if (!pop.classList.contains('hidden')) pop.classList.add('hidden');
+        }, { passive: true });
+        document.addEventListener('blur', (e) => {
+          const inp = e.target && e.target.closest ? e.target.closest('input[data-custom-timepicker="1"]') : null;
+          if (!inp) return;
+          const raw = String(inp.value || '').trim();
+          const m = raw.match(/^(\d{1,2})[:.\s]?(\d{2})$/);
+          if (m) {
+            const hh = String(Math.min(23, Math.max(0, parseInt(m[1], 10)))).padStart(2, '0');
+            const mm = String(Math.min(59, Math.max(0, parseInt(m[2], 10)))).padStart(2, '0');
+            inp.value = hh + ':' + mm;
+            inp.dispatchEvent(new Event('input', { bubbles: true }));
+            inp.dispatchEvent(new Event('change', { bubbles: true }));
+          } else if (!/^\d{2}:\d{2}$/.test(raw)) {
+            inp.value = '12:00';
+            inp.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        }, true);
+      }
+
+      // === 2. РАСКРЫТЫЙ КАЛЬКУЛЯТОР ПОЯСОВ В САЙДБАРЕ ===
+      const SB_TZ_KEY = 'tetrika_onb_sidebar_tz_v1';
+      const mskIn = document.getElementById('sb-tz-msk-input');
+      const cliIn = document.getElementById('sb-tz-cli-input');
+      const diffBadge = document.getElementById('sb-tz-diff-badge');
+      const pillsWrap = document.getElementById('sb-tz-pills');
+      if (mskIn && cliIn && pillsWrap) {
+        let offset = 2;
+        try {
+          const sv = parseInt(localStorage.getItem(SB_TZ_KEY) || '2', 10);
+          if (Number.isFinite(sv) && sv >= -12 && sv <= 12) offset = sv;
+        } catch (e) {}
+
+        const toMins = (str) => {
+          const m = String(str || '').match(/^(\d{1,2}):(\d{2})$/);
+          if (!m) return null;
+          return ((Number(m[1]) % 24) * 60 + (Number(m[2]) % 60));
+        };
+        const fromMins = (mins) => {
+          const norm = ((mins % 1440) + 1440) % 1440;
+          return String(Math.floor(norm / 60)).padStart(2, '0') + ':' + String(norm % 60).padStart(2, '0');
+        };
+
+        const updatePillsUI = () => {
+          if (diffBadge) diffBadge.textContent = (offset > 0 ? '+' + offset : String(offset)) + ' ч';
+          pillsWrap.querySelectorAll('.sb-tz-pill').forEach((b) => {
+            const on = parseInt(b.getAttribute('data-sb-tz'), 10) === offset;
+            b.className = on
+              ? 'sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 text-white border border-indigo-600 transition'
+              : 'sb-tz-pill px-1.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 transition';
+          });
+        };
+
+        const syncFromMsk = () => {
+          const m = toMins(mskIn.value);
+          if (m !== null) cliIn.value = fromMins(m + offset * 60);
+        };
+        const syncFromCli = () => {
+          const m = toMins(cliIn.value);
+          if (m !== null) mskIn.value = fromMins(m - offset * 60);
+        };
+
+        const setNowMsk = () => {
+          try {
+            const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Moscow', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+            const hh = parts.find(p => p.type === 'hour')?.value || '12';
+            const mm = parts.find(p => p.type === 'minute')?.value || '00';
+            mskIn.value = hh + ':' + mm;
+            syncFromMsk();
+          } catch (e) {}
+        };
+
+        mskIn.addEventListener('input', syncFromMsk);
+        cliIn.addEventListener('input', syncFromCli);
+        document.getElementById('sb-tz-msk-minus')?.addEventListener('click', () => {
+          const m = toMins(mskIn.value);
+          mskIn.value = fromMins((m === null ? 960 : m) - 60);
+          syncFromMsk();
+        });
+        document.getElementById('sb-tz-msk-plus')?.addEventListener('click', () => {
+          const m = toMins(mskIn.value);
+          mskIn.value = fromMins((m === null ? 960 : m) + 60);
+          syncFromMsk();
+        });
+        document.getElementById('sb-tz-cli-minus')?.addEventListener('click', () => {
+          const m = toMins(cliIn.value);
+          cliIn.value = fromMins((m === null ? 1080 : m) - 60);
+          syncFromCli();
+        });
+        document.getElementById('sb-tz-cli-plus')?.addEventListener('click', () => {
+          const m = toMins(cliIn.value);
+          cliIn.value = fromMins((m === null ? 1080 : m) + 60);
+          syncFromCli();
+        });
+        document.getElementById('sb-tz-now-btn')?.addEventListener('click', setNowMsk);
+
+        pillsWrap.querySelectorAll('.sb-tz-pill').forEach((b) => {
+          b.addEventListener('click', () => {
+            offset = parseInt(b.getAttribute('data-sb-tz'), 10) || 0;
+            try { localStorage.setItem(SB_TZ_KEY, String(offset)); } catch (e) {}
+            updatePillsUI();
+            syncFromMsk();
+          });
+        });
+
+        updatePillsUI();
+        setNowMsk();
+      }
     })();
   </script>
 </body>
