@@ -695,26 +695,22 @@
       100% { transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1); opacity: 0; }
     }
 
-    /* Плавная 60 FPS анимация сворачивания/разворачивания цветных баннеров скрипта */
+    /* Чистая плавная анимация сворачивания баннера без скачков display/height/font-size */
     section[data-script-section] > div.bg-gradient-to-r {
       padding-right: 7.5rem !important;
-      transition: padding 280ms cubic-bezier(0.22, 1, 0.36, 1);
+      transition: padding 220ms ease-out;
     }
-    section[data-script-section] > div.bg-gradient-to-r h2 {
-      transition: font-size 260ms cubic-bezier(0.22, 1, 0.36, 1), line-height 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    section[data-script-section] > div.bg-gradient-to-r > div.flex {
+      transition: gap 220ms ease-out;
     }
     .banner-collapsible-part {
-      max-height: 140px;
+      display: block;
+      width: fit-content;
+      max-width: 100%;
+      max-height: 96px;
       opacity: 1;
-      transform: translate3d(0, 0, 0);
       overflow: hidden;
-      transition:
-        max-height 280ms cubic-bezier(0.22, 1, 0.36, 1),
-        opacity 210ms ease-out,
-        transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
-        margin 260ms cubic-bezier(0.22, 1, 0.36, 1),
-        padding 260ms cubic-bezier(0.22, 1, 0.36, 1),
-        border-width 200ms ease;
+      transition: max-height 220ms ease-out, opacity 180ms ease-out, margin 220ms ease-out, padding 220ms ease-out;
     }
     .script-banner-compact {
       padding: 0.75rem 7.5rem 0.75rem 1.25rem !important;
@@ -723,21 +719,14 @@
       gap: 0 !important;
     }
     .script-banner-compact .banner-collapsible-part {
-      display: block !important;
       max-height: 0 !important;
-      height: 0 !important;
       opacity: 0 !important;
-      transform: translate3d(0, -4px, 0) !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      border-width: 0 !important;
-      line-height: 0 !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      border-color: transparent !important;
       pointer-events: none;
-    }
-    .script-banner-compact h2 {
-      font-size: 1.05rem !important;
-      line-height: 1.3 !important;
-      margin: 0 !important;
     }
     .banner-compact-toggle-btn .banner-chevron {
       display: inline-block;
@@ -5689,19 +5678,24 @@
         });
       }
 
-      // CSV Export
+      // CSV Export (с экранированием кавычек/точек с запятой и защитой от CSV Formula Injection)
       document.getElementById('btn-tracker-export')?.addEventListener('click', () => {
+        const csvCell = (val) => {
+          let s = String(val == null ? '' : val).replace(/\r?\n/g, ' ');
+          if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+          return '"' + s.replace(/"/g, '""') + '"';
+        };
         const headers = ['№', 'Дата', 'Номер клиента', 'Комментарий', 'Кол-во предметов', 'Лекта', 'МВУ', 'Направления', 'Реферал'];
         const rows = records.map((r, i) => [
           i + 1,
-          r.date,
-          r.phone || '—',
-          '"' + (r.comment || '—').replace(/"/g, '""') + '"',
-          r.qty,
+          csvCell(r.date || ''),
+          csvCell(r.phone || '—'),
+          csvCell(r.comment || '—'),
+          Number(r.qty) || 0,
           r.lekta ? 'Да' : 'Нет',
-          r.mvu,
-          (r.dirs || []).join('+'),
-          r.ref
+          csvCell(r.mvu || ''),
+          csvCell((r.dirs || []).join('+')),
+          csvCell(r.ref || '')
         ].join(';'));
         const csvContent = '\uFEFF' + [headers.join(';'), ...rows].join('\n');
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -6950,7 +6944,8 @@
 
         updateRemindersBadge();
         checkDueReminders();
-        setInterval(() => { if (!document.hidden) checkDueReminders(); }, 5000);
+        setInterval(checkDueReminders, 5000);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) checkDueReminders(); });
       })();
 
       if (btnToggleCbSound) {
@@ -7048,7 +7043,8 @@
         });
       }
 
-      setInterval(() => { if (!document.hidden) checkDueCallbacks(); }, 15000);
+      setInterval(checkDueCallbacks, 15000);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) checkDueCallbacks(); });
 
 
       // =========================================================================
@@ -8792,9 +8788,9 @@
           }
         }
 
-        // Мгновенная синхронизация между двумя вкладками одного браузера
+        // Мгновенная синхронизация между двумя вкладками одного браузера (включая localStorage.clear)
         window.addEventListener('storage', (e) => {
-          if (e.key && isAppDataKey(e.key)) {
+          if (e.key === null || isAppDataKey(e.key)) {
             refreshAppStateFromLocalStorage();
           }
         });
@@ -8907,34 +8903,48 @@
 
         if (saveCfgBtn) {
           saveCfgBtn.addEventListener('click', async () => {
+            if (saveCfgBtn.disabled) return;
             const u = (urlInput ? urlInput.value : '').trim();
             const k = (keyInput ? keyInput.value : '').trim();
             if (!u || !k) {
               showBanner('Заполните оба поля: Project URL и Anon Public Key.', 'error');
               return;
             }
-            safeOrigSet(CFG_URL_KEY, u);
-            safeOrigSet(CFG_ANON_KEY, k);
-            if (cfgDetails) cfgDetails.open = false;
-            showBanner('Подключение сохранено! Теперь можно войти или зарегистрироваться.', 'success');
-            await initClient();
+            saveCfgBtn.disabled = true;
+            try {
+              safeOrigSet(CFG_URL_KEY, u);
+              safeOrigSet(CFG_ANON_KEY, k);
+              if (cfgDetails) cfgDetails.open = false;
+              showBanner('Подключение сохранено! Теперь можно войти или зарегистрироваться.', 'success');
+              await initClient();
+            } catch (err) {
+              showBanner('Ошибка инициализации подключения: ' + (err && err.message ? err.message : 'проверьте сеть'), 'error');
+            } finally {
+              saveCfgBtn.disabled = false;
+            }
           });
         }
 
         async function handleLogin() {
+          if (loginBtn && loginBtn.disabled) return;
           if (!sbClient) { showBanner('Сначала настройте Project URL и Anon Key ниже.', 'error'); return; }
           const email = (emailInput ? emailInput.value : '').trim();
           const password = passInput ? passInput.value : '';
           if (!email || !password) { showBanner('Введите Email и пароль.', 'error'); return; }
           if (loginBtn) loginBtn.disabled = true;
-          const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
-          if (loginBtn) loginBtn.disabled = false;
-          if (error) { showBanner('Ошибка входа: ' + error.message, 'error'); return; }
-          const prevUid = localStorage.getItem(LAST_UID_KEY);
-          currentUser = data.user;
-          updateHeaderUI();
-          showBanner('Вход выполнен! Синхронизируем данные...', 'success');
-          await pullFromCloud(true, Boolean(prevUid && prevUid !== currentUser.id), true);
+          try {
+            const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+            if (error) { showBanner('Ошибка входа: ' + error.message, 'error'); return; }
+            const prevUid = localStorage.getItem(LAST_UID_KEY);
+            currentUser = data.user;
+            updateHeaderUI();
+            showBanner('Вход выполнен! Синхронизируем данные...', 'success');
+            await pullFromCloud(true, Boolean(prevUid && prevUid !== currentUser.id), true);
+          } catch (err) {
+            showBanner('Сетевая ошибка входа: ' + (err && err.message ? err.message : 'проверьте интернет'), 'error');
+          } finally {
+            if (loginBtn) loginBtn.disabled = false;
+          }
         }
 
         if (loginBtn) {
@@ -8949,47 +8959,69 @@
 
         if (signupBtn) {
           signupBtn.addEventListener('click', async () => {
+            if (signupBtn.disabled) return;
             if (!sbClient) { showBanner('Сначала настройте Project URL и Anon Key ниже.', 'error'); return; }
             const email = (emailInput ? emailInput.value : '').trim();
             const password = passInput ? passInput.value : '';
             if (!email || password.length < 6) { showBanner('Введите Email и пароль (минимум 6 символов).', 'error'); return; }
             signupBtn.disabled = true;
-            const { data, error } = await sbClient.auth.signUp({ email, password });
-            signupBtn.disabled = false;
-            if (error) { showBanner('Ошибка регистрации: ' + error.message, 'error'); return; }
-            if (data.session) {
-              currentUser = data.user;
-              safeOrigSet(LAST_UID_KEY, currentUser.id);
-              updateHeaderUI();
-              await pushToCloud(true);
-              showBanner('Аккаунт создан и данные сохранены в облако!', 'success');
-            } else {
-              showBanner('Аккаунт создан! Если включено подтверждение почты — проверьте Email, или отключите Confirm Email в Supabase Auth.', 'info');
+            try {
+              const { data, error } = await sbClient.auth.signUp({ email, password });
+              if (error) { showBanner('Ошибка регистрации: ' + error.message, 'error'); return; }
+              if (data.session) {
+                currentUser = data.user;
+                safeOrigSet(LAST_UID_KEY, currentUser.id);
+                updateHeaderUI();
+                await pushToCloud(true);
+                showBanner('Аккаунт создан и данные сохранены в облако!', 'success');
+              } else {
+                showBanner('Аккаунт создан! Если включено подтверждение почты — проверьте Email, или отключите Confirm Email в Supabase Auth.', 'info');
+              }
+            } catch (err) {
+              showBanner('Сетевая ошибка регистрации: ' + (err && err.message ? err.message : 'проверьте интернет'), 'error');
+            } finally {
+              signupBtn.disabled = false;
             }
           });
         }
 
         if (syncNowBtn) {
           syncNowBtn.addEventListener('click', async () => {
-            if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
-            if (hasPendingLocalChanges()) {
-              await pushToCloud(false);
-            } else {
-              await pullFromCloud(false, false, true);
+            if (syncNowBtn.disabled) return;
+            syncNowBtn.disabled = true;
+            try {
+              if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
+              if (hasPendingLocalChanges()) {
+                await pushToCloud(false);
+              } else {
+                await pullFromCloud(false, false, true);
+              }
+            } catch (err) {
+              showBanner('Ошибка синхронизации: ' + (err && err.message ? err.message : 'проверьте сеть'), 'error');
+            } finally {
+              syncNowBtn.disabled = false;
             }
           });
         }
 
         if (logoutBtn) {
           logoutBtn.addEventListener('click', async () => {
-            if (syncTimer || hasPendingLocalChanges()) {
-              if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
-              await pushToCloud(true);
+            if (logoutBtn.disabled) return;
+            logoutBtn.disabled = true;
+            try {
+              if (syncTimer || hasPendingLocalChanges()) {
+                if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
+                await pushToCloud(true);
+              }
+              if (sbClient) await sbClient.auth.signOut();
+              currentUser = null;
+              updateHeaderUI();
+              showBanner('Вы вышли из облачного аккаунта.', 'info');
+            } catch (err) {
+              showBanner('Ошибка выхода: ' + (err && err.message ? err.message : 'попробуйте снова'), 'error');
+            } finally {
+              logoutBtn.disabled = false;
             }
-            if (sbClient) await sbClient.auth.signOut();
-            currentUser = null;
-            updateHeaderUI();
-            showBanner('Вы вышли из облачного аккаунта.', 'info');
           });
         }
 
@@ -9072,46 +9104,57 @@
           'salary-chart-quick-editor',
           'cmd-palette-modal'
         ];
-        const modals = modalIds.map((id) => document.getElementById(id)).filter(Boolean);
+        const modals = [];
+        const boundModalSet = new WeakSet();
 
         function syncBodyScrollLock() {
           const anyOpen = modals.some((m) => !m.classList.contains('hidden'));
           document.documentElement.style.overflow = anyOpen ? 'hidden' : '';
           document.body.style.overflow = anyOpen ? 'hidden' : '';
           if (!anyOpen) {
-            const gPop = document.getElementById('global-date-popover');
-            const tPop = document.getElementById('rem-time-popover');
-            const cPop = document.getElementById('custom-time-popover');
-            if (gPop) gPop.classList.add('hidden');
-            if (tPop) tPop.classList.add('hidden');
-            if (cPop) cPop.classList.add('hidden');
+            ['global-date-popover', 'rem-time-popover', 'custom-time-popover'].forEach((pid) => {
+              const p = document.getElementById(pid);
+              if (p) p.classList.add('hidden');
+            });
           }
         }
 
         const observer = new MutationObserver(syncBodyScrollLock);
-        syncBodyScrollLock();
-        modals.forEach((m) => {
-          m.classList.add('overscroll-contain');
-          m.setAttribute('role', 'dialog');
-          m.setAttribute('aria-modal', 'true');
-          observer.observe(m, { attributes: true, attributeFilter: ['class'] });
-
-          // Закрытие при клике на тёмный фон вокруг окна
-          m.addEventListener('click', (e) => {
-            if (e.target === m) {
-              m.classList.add('hidden');
-              syncBodyScrollLock();
-            }
+        function bindModals() {
+          modalIds.forEach((id) => {
+            const m = document.getElementById(id);
+            if (!m || boundModalSet.has(m)) return;
+            boundModalSet.add(m);
+            modals.push(m);
+            m.classList.add('overscroll-contain');
+            m.setAttribute('role', 'dialog');
+            m.setAttribute('aria-modal', 'true');
+            observer.observe(m, { attributes: true, attributeFilter: ['class'] });
+            m.addEventListener('click', (e) => {
+              if (e.target === m) {
+                m.classList.add('hidden');
+                syncBodyScrollLock();
+              }
+            });
           });
-        });
+          syncBodyScrollLock();
+        }
+        bindModals();
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', bindModals, { once: true });
+        } else {
+          setTimeout(bindModals, 0);
+        }
 
-        // Закрытие верхней открытой модалки по Esc
+        // Закрытие открытых поповеров, затем верхней модалки по Esc
         document.addEventListener('keydown', (e) => {
           if (e.key !== 'Escape') return;
-          const cPop = document.getElementById('custom-time-popover');
-          if (cPop && !cPop.classList.contains('hidden')) {
-            cPop.classList.add('hidden');
-            return;
+          for (const pid of ['custom-time-popover', 'rem-time-popover', 'global-date-popover']) {
+            const pop = document.getElementById(pid);
+            if (pop && !pop.classList.contains('hidden')) {
+              pop.classList.add('hidden');
+              return;
+            }
           }
           for (let i = modals.length - 1; i >= 0; i--) {
             if (!modals[i].classList.contains('hidden')) {
@@ -12846,12 +12889,13 @@
               el.classList.add('banner-collapsible-part');
             }
           });
-          // Добавляем кнопку сворачивания, если её ещё нет
+          // Добавляем кнопку сворачивания, если её ещё нет (DOM создаём 1 раз, чтобы CSS-поворот стрелки работал плавно)
           if (!banner.querySelector('.banner-compact-toggle-btn')) {
             banner.style.position = 'relative';
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'banner-compact-toggle-btn absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 text-white text-[11px] font-bold transition z-10';
+            btn.innerHTML = '<span class="banner-chevron mr-1">▾</span><span class="banner-toggle-label"></span>';
             btn.addEventListener('click', (e) => {
               e.stopPropagation();
               isBannerCompact = !isBannerCompact;
@@ -12862,13 +12906,24 @@
           }
           const toggleBtn = banner.querySelector('.banner-compact-toggle-btn');
           if (toggleBtn) {
-            toggleBtn.innerHTML = '<span class="banner-chevron mr-1">▾</span><span>' + (isBannerCompact ? 'Развернуть' : 'Свернуть') + '</span>';
+            const lbl = toggleBtn.querySelector('.banner-toggle-label');
+            if (lbl) lbl.textContent = isBannerCompact ? 'Развернуть' : 'Свернуть';
+            toggleBtn.setAttribute('aria-expanded', String(!isBannerCompact));
             toggleBtn.title = isBannerCompact ? 'Развернуть шапку скрипта' : 'Свернуть шапку скрипта в 1 строку';
           }
         });
       }
+      window.__applyCompactToAllBanners = applyCompactToAllBanners;
       applyCompactToAllBanners();
       setTimeout(applyCompactToAllBanners, 500);
+      if (typeof MutationObserver !== 'undefined') {
+        const mainEl = document.querySelector('main');
+        if (mainEl) {
+          new MutationObserver((muts) => {
+            if (muts.some((m) => m.addedNodes && m.addedNodes.length)) applyCompactToAllBanners();
+          }).observe(mainEl, { childList: true });
+        }
+      }
 
       // === 3. КАРТОЧКА «СЕГОДНЯ НА СМЕНЕ» + GPU-КОЛЬЦО + КНОПКА ЛЕГЕНДЫ (i) ===
       const DAILY_GOAL_KEY = 'tetrika_onb_daily_goal_v1';
@@ -12887,6 +12942,12 @@
         } catch (e) {}
         goalInput.addEventListener('input', () => {
           const v = Math.max(1, Math.min(199, parseInt(goalInput.value, 10) || 10));
+          try { localStorage.setItem(DAILY_GOAL_KEY, String(v)); } catch (e) {}
+          updateSidebarTodayRing();
+        });
+        goalInput.addEventListener('blur', () => {
+          const v = Math.max(1, Math.min(199, parseInt(goalInput.value, 10) || 10));
+          goalInput.value = String(v);
           try { localStorage.setItem(DAILY_GOAL_KEY, String(v)); } catch (e) {}
           updateSidebarTodayRing();
         });
@@ -12939,10 +13000,13 @@
         if (subjsEl) subjsEl.textContent = todaySubTxt;
       }
 
-      // Наблюдаем за #kpi-today чтобы кольцо обновлялось автоматически при добавлении/синке записей
+      // Наблюдаем за #kpi-today и #kpi-today-sub, чтобы кольцо и предметы обновлялись синхронно
       const kpiTodayNode = document.getElementById('kpi-today');
-      if (kpiTodayNode && typeof MutationObserver !== 'undefined') {
-        new MutationObserver(updateSidebarTodayRing).observe(kpiTodayNode, { childList: true, characterData: true, subtree: true });
+      const kpiTodaySubNode = document.getElementById('kpi-today-sub');
+      if (typeof MutationObserver !== 'undefined') {
+        const ringObs = new MutationObserver(updateSidebarTodayRing);
+        if (kpiTodayNode) ringObs.observe(kpiTodayNode, { childList: true, characterData: true, subtree: true });
+        if (kpiTodaySubNode) ringObs.observe(kpiTodaySubNode, { childList: true, characterData: true, subtree: true });
       }
       setTimeout(updateSidebarTodayRing, 180);
 
