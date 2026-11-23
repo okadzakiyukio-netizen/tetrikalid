@@ -717,22 +717,31 @@
         border-width 200ms ease;
     }
     .script-banner-compact {
-      padding: 0.7rem 7.5rem 0.7rem 1.25rem !important;
+      padding: 0.6rem 7.5rem 0.6rem 1.15rem !important;
+    }
+    .script-banner-compact > div.flex {
+      gap: 0 !important;
     }
     .script-banner-compact .banner-collapsible-part {
+      display: block !important;
       max-height: 0 !important;
+      height: 0 !important;
       opacity: 0 !important;
-      transform: translate3d(0, -6px, 0) !important;
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
+      transform: translate3d(0, -4px, 0) !important;
+      margin: 0 !important;
+      padding: 0 !important;
       border-width: 0 !important;
+      line-height: 0 !important;
       pointer-events: none;
     }
     .script-banner-compact h2 {
-      font-size: 1.05rem !important;
-      line-height: 1.3 !important;
+      font-size: 1rem !important;
+      line-height: 1.35 !important;
+      margin: 0 !important;
+    }
+    .script-banner-compact .banner-compact-toggle-btn {
+      top: 50% !important;
+      transform: translateY(-50%) !important;
     }
     .banner-compact-toggle-btn .banner-chevron {
       display: inline-block;
@@ -12836,8 +12845,11 @@
         document.querySelectorAll('section[data-script-section] > div.bg-gradient-to-r').forEach((banner) => {
           banner.classList.toggle('script-banner-compact', isBannerCompact);
           // Скрываем описание, верхний бейдж, кнопки действий и правую плашку («Бесплатных уроков: 3–5 ВУ» / «Старт цены») в компактном режиме
-          banner.querySelectorAll('p, span.inline-block.rounded-full, .banner-actions-wrap, div.mt-4, div.mt-3, div[class*="bg-white/"]').forEach((el) => {
+          banner.querySelectorAll('p, span.inline-block.rounded-full, .banner-actions-wrap, div.mt-4, div.mt-3, div.mt-2, div[class*="bg-white/"], div[class*="mt-2.5"]').forEach((el) => {
             if (!el.closest('.banner-compact-toggle-btn') && !el.querySelector('h2')) el.classList.add('banner-collapsible-part');
+          });
+          banner.querySelectorAll('.btn-rename-script-banner, [data-edit-custom-script]').forEach((b) => {
+            if (b.parentElement && !b.parentElement.querySelector('h2')) b.parentElement.classList.add('banner-collapsible-part');
           });
           // Добавляем кнопку сворачивания, если её ещё нет
           if (!banner.querySelector('.banner-compact-toggle-btn')) {
