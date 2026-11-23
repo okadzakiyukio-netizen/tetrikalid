@@ -4145,7 +4145,11 @@
         rebuildStageNavigation();
       }
 
-      searchInput.addEventListener('input', applySearchFilter);
+      let scriptSearchDebounceTimer = null;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(scriptSearchDebounceTimer);
+        scriptSearchDebounceTimer = setTimeout(applySearchFilter, 120);
+      });
 
       clearSearchBtn.addEventListener('click', () => {
         searchInput.value = '';
@@ -7898,8 +7902,11 @@
 
       function getNormHours(year, month) {
         const key = getNormMonthKey(year, month);
-        if (normHoursByMonth && normHoursByMonth[key] !== undefined && !isNaN(parseFloat(normHoursByMonth[key]))) {
-          return parseFloat(normHoursByMonth[key]);
+        if (normHoursByMonth && normHoursByMonth[key] !== undefined) {
+          const parsed = parseFloat(normHoursByMonth[key]);
+          if (Number.isFinite(parsed) && parsed > 0 && parsed <= 744) {
+            return parsed;
+          }
         }
         return getDefaultMonthNorm(year, month);
       }
@@ -7907,8 +7914,8 @@
       function saveNormHours(val, year, month) {
         const key = getNormMonthKey(year, month);
         const num = parseFloat(String(val).replace(',', '.').trim());
-        if (!isNaN(num) && num > 0) {
-          normHoursByMonth[key] = num;
+        if (Number.isFinite(num) && num > 0) {
+          normHoursByMonth[key] = Math.min(744, num);
         }
         if (typeof setPersistentValue === 'function') {
           setPersistentValue(STORAGE_NORM_BY_MONTH_KEY, normHoursByMonth);
@@ -13042,17 +13049,24 @@
           }
         }, 40);
       }
-      // Если пользователь обновил страницу прямо на вкладке «План на месяц» — проигрываем 1 раз при загрузке
+      // Следим за первым появлением #section-plan (F5, верхние вкладки, мобильный бар или Ctrl+K) и отключаем наблюдатель после 1 проигрывания
       const planSecInit = document.getElementById('section-plan');
-      if (planSecInit && !planSecInit.classList.contains('hidden')) {
-        setTimeout(playPlanBankAnimOnce, 180);
+      if (planSecInit) {
+        if (!planSecInit.classList.contains('hidden')) {
+          setTimeout(playPlanBankAnimOnce, 180);
+        } else if (typeof MutationObserver !== 'undefined') {
+          const planVisObs = new MutationObserver(() => {
+            if (!planSecInit.classList.contains('hidden')) {
+              planVisObs.disconnect();
+              playPlanBankAnimOnce();
+            }
+          });
+          planVisObs.observe(planSecInit, { attributes: true, attributeFilter: ['class'] });
+        }
       }
       document.getElementById('main-tabs-nav')?.addEventListener('click', (e) => {
         const btn = e.target.closest('.script-tab');
         if (!btn) return;
-        if (btn.getAttribute('data-tab') === 'plan') {
-          playPlanBankAnimOnce();
-        }
         setTimeout(applyCompactToAllBanners, 60);
       });
 
