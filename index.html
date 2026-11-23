@@ -1630,44 +1630,7 @@
           </div>
         </div>
       </div>
-
-      <!-- Минималистичный калькулятор часовых поясов (±МСК) -->
-      <div id="sidebar-tz-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm text-xs space-y-3">
-        <div class="flex items-center justify-between gap-2">
-          <div class="font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Часовые пояса</div>
-          <button type="button" id="sb-tz-now-btn" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline transition">Сейчас</button>
-        </div>
-
-        <select id="sb-tz-select" aria-label="Часовой пояс клиента" class="w-full px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
-          <option value="-1">−1 ч • Калининград</option>
-          <option value="0">0 ч • Москва / СПб</option>
-          <option value="1">+1 ч • Самара</option>
-          <option value="2" selected>+2 ч • Екатеринбург / Урал</option>
-          <option value="3">+3 ч • Омск</option>
-          <option value="4">+4 ч • Новосибирск / Томск</option>
-          <option value="5">+5 ч • Иркутск</option>
-          <option value="6">+6 ч • Якутск</option>
-          <option value="7">+7 ч • Владивосток</option>
-          <option value="8">+8 ч • Магадан</option>
-          <option value="9">+9 ч • Камчатка</option>
-        </select>
-
-        <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70">
-          <div class="flex-1 text-center">
-            <div class="text-[10px] font-bold uppercase text-slate-400">МСК</div>
-            <input id="sb-tz-msk-input" type="text" inputmode="numeric" value="16:00" maxlength="5" data-custom-timepicker="1" title="Нажмите для выбора времени" class="w-full mt-0.5 bg-transparent text-center text-lg font-black text-slate-900 dark:text-white tabular-nums focus:outline-none cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition" />
-          </div>
-          <div class="flex flex-col items-center shrink-0 px-1">
-            <span id="sb-tz-diff-badge" class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 tabular-nums">+2ч</span>
-            <span class="text-slate-300 dark:text-slate-600 text-xs leading-none">⇄</span>
-          </div>
-          <div class="flex-1 text-center">
-            <div class="text-[10px] font-bold uppercase text-indigo-600 dark:text-indigo-400">Клиент</div>
-            <input id="sb-tz-cli-input" type="text" inputmode="numeric" value="18:00" maxlength="5" data-custom-timepicker="1" title="Нажмите для выбора времени" class="w-full mt-0.5 bg-transparent text-center text-lg font-black text-indigo-600 dark:text-indigo-400 tabular-nums focus:outline-none cursor-pointer hover:opacity-80 transition" />
-          </div>
-        </div>
-      </div>
-    </aside>
+</aside>
 
     <!-- Main Script Content Area -->
     <main id="main-content-col" class="lg:col-span-12 space-y-4">
@@ -13126,64 +13089,6 @@
         }, true);
       }
 
-      // === 2. МИНИМАЛИСТИЧНЫЙ КАЛЬКУЛЯТОР ПОЯСОВ В САЙДБАРЕ ===
-      const SB_TZ_KEY = 'tetrika_onb_sidebar_tz_v1';
-      const mskIn = document.getElementById('sb-tz-msk-input');
-      const cliIn = document.getElementById('sb-tz-cli-input');
-      const tzSel = document.getElementById('sb-tz-select');
-      const diffBadge = document.getElementById('sb-tz-diff-badge');
-      if (mskIn && cliIn && tzSel) {
-        let offset = 2;
-        try {
-          const sv = parseInt(localStorage.getItem(SB_TZ_KEY) || '2', 10);
-          if (Number.isFinite(sv) && sv >= -1 && sv <= 9) offset = sv;
-        } catch (e) {}
-        tzSel.value = String(offset);
-
-        const toMins = (str) => {
-          const m = String(str || '').match(/^(\d{1,2}):(\d{2})$/);
-          if (!m) return null;
-          return ((Number(m[1]) % 24) * 60 + (Number(m[2]) % 60));
-        };
-        const fromMins = (mins) => {
-          const norm = ((mins % 1440) + 1440) % 1440;
-          return String(Math.floor(norm / 60)).padStart(2, '0') + ':' + String(norm % 60).padStart(2, '0');
-        };
-
-        const updateBadge = () => {
-          if (diffBadge) diffBadge.textContent = (offset > 0 ? '+' + offset : String(offset)) + 'ч';
-        };
-        const syncFromMsk = () => {
-          const m = toMins(mskIn.value);
-          if (m !== null) cliIn.value = fromMins(m + offset * 60);
-        };
-        const syncFromCli = () => {
-          const m = toMins(cliIn.value);
-          if (m !== null) mskIn.value = fromMins(m - offset * 60);
-        };
-        const setNowMsk = () => {
-          try {
-            const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Moscow', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
-            const hh = parts.find(p => p.type === 'hour')?.value || '12';
-            const mm = parts.find(p => p.type === 'minute')?.value || '00';
-            mskIn.value = hh + ':' + mm;
-            syncFromMsk();
-          } catch (e) {}
-        };
-
-        mskIn.addEventListener('input', syncFromMsk);
-        cliIn.addEventListener('input', syncFromCli);
-        tzSel.addEventListener('change', () => {
-          offset = parseInt(tzSel.value, 10) || 0;
-          try { localStorage.setItem(SB_TZ_KEY, String(offset)); } catch (e) {}
-          updateBadge();
-          syncFromMsk();
-        });
-        document.getElementById('sb-tz-now-btn')?.addEventListener('click', setNowMsk);
-
-        updateBadge();
-        setNowMsk();
-      }
     })();
   </script>
 </body>
