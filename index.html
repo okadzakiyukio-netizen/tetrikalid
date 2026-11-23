@@ -618,12 +618,108 @@
 
 
   </style>
+
+  <style id="bento-redesign-styles">
+    /* === 1. GLASS & BENTO REDESIGN + 4 АКЦЕНТНЫЕ ТЕМЫ === */
+    :root {
+      --accent-main: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-light: #6366f1;
+      --accent-soft: rgba(99, 102, 241, 0.12);
+      --accent-glow: rgba(79, 70, 229, 0.28);
+    }
+    html[data-accent="emerald"] {
+      --accent-main: #059669;
+      --accent-hover: #047857;
+      --accent-light: #10b981;
+      --accent-soft: rgba(16, 185, 129, 0.13);
+      --accent-glow: rgba(5, 150, 105, 0.28);
+    }
+    html[data-accent="graphite"] {
+      --accent-main: #334155;
+      --accent-hover: #1e293b;
+      --accent-light: #64748b;
+      --accent-soft: rgba(100, 116, 139, 0.14);
+      --accent-glow: rgba(51, 65, 85, 0.28);
+    }
+    html[data-accent="cyber"] {
+      --accent-main: #9333ea;
+      --accent-hover: #7e22ce;
+      --accent-light: #a855f7;
+      --accent-soft: rgba(168, 85, 247, 0.14);
+      --accent-glow: rgba(147, 51, 234, 0.30);
+    }
+
+    /* Тонкий точечный фон (Bento Canvas) */
+    body {
+      background-image: radial-gradient(rgba(148, 163, 184, 0.24) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+    .dark body {
+      background-image: radial-gradient(rgba(71, 85, 105, 0.26) 1px, transparent 1px);
+    }
+
+    /* Glass-шапка и чёткие Bento-карточки */
+    header {
+      background-color: rgba(255, 255, 255, 0.86) !important;
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+    }
+    .dark header {
+      background-color: rgba(15, 23, 42, 0.84) !important;
+    }
+    article.searchable-block,
+    #section-tracker .rounded-2xl.bg-white,
+    #section-plan .rounded-2xl.bg-white,
+    #section-schedule .rounded-2xl.bg-white {
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.08);
+    }
+    .dark article.searchable-block,
+    .dark #section-tracker .rounded-2xl.dark\:bg-slate-900,
+    .dark #section-plan .rounded-2xl.dark\:bg-slate-900,
+    .dark #section-schedule .rounded-2xl.dark\:bg-slate-900 {
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 28px -14px rgba(0, 0, 0, 0.55);
+    }
+
+    /* Привязка выбранного акцента к ключевым элементам */
+    .speech-bubble {
+      border-left-color: var(--accent-light) !important;
+    }
+    .dark #tabs-sliding-pill {
+      background: var(--accent-main) !important;
+      box-shadow: 0 2px 10px var(--accent-glow) !important;
+    }
+    #tabs-sliding-pill {
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.10), 0 0 0 1.5px var(--accent-soft) !important;
+    }
+    #cloud-sync-progress-bar.active::after {
+      background: linear-gradient(90deg, transparent, var(--accent-light), #38bdf8, transparent) !important;
+    }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+      outline-color: var(--accent-light) !important;
+    }
+    .cmd-item-active {
+      background-color: var(--accent-soft) !important;
+      color: var(--accent-main) !important;
+    }
+    .dark .cmd-item-active {
+      color: #e2e8f0 !important;
+    }
+    @keyframes cmdHighlightFlash {
+      0% { box-shadow: 0 0 0 3px var(--accent-light); }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+    .cmd-jump-flash {
+      animation: cmdHighlightFlash 1.2s ease-out;
+    }
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200">
   <div id="cloud-sync-progress-bar" aria-hidden="true" class="fixed top-0 inset-x-0 h-[2.5px] z-[9999] pointer-events-none overflow-hidden opacity-0 transition-opacity duration-200"></div>
   <!-- Экран входа / Демо-доступа по паролю -->
-  <div id="demo-lock-overlay" class="hidden fixed inset-0 z-[9990] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl p-6 space-y-4">
+  <div id="demo-lock-overlay" class="hidden fixed inset-0 z-[9990] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 overflow-hidden">
+    <canvas id="lock-webgl-canvas" aria-hidden="true" class="absolute inset-0 w-full h-full pointer-events-none opacity-80"></canvas>
+    <div class="relative z-10 w-full max-w-sm rounded-2xl bg-white/95 dark:bg-slate-900/92 backdrop-blur-xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-6 space-y-4">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-base flex items-center justify-center shrink-0 shadow-sm">ТЛ</div>
         <div>
@@ -1333,10 +1429,23 @@
                 <span class="w-4 text-center">🔒</span>
                 <span>Пароль и доступ</span>
               </button>
+              <button id="btn-open-cmd-from-menu" type="button" class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-left font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <span class="flex items-center gap-2.5"><span class="w-4 text-center">⚡</span><span>Командная палитра</span></span>
+                <kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-500">Ctrl+K</kbd>
+              </button>
               <button id="btn-open-welcome-modal" type="button" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                 <span class="w-4 text-center font-black text-indigo-600 dark:text-indigo-400">?</span>
                 <span>Быстрый гид по сайту</span>
               </button>
+              <div class="pt-1.5 mt-1 border-t border-slate-100 dark:border-slate-800 px-2 pb-1">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Цвет акцента</div>
+                <div class="grid grid-cols-4 gap-1.5" id="accent-preset-row">
+                  <button type="button" data-accent-pick="indigo" title="Индиго" class="h-6 rounded-lg bg-indigo-600 ring-offset-2 dark:ring-offset-slate-900 transition hover:scale-105"></button>
+                  <button type="button" data-accent-pick="emerald" title="Изумруд" class="h-6 rounded-lg bg-emerald-600 ring-offset-2 dark:ring-offset-slate-900 transition hover:scale-105"></button>
+                  <button type="button" data-accent-pick="graphite" title="Графит" class="h-6 rounded-lg bg-slate-700 ring-offset-2 dark:ring-offset-slate-900 transition hover:scale-105"></button>
+                  <button type="button" data-accent-pick="cyber" title="Кибер-фиолет" class="h-6 rounded-lg bg-purple-600 ring-offset-2 dark:ring-offset-slate-900 transition hover:scale-105"></button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1354,6 +1463,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/>
           </svg>
           <input id="global-search" type="text" placeholder="Быстрый поиск по всем скриптам, фразам, возражениям и регламентам..." class="w-full pl-10 pr-9 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70 text-slate-900 dark:text-white shadow-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-400" />
+          <button id="btn-open-cmd-pill" type="button" class="hidden sm:inline-flex items-center gap-1 absolute right-9 top-1/2 -translate-y-1/2 px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-300 shadow-sm transition" title="Быстрая командная палитра (Ctrl+K)">
+            <span>⚡</span><kbd>Ctrl+K</kbd>
+          </button>
           <button id="clear-search" type="button" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-bold text-sm" title="Очистить поиск">
             ✕
           </button>
@@ -8074,6 +8186,7 @@
           'tetrika_call_notes_size_v1',
           'tetrika_onb_schedule_view_v1',
           'tetrika_onb_theme_v1',
+          'tetrika_onb_accent_v1',
           'tetrika_theme',
           'tetrika_onb_lock_unlocked_session_v1',
           'tetrika_onb_cloud_last_uid_v1'
@@ -8735,7 +8848,8 @@
           'substage-modal',
           'new-script-modal',
           'lock-settings-modal',
-          'salary-chart-quick-editor'
+          'salary-chart-quick-editor',
+          'cmd-palette-modal'
         ];
         const modals = modalIds.map((id) => document.getElementById(id)).filter(Boolean);
 
@@ -12091,6 +12205,396 @@
         }
         setTimeout(schedulePill, 80);
         setTimeout(schedulePill, 350);
+      }
+    })();
+  </script>
+
+  <!-- GPU Confetti Canvas (100% плана) -->
+  <canvas id="gpu-confetti-canvas" aria-hidden="true" class="hidden fixed inset-0 w-full h-full z-[9997] pointer-events-none"></canvas>
+
+  <!-- Командная палитра (Ctrl + K) -->
+  <div id="cmd-palette-modal" role="dialog" aria-modal="true" aria-label="Командная палитра" class="hidden fixed inset-0 z-[9985] bg-slate-950/60 backdrop-blur-sm flex items-start justify-center pt-[10vh] p-4">
+    <div class="w-full max-w-xl rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+      <div class="flex items-center gap-2.5 px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+        <span class="text-base">⚡</span>
+        <input id="cmd-palette-input" type="text" autocomplete="off" placeholder="Поиск: возражение, этап, номер клиента, вкладка или действие..." class="flex-1 bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none" />
+        <kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-400">ESC</kbd>
+      </div>
+      <div id="cmd-palette-results" class="max-h-[56vh] overflow-y-auto p-2 space-y-1 text-xs"></div>
+      <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] text-slate-400 font-medium">
+        <span>↑↓ выбор • Enter перейти</span>
+        <span>Ctrl + K открыть / закрыть</span>
+      </div>
+    </div>
+  </div>
+
+  <script id="pro-redesign-gpu-script">
+    (function initProFeatures() {
+      // === 1. ВЫБОР ЦВЕТА АКЦЕНТА (4 пресета) ===
+      const ACCENT_KEY = 'tetrika_onb_accent_v1';
+      function applyAccent(name) {
+        const val = ['indigo', 'emerald', 'graphite', 'cyber'].includes(name) ? name : 'indigo';
+        document.documentElement.setAttribute('data-accent', val);
+        try { localStorage.setItem(ACCENT_KEY, val); } catch (e) {}
+        document.querySelectorAll('[data-accent-pick]').forEach((b) => {
+          const active = b.getAttribute('data-accent-pick') === val;
+          b.classList.toggle('ring-2', active);
+          b.classList.toggle('ring-slate-900', active);
+          b.classList.toggle('dark:ring-white', active);
+        });
+      }
+      try { applyAccent(localStorage.getItem(ACCENT_KEY) || 'indigo'); } catch (e) { applyAccent('indigo'); }
+      document.querySelectorAll('[data-accent-pick]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          applyAccent(btn.getAttribute('data-accent-pick'));
+          if (typeof showToast === 'function') showToast('Цвет акцента обновлён');
+        });
+      });
+
+      // === 2. WEBGL / GPU АТМОСФЕРНЫЙ ШЕЙДЕР НА ЭКРАНЕ ВХОДА (работает только пока экран замка открыт) ===
+      (function initLockWebGL() {
+        const overlay = document.getElementById('demo-lock-overlay');
+        const canvas = document.getElementById('lock-webgl-canvas');
+        if (!overlay || !canvas) return;
+        let rafId = null;
+        let gl = null;
+        let program = null;
+        let uTime = null;
+        let uRes = null;
+        let startTs = performance.now();
+
+        function initGL() {
+          if (gl) return true;
+          gl = canvas.getContext('webgl', { alpha: true, antialias: false, powerPreference: 'low-power' });
+          if (!gl) return false;
+          const vsSrc = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
+          const fsSrc = `
+            precision mediump float;
+            uniform float u_time;
+            uniform vec2 u_res;
+            void main() {
+              vec2 uv = gl_FragCoord.xy / u_res.xy;
+              float t = u_time * 0.25;
+              float w1 = sin(uv.x * 3.2 + t) * cos(uv.y * 2.6 - t * 0.8);
+              float w2 = cos(uv.x * 2.1 - t * 0.6 + uv.y * 3.0);
+              vec3 c1 = vec3(0.06, 0.09, 0.20);
+              vec3 c2 = vec3(0.31, 0.27, 0.90);
+              vec3 c3 = vec3(0.06, 0.56, 0.72);
+              vec3 col = mix(c1, c2, smoothstep(-0.6, 0.9, w1) * 0.55);
+              col = mix(col, c3, smoothstep(-0.3, 1.0, w2) * 0.35);
+              gl_FragColor = vec4(col, 0.92);
+            }
+          `;
+          const compile = (type, src) => {
+            const s = gl.createShader(type);
+            gl.shaderSource(s, src);
+            gl.compileShader(s);
+            return s;
+          };
+          program = gl.createProgram();
+          gl.attachShader(program, compile(gl.VERTEX_SHADER, vsSrc));
+          gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fsSrc));
+          gl.linkProgram(program);
+          gl.useProgram(program);
+          const buf = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+          const loc = gl.getAttribLocation(program, 'p');
+          gl.enableVertexAttribArray(loc);
+          gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+          uTime = gl.getUniformLocation(program, 'u_time');
+          uRes = gl.getUniformLocation(program, 'u_res');
+          return true;
+        }
+
+        function renderLoop() {
+          if (overlay.classList.contains('hidden')) {
+            rafId = null;
+            return;
+          }
+          const dpr = Math.min(1.5, window.devicePixelRatio || 1);
+          const w = Math.max(1, Math.floor(window.innerWidth * dpr * 0.5));
+          const h = Math.max(1, Math.floor(window.innerHeight * dpr * 0.5));
+          if (canvas.width !== w || canvas.height !== h) {
+            canvas.width = w;
+            canvas.height = h;
+            gl.viewport(0, 0, w, h);
+          }
+          gl.uniform1f(uTime, (performance.now() - startTs) / 1000);
+          gl.uniform2f(uRes, w, h);
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+          rafId = requestAnimationFrame(renderLoop);
+        }
+
+        const checkLockVis = () => {
+          const visible = !overlay.classList.contains('hidden') && !document.hidden;
+          if (visible && !rafId && initGL()) {
+            startTs = performance.now();
+            rafId = requestAnimationFrame(renderLoop);
+          } else if (!visible && rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+        };
+        document.addEventListener('visibilitychange', checkLockVis);
+
+        if (typeof MutationObserver !== 'undefined') {
+          new MutationObserver(checkLockVis).observe(overlay, { attributes: true, attributeFilter: ['class'] });
+        }
+        checkLockVis();
+      })();
+
+      // === 3. GPU CANVAS КОНФЕТТИ ПРИ 100% ПЛАНА ===
+      let confettiFiredForPlan = false;
+      let confettiRafId = null;
+      window.fireGpuConfetti = function () {
+        const canvas = document.getElementById('gpu-confetti-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        if (confettiRafId) { cancelAnimationFrame(confettiRafId); confettiRafId = null; }
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        canvas.classList.remove('hidden');
+
+        const colors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#38bdf8', '#a855f7'];
+        const particles = Array.from({ length: 75 }, () => ({
+          x: window.innerWidth * (0.25 + Math.random() * 0.5),
+          y: window.innerHeight * 0.28,
+          vx: (Math.random() - 0.5) * 14,
+          vy: -6 - Math.random() * 10,
+          size: 5 + Math.random() * 5,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 14,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          life: 1
+        }));
+
+        const tick = () => {
+          ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+          let alive = 0;
+          for (const p of particles) {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.38;
+            p.vx *= 0.99;
+            p.rot += p.vrot;
+            p.life -= 0.015;
+            if (p.life > 0) {
+              alive++;
+              ctx.save();
+              ctx.globalAlpha = Math.max(0, p.life);
+              ctx.translate(p.x, p.y);
+              ctx.rotate((p.rot * Math.PI) / 180);
+              ctx.fillStyle = p.color;
+              ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+              ctx.restore();
+            }
+          }
+          if (alive > 0) confettiRafId = requestAnimationFrame(tick);
+          else { confettiRafId = null; canvas.classList.add('hidden'); }
+        };
+        confettiRafId = requestAnimationFrame(tick);
+      };
+
+      const planPctEl = document.getElementById('plan-people-percent');
+      if (planPctEl && typeof MutationObserver !== 'undefined') {
+        new MutationObserver(() => {
+          const num = parseInt(planPctEl.textContent || '0', 10);
+          const planSec = document.getElementById('section-plan');
+          if (num >= 100 && !confettiFiredForPlan && planSec && !planSec.classList.contains('hidden')) {
+            confettiFiredForPlan = true;
+            window.fireGpuConfetti();
+          } else if (num < 100) {
+            confettiFiredForPlan = false;
+          }
+        }).observe(planPctEl, { childList: true, characterData: true, subtree: true });
+      }
+
+      // === 4. КОМАНДНАЯ ПАЛИТРА (Ctrl + K) ===
+      const cmdModal = document.getElementById('cmd-palette-modal');
+      const cmdInput = document.getElementById('cmd-palette-input');
+      const cmdResults = document.getElementById('cmd-palette-results');
+      if (cmdModal && cmdInput && cmdResults) {
+        let cmdItems = [];
+        let cachedCmdIndex = [];
+        let activeIdx = 0;
+
+        const isScreenLocked = () => {
+          const lockEl = document.getElementById('demo-lock-overlay');
+          return Boolean(lockEl && !lockEl.classList.contains('hidden'));
+        };
+
+        const openCmd = () => {
+          if (isScreenLocked()) return;
+          cachedCmdIndex = buildIndex();
+          cmdModal.classList.remove('hidden');
+          cmdInput.value = '';
+          activeIdx = 0;
+          renderCmdResults('');
+          setTimeout(() => cmdInput.focus(), 20);
+        };
+        const closeCmd = () => {
+          cmdModal.classList.add('hidden');
+        };
+
+        const buildIndex = () => {
+          const list = [
+            { cat: 'Вкладка', icon: '🏫', title: '1. Скрипт ОНБ ШП', sub: 'Основной скрипт', run: () => document.querySelector('#main-tabs-nav .script-tab[data-tab="shp"]')?.click() },
+            { cat: 'Вкладка', icon: '💻', title: '2. Тетрика — IT', sub: 'IT-направление', run: () => document.querySelector('#main-tabs-nav .script-tab[data-tab="it"]')?.click() },
+            { cat: 'Вкладка', icon: '🎓', title: '3. Лектариум (ОГЭ/ЕГЭ)', sub: 'ОГЭ и ЕГЭ', run: () => document.querySelector('#main-tabs-nav .script-tab[data-tab="lectarium"]')?.click() },
+            { cat: 'Вкладка', icon: '📋', title: 'Фиксация записей & Перезвоны', sub: 'Трекер лидов и звонков', run: () => document.querySelector('#main-tabs-nav .script-tab[data-tab="tracker"]')?.click() },
+            { cat: 'Вкладка', icon: '🎯', title: 'План на месяц и KPI', sub: 'Выполнение, МВУ, РЕФ', run: () => document.querySelector('#main-tabs-nav .script-tab[data-tab="plan"]')?.click() },
+            { cat: 'Вкладка', icon: '📅', title: 'График смен и Зарплата', sub: 'Календарь и доход', run: () => document.querySelector('#main-tabs-nav .script-tab[data-tab="schedule"]')?.click() },
+            { cat: 'Действие', icon: '🌓', title: 'Сменить тему (Светлая / Тёмная)', sub: 'Оформление', run: () => document.getElementById('btn-theme-desktop')?.click() },
+            { cat: 'Действие', icon: '☁️', title: 'Облачная синхронизация', sub: 'Открыть Supabase', run: () => document.getElementById('btn-open-cloud-modal')?.click() },
+            { cat: 'Действие', icon: '🔔', title: 'Напоминания', sub: 'Открыть список', run: () => document.getElementById('btn-open-reminders-modal')?.click() },
+            { cat: 'Действие', icon: '🔒', title: 'Пароль и блокировка экрана', sub: 'Настройки доступа', run: () => document.getElementById('btn-open-lock-modal')?.click() },
+            { cat: 'Действие', icon: '🎉', title: 'Запустить салют конфетти (GPU тест)', sub: 'Проверка Canvas', run: () => window.fireGpuConfetti && window.fireGpuConfetti() }
+          ];
+
+          // Индексация возражений и этапов скриптов
+          document.querySelectorAll('section[data-script-section]').forEach((sec) => {
+            const tabKey = sec.getAttribute('data-script-section');
+            if (!tabKey || ['tracker', 'plan', 'schedule'].includes(tabKey)) return;
+            sec.querySelectorAll('article.searchable-block').forEach((art) => {
+              const title = (art.querySelector('h3')?.textContent || art.getAttribute('data-stage-title') || '').trim();
+              if (title) {
+                list.push({
+                  cat: 'Этап',
+                  icon: '📌',
+                  title: title,
+                  sub: tabKey.toUpperCase(),
+                  run: () => {
+                    document.querySelector('#main-tabs-nav .script-tab[data-tab="' + tabKey + '"]')?.click();
+                    setTimeout(() => {
+                      art.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      art.classList.add('cmd-jump-flash');
+                      setTimeout(() => art.classList.remove('cmd-jump-flash'), 1200);
+                    }, 60);
+                  }
+                });
+              }
+            });
+            sec.querySelectorAll('.objection-card').forEach((card) => {
+              const title = (card.querySelector('.font-bold, strong')?.textContent || '').trim();
+              const body = (card.querySelector('p')?.textContent || '').trim().slice(0, 75);
+              if (title) {
+                list.push({
+                  cat: 'Возражение',
+                  icon: '🛡️',
+                  title: title,
+                  sub: body || tabKey.toUpperCase(),
+                  run: () => {
+                    document.querySelector('#main-tabs-nav .script-tab[data-tab="' + tabKey + '"]')?.click();
+                    const det = card.closest('details');
+                    if (det) det.open = true;
+                    setTimeout(() => {
+                      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      card.classList.add('cmd-jump-flash');
+                      setTimeout(() => card.classList.remove('cmd-jump-flash'), 1200);
+                    }, 60);
+                  }
+                });
+              }
+            });
+          });
+
+          // Индексация сохранённых записей клиентов (до 60 последних для мгновенного поиска)
+          if (typeof records !== 'undefined' && Array.isArray(records)) {
+            records.slice(0, 60).forEach((r) => {
+              const label = (r.phone && r.phone !== '—' ? r.phone : 'Без номера') + (r.comment && r.comment !== '—' ? ' • ' + r.comment.slice(0, 45) : '');
+              list.push({
+                cat: 'Клиент',
+                icon: '👤',
+                title: label,
+                sub: (r.date || '') + ' • ' + (r.qty || 1) + ' предм.',
+                run: () => {
+                  document.querySelector('#main-tabs-nav .script-tab[data-tab="tracker"]')?.click();
+                  const sEl = document.getElementById('tracker-search');
+                  if (sEl) {
+                    sEl.value = (r.phone && r.phone !== '—') ? r.phone : (r.comment || '');
+                    sEl.dispatchEvent(new Event('input'));
+                  }
+                }
+              });
+            });
+          }
+          return list;
+        };
+
+        const renderCmdResults = (query) => {
+          const q = (query || '').trim().toLowerCase();
+          const all = cachedCmdIndex.length ? cachedCmdIndex : buildIndex();
+          cmdItems = q
+            ? all.filter((it) => (it.title + ' ' + it.sub + ' ' + it.cat).toLowerCase().includes(q)).slice(0, 20)
+            : all.slice(0, 12);
+          activeIdx = 0;
+          cmdResults.innerHTML = '';
+          if (cmdItems.length === 0) {
+            cmdResults.innerHTML = '<div class="py-8 text-center text-slate-400">Ничего не найдено</div>';
+            return;
+          }
+          const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          cmdItems.forEach((it, idx) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'w-full flex items-center justify-between gap-3 px-3 py-2 rounded-xl text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition ' + (idx === activeIdx ? 'cmd-item-active' : 'text-slate-700 dark:text-slate-200');
+            btn.innerHTML =
+              '<div class="flex items-center gap-2.5 min-w-0">' +
+                '<span class="text-sm shrink-0">' + it.icon + '</span>' +
+                '<div class="min-w-0">' +
+                  '<div class="font-bold truncate">' + esc(it.title) + '</div>' +
+                  '<div class="text-[11px] text-slate-400 truncate">' + esc(it.sub) + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<span class="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-500 shrink-0">' + esc(it.cat) + '</span>';
+            btn.addEventListener('click', () => {
+              closeCmd();
+              it.run();
+            });
+            cmdResults.appendChild(btn);
+          });
+        };
+
+        const updateActiveRow = () => {
+          Array.from(cmdResults.children).forEach((el, idx) => {
+            el.classList.toggle('cmd-item-active', idx === activeIdx);
+            if (idx === activeIdx) el.scrollIntoView({ block: 'nearest' });
+          });
+        };
+
+        cmdInput.addEventListener('input', () => renderCmdResults(cmdInput.value));
+        cmdInput.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (cmdItems.length) { activeIdx = (activeIdx + 1) % cmdItems.length; updateActiveRow(); }
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (cmdItems.length) { activeIdx = (activeIdx - 1 + cmdItems.length) % cmdItems.length; updateActiveRow(); }
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (cmdItems[activeIdx]) { closeCmd(); cmdItems[activeIdx].run(); }
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            closeCmd();
+          }
+        });
+
+        cmdModal.addEventListener('click', (e) => { if (e.target === cmdModal) closeCmd(); });
+        document.getElementById('btn-open-cmd-pill')?.addEventListener('click', openCmd);
+        document.getElementById('btn-open-cmd-from-menu')?.addEventListener('click', openCmd);
+
+        document.addEventListener('keydown', (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.code === 'KeyK') {
+            e.preventDefault();
+            if (cmdModal.classList.contains('hidden')) openCmd();
+            else closeCmd();
+          }
+        });
       }
     })();
   </script>
