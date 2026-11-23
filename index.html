@@ -620,77 +620,147 @@
   </style>
 
   <style id="bento-redesign-styles">
-    /* === 1. GLASS & BENTO REDESIGN + 4 АКЦЕНТНЫЕ ТЕМЫ === */
+    /* === 1. Убираем стрёмные белые стрелки у всех input[type="number"] === */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    /* === 2. ПОЛНОЦЕННЫЕ 4 ЦВЕТА АКЦЕНТА (реально перекрашивают весь интерфейс) === */
     :root {
       --accent-main: #4f46e5;
       --accent-hover: #4338ca;
       --accent-light: #6366f1;
+      --accent-text: #4f46e5;
+      --accent-dark-text: #818cf8;
       --accent-soft: rgba(99, 102, 241, 0.12);
-      --accent-glow: rgba(79, 70, 229, 0.28);
+      --accent-border: rgba(99, 102, 241, 0.28);
+      --accent-glow: rgba(79, 70, 229, 0.30);
+      --accent-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
     }
     html[data-accent="emerald"] {
       --accent-main: #059669;
       --accent-hover: #047857;
       --accent-light: #10b981;
-      --accent-soft: rgba(16, 185, 129, 0.13);
-      --accent-glow: rgba(5, 150, 105, 0.28);
+      --accent-text: #047857;
+      --accent-dark-text: #34d399;
+      --accent-soft: rgba(16, 185, 129, 0.14);
+      --accent-border: rgba(16, 185, 129, 0.32);
+      --accent-glow: rgba(5, 150, 105, 0.32);
+      --accent-grad: linear-gradient(135deg, #059669 0%, #0d9488 100%);
     }
     html[data-accent="graphite"] {
       --accent-main: #334155;
       --accent-hover: #1e293b;
       --accent-light: #64748b;
-      --accent-soft: rgba(100, 116, 139, 0.14);
-      --accent-glow: rgba(51, 65, 85, 0.28);
+      --accent-text: #334155;
+      --accent-dark-text: #cbd5e1;
+      --accent-soft: rgba(100, 116, 139, 0.16);
+      --accent-border: rgba(100, 116, 139, 0.34);
+      --accent-glow: rgba(71, 85, 105, 0.35);
+      --accent-grad: linear-gradient(135deg, #1e293b 0%, #475569 100%);
     }
     html[data-accent="cyber"] {
       --accent-main: #9333ea;
       --accent-hover: #7e22ce;
-      --accent-light: #a855f7;
-      --accent-soft: rgba(168, 85, 247, 0.14);
-      --accent-glow: rgba(147, 51, 234, 0.30);
+      --accent-light: #c026d3;
+      --accent-text: #9333ea;
+      --accent-dark-text: #e879f9;
+      --accent-soft: rgba(168, 85, 247, 0.15);
+      --accent-border: rgba(192, 38, 211, 0.34);
+      --accent-glow: rgba(147, 51, 234, 0.36);
+      --accent-grad: linear-gradient(135deg, #7e22ce 0%, #db2777 100%);
     }
 
-    /* Тонкий точечный фон (Bento Canvas) */
+    /* Когда выбран любой акцент кроме стандартного indigo — перекрашиваем кнопки, бейджи, баннеры, прогресс-бары и логотип */
+    html[data-accent]:not([data-accent="indigo"]) .bg-indigo-600:not([data-accent-pick]) {
+      background-color: var(--accent-main) !important;
+    }
+    html[data-accent]:not([data-accent="indigo"]) .hover\:bg-indigo-700:hover {
+      background-color: var(--accent-hover) !important;
+    }
+    html[data-accent]:not([data-accent="indigo"]) .text-indigo-600,
+    html[data-accent]:not([data-accent="indigo"]) .text-indigo-700 {
+      color: var(--accent-text) !important;
+    }
+    html.dark[data-accent]:not([data-accent="indigo"]) .dark\:text-indigo-400,
+    html.dark[data-accent]:not([data-accent="indigo"]) .dark\:text-indigo-300 {
+      color: var(--accent-dark-text) !important;
+    }
+    html[data-accent]:not([data-accent="indigo"]) .bg-indigo-50,
+    html[data-accent]:not([data-accent="indigo"]) .bg-indigo-50\/60,
+    html[data-accent]:not([data-accent="indigo"]) .bg-indigo-50\/80 {
+      background-color: var(--accent-soft) !important;
+    }
+    html[data-accent]:not([data-accent="indigo"]) .border-indigo-200,
+    html[data-accent]:not([data-accent="indigo"]) .border-indigo-100 {
+      border-color: var(--accent-border) !important;
+    }
+    html[data-accent]:not([data-accent="indigo"]) .from-indigo-600,
+    html[data-accent]:not([data-accent="indigo"]) .from-indigo-500 {
+      background-image: var(--accent-grad) !important;
+    }
+    html[data-accent]:not([data-accent="indigo"]) #plan-overall-bar {
+      background: var(--accent-grad) !important;
+    }
+
+    /* === 3. ЗАМЕТНЫЙ BENTO & GLASS РЕДИЗАЙН === */
     body {
-      background-image: radial-gradient(rgba(148, 163, 184, 0.24) 1px, transparent 1px);
-      background-size: 22px 22px;
+      background-image: radial-gradient(rgba(148, 163, 184, 0.28) 1px, transparent 1px);
+      background-size: 20px 20px;
     }
     .dark body {
-      background-image: radial-gradient(rgba(71, 85, 105, 0.26) 1px, transparent 1px);
+      background-color: #070b14 !important;
+      background-image:
+        radial-gradient(ellipse 80% 45% at 50% -10%, var(--accent-soft), transparent 70%),
+        radial-gradient(rgba(71, 85, 105, 0.24) 1px, transparent 1px);
+      background-size: 100% 100%, 20px 20px;
+      background-attachment: fixed;
     }
 
-    /* Glass-шапка и чёткие Bento-карточки */
     header {
-      background-color: rgba(255, 255, 255, 0.86) !important;
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      background-color: rgba(255, 255, 255, 0.84) !important;
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      border-bottom-color: rgba(148, 163, 184, 0.22) !important;
     }
     .dark header {
-      background-color: rgba(15, 23, 42, 0.84) !important;
+      background-color: rgba(11, 17, 32, 0.82) !important;
+      border-bottom-color: rgba(51, 65, 85, 0.55) !important;
     }
+
+    /* Bento-карточки с мягкой гранью и глубиной */
     article.searchable-block,
     #section-tracker .rounded-2xl.bg-white,
     #section-plan .rounded-2xl.bg-white,
     #section-schedule .rounded-2xl.bg-white {
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.08);
+      border-radius: 1.25rem !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 28px -14px rgba(15, 23, 42, 0.10);
     }
     .dark article.searchable-block,
     .dark #section-tracker .rounded-2xl.dark\:bg-slate-900,
     .dark #section-plan .rounded-2xl.dark\:bg-slate-900,
     .dark #section-schedule .rounded-2xl.dark\:bg-slate-900 {
-      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 28px -14px rgba(0, 0, 0, 0.55);
+      background-color: rgba(15, 23, 42, 0.82) !important;
+      border-color: rgba(51, 65, 85, 0.65) !important;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 14px 32px -16px rgba(0, 0, 0, 0.65);
     }
 
-    /* Привязка выбранного акцента к ключевым элементам */
+    /* Акцент на репликах, скользящей плашке и прогрессе */
     .speech-bubble {
       border-left-color: var(--accent-light) !important;
     }
     .dark #tabs-sliding-pill {
       background: var(--accent-main) !important;
-      box-shadow: 0 2px 10px var(--accent-glow) !important;
+      box-shadow: 0 2px 12px var(--accent-glow) !important;
     }
     #tabs-sliding-pill {
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.10), 0 0 0 1.5px var(--accent-soft) !important;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.10), 0 0 0 1.5px var(--accent-border) !important;
     }
     #cloud-sync-progress-bar.active::after {
       background: linear-gradient(90deg, transparent, var(--accent-light), #38bdf8, transparent) !important;
@@ -700,10 +770,10 @@
     }
     .cmd-item-active {
       background-color: var(--accent-soft) !important;
-      color: var(--accent-main) !important;
+      color: var(--accent-text) !important;
     }
     .dark .cmd-item-active {
-      color: #e2e8f0 !important;
+      color: #f8fafc !important;
     }
     @keyframes cmdHighlightFlash {
       0% { box-shadow: 0 0 0 3px var(--accent-light); }
@@ -12235,6 +12305,11 @@
       function applyAccent(name) {
         const val = ['indigo', 'emerald', 'graphite', 'cyber'].includes(name) ? name : 'indigo';
         document.documentElement.setAttribute('data-accent', val);
+        const themeMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeMeta) {
+          const map = { indigo: '#4f46e5', emerald: '#059669', graphite: '#334155', cyber: '#9333ea' };
+          themeMeta.setAttribute('content', map[val] || '#4f46e5');
+        }
         try { localStorage.setItem(ACCENT_KEY, val); } catch (e) {}
         document.querySelectorAll('[data-accent-pick]').forEach((b) => {
           const active = b.getAttribute('data-accent-pick') === val;
