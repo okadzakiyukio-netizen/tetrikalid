@@ -961,6 +961,179 @@
   </div>
 
     <!-- Timezone Calculator Modal Dialog (Вызывается по 🕔) -->
+  <!-- Modal: Шпаргалки по школьным предметам (1–4, 5–9, 10–11 классы) -->
+  <div id="cheatsheet-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-3xl max-h-[88vh] flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg font-bold shrink-0">📚</span>
+          <div class="min-w-0">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white truncate">Шпаргалка: Школьные предметы, МВУ и оборудование</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Какие предметы идут на МВУ, а какие — только к преподавателю</p>
+          </div>
+        </div>
+        <button id="btn-close-cheatsheet-modal" type="button" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-lg transition shrink-0" aria-label="Закрыть">✕</button>
+      </div>
+
+      <!-- Grade filter tabs -->
+      <div class="flex flex-wrap items-center gap-1.5 px-5 py-2.5 bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800 shrink-0">
+        <button type="button" data-cs-tab="all" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-sm">Все классы</button>
+        <button type="button" data-cs-tab="1-4" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400">1–4 класс</button>
+        <button type="button" data-cs-tab="5-9" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400">5–9 класс</button>
+        <button type="button" data-cs-tab="10-11" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400">10–11 класс</button>
+      </div>
+
+      <!-- Body -->
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-5">
+
+        <!-- 1–4 класс -->
+        <div data-cs-panel="1-4" class="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+          <div class="px-4 py-2.5 bg-indigo-50/70 dark:bg-indigo-950/40 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <span class="text-sm font-extrabold text-indigo-900 dark:text-indigo-200">1–4 класс</span>
+            <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-300">ПК / Ноут / Планшет</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[460px] text-xs sm:text-[13px] border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold text-center">
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[22%]">Направление</th>
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[24%]">МВУ</th>
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[28%]">Преподаватель</th>
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[26%]">Оборудование</th>
+                </tr>
+              </thead>
+              <tbody class="text-slate-800 dark:text-slate-100">
+                <tr>
+                  <td rowspan="7" class="border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-center font-bold bg-slate-50/50 dark:bg-slate-800/30">Школьные предметы</td>
+                  <td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Русский язык</td>
+                  <td rowspan="7" class="border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-center align-middle leading-relaxed bg-slate-50/50 dark:bg-slate-800/30">
+                    <div class="font-bold text-slate-900 dark:text-white">ПК/Ноут/Планшет</div>
+                    <div>+ Микрофон</div>
+                    <div>+ Камера</div>
+                    <div class="text-slate-500 dark:text-slate-400">(желательно)</div>
+                  </td>
+                </tr>
+                <tr><td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Математика</td></tr>
+                <tr><td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Английский язык</td></tr>
+                <tr>
+                  <td rowspan="4" class="border border-slate-200 dark:border-slate-700 px-3 py-2 text-center text-[11px] text-slate-400 dark:text-slate-500 align-middle">Только преподаватель</td>
+                  <td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Окружающий мир</td>
+                </tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Чтение</td></tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Другие иностр. яз.</td></tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Логопед</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 5–9 класс -->
+        <div data-cs-panel="5-9" class="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+          <div class="px-4 py-2.5 bg-indigo-50/70 dark:bg-indigo-950/40 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <span class="text-sm font-extrabold text-indigo-900 dark:text-indigo-200">5–9 класс</span>
+            <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-300">ПК / Ноут / Планшет</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[460px] text-xs sm:text-[13px] border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold text-center">
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[22%]">Направление</th>
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[24%]">МВУ</th>
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[28%]">Преподаватель</th>
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[26%]">Оборудование</th>
+                </tr>
+              </thead>
+              <tbody class="text-slate-800 dark:text-slate-100">
+                <tr>
+                  <td rowspan="12" class="border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-center font-bold bg-slate-50/50 dark:bg-slate-800/30">Школьные предметы</td>
+                  <td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Русский язык</td>
+                  <td rowspan="12" class="border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-center align-middle leading-relaxed bg-slate-50/50 dark:bg-slate-800/30">
+                    <div class="font-bold text-slate-900 dark:text-white">ПК/Ноут/Планшет</div>
+                    <div>+ Микрофон</div>
+                    <div>+ Камера</div>
+                    <div class="text-slate-500 dark:text-slate-400">(желательно)</div>
+                  </td>
+                </tr>
+                <tr><td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Математика</td></tr>
+                <tr><td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Физика <span class="text-rose-600 dark:text-rose-400 font-semibold">(с 7 класса)</span></td></tr>
+                <tr><td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Химия <span class="text-rose-600 dark:text-rose-400 font-semibold">(с 8 класса)</span></td></tr>
+                <tr><td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Английский язык</td></tr>
+                <tr>
+                  <td rowspan="7" class="border border-slate-200 dark:border-slate-700 px-3 py-2 text-center text-[11px] text-slate-400 dark:text-slate-500 align-middle">Только преподаватель</td>
+                  <td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Другие иностр. яз.</td>
+                </tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Биология</td></tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">История</td></tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Обществознание <span class="text-rose-600 dark:text-rose-400 font-semibold">(с 7 класса)</span></td></tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">География</td></tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Литература</td></tr>
+                <tr>
+                  <td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 leading-snug">
+                    <div>Информатика <span class="text-rose-600 dark:text-rose-400 font-semibold">(с 6 класса)</span></div>
+                    <div class="text-rose-600 dark:text-rose-400 font-semibold text-[11px] mt-0.5">Это не IT! Это школьный предмет</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 10–11 класс -->
+        <div data-cs-panel="10-11" class="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+          <div class="px-4 py-2.5 bg-indigo-50/70 dark:bg-indigo-950/40 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <span class="text-sm font-extrabold text-indigo-900 dark:text-indigo-200">10–11 класс</span>
+            <span class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">ПК / Ноут / Планшет / Телефон</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[460px] text-xs sm:text-[13px] border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold text-center">
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[22%]">Направление</th>
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[24%]">МВУ</th>
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[28%]">Преподаватель</th>
+                  <th class="border border-slate-200 dark:border-slate-700 px-3 py-2 w-[26%]">Оборудование</th>
+                </tr>
+              </thead>
+              <tbody class="text-slate-800 dark:text-slate-100">
+                <tr>
+                  <td rowspan="12" class="border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-center font-bold bg-slate-50/50 dark:bg-slate-800/30">Школьные предметы</td>
+                  <td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Русский язык</td>
+                  <td rowspan="12" class="border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-center align-middle leading-relaxed bg-slate-50/50 dark:bg-slate-800/30">
+                    <div class="font-bold text-slate-900 dark:text-white">ПК/Ноут/Планшет/<span class="text-emerald-600 dark:text-emerald-400">Телефон</span></div>
+                    <div>+ Микрофон</div>
+                    <div>+ Камера</div>
+                    <div class="text-slate-500 dark:text-slate-400">(желательно)</div>
+                  </td>
+                </tr>
+                <tr><td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Математика</td></tr>
+                <tr><td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Химия</td></tr>
+                <tr><td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Физика</td></tr>
+                <tr><td colspan="2" class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-center font-medium bg-indigo-50/35 dark:bg-indigo-950/20">Английский язык</td></tr>
+                <tr>
+                  <td rowspan="7" class="border border-slate-200 dark:border-slate-700 px-3 py-2 text-center text-[11px] text-slate-400 dark:text-slate-500 align-middle">Только преподаватель</td>
+                  <td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Другие иностр. яз.</td>
+                </tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Биология</td></tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">История</td></tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Обществознание</td></tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">География</td></tr>
+                <tr><td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5">Литература</td></tr>
+                <tr>
+                  <td class="border border-slate-200 dark:border-slate-700 px-3 py-1.5 leading-snug">
+                    <div>Информатика</div>
+                    <div class="text-rose-600 dark:text-rose-400 font-semibold text-[11px] mt-0.5">Это не IT! Это школьный предмет</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <div id="tz-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 edit-modal-backdrop">
     <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-5 sm:p-6 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
@@ -1531,6 +1704,10 @@
             <span class="text-[11px] text-slate-400 hidden sm:inline">(нажмите, чтобы свернуть / развернуть)</span>
           </div>
           <div class="flex items-center gap-2">
+            <button id="btn-open-cheatsheet-modal" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-700 transition shadow-sm flex items-center gap-1" title="Шпаргалка по школьным предметам, МВУ и оборудованию (1–11 классы)">
+              <span>📚</span>
+              <span class="hidden sm:inline">Шпаргалка</span>
+            </button>
             <button type="button" class="btn-calc-tz-trigger px-2.5 py-1 rounded-lg text-[11px] font-bold border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-700 transition shadow-sm flex items-center gap-1" title="Калькулятор часовых поясов (±МСК)">
               <span>🕔</span>
               <span class="hidden sm:inline">Пояса</span>
@@ -9110,6 +9287,7 @@
           'welcome-modal',
           'add-objection-modal',
           'edit-modal',
+          'cheatsheet-modal',
           'tz-modal',
           'reminders-modal',
           'cloud-modal',
@@ -12727,6 +12905,8 @@
             { cat: 'Вкладка', icon: '📅', title: 'График смен и Зарплата', sub: 'Календарь и доход', run: () => document.querySelector('#main-tabs-nav .script-tab[data-tab="schedule"]')?.click() },
             { cat: 'Действие', icon: '🌓', title: 'Сменить тему (Светлая / Тёмная)', sub: 'Оформление', run: () => document.getElementById('btn-theme-desktop')?.click() },
             { cat: 'Действие', icon: '☁️', title: 'Облачная синхронизация', sub: 'Открыть Supabase', run: () => document.getElementById('btn-open-cloud-modal')?.click() },
+            { cat: 'Действие', icon: '📚', title: 'Шпаргалка: Школьные предметы, МВУ и оборудование', sub: '1–4, 5–9, 10–11 классы', run: () => window.openCheatsheetModal && window.openCheatsheetModal('all') },
+            { cat: 'Действие', icon: '🕔', title: 'Калькулятор часовых поясов (±МСК)', sub: 'Пересчёт времени клиента', run: () => document.querySelector('.btn-calc-tz-trigger')?.click() },
             { cat: 'Действие', icon: '🔔', title: 'Напоминания', sub: 'Открыть список', run: () => document.getElementById('btn-open-reminders-modal')?.click() },
             { cat: 'Действие', icon: '🔒', title: 'Пароль и блокировка экрана', sub: 'Настройки доступа', run: () => document.getElementById('btn-open-lock-modal')?.click() },
             { cat: 'Действие', icon: '🎉', title: 'Запустить салют конфетти (GPU тест)', sub: 'Проверка Canvas', run: () => window.fireGpuConfetti && window.fireGpuConfetti() }
@@ -13250,6 +13430,53 @@
         }, true);
       }
 
+    })();
+  </script>
+
+  <script id="cheatsheet-modal-script">
+    (function initCheatsheetModal() {
+      const modal = document.getElementById('cheatsheet-modal');
+      const openBtn = document.getElementById('btn-open-cheatsheet-modal');
+      const closeBtn = document.getElementById('btn-close-cheatsheet-modal');
+      if (!modal) return;
+
+      const tabs = Array.from(modal.querySelectorAll('.cs-tab-btn'));
+      const panels = Array.from(modal.querySelectorAll('[data-cs-panel]'));
+
+      function setCsTab(key) {
+        tabs.forEach((btn) => {
+          const active = btn.getAttribute('data-cs-tab') === key;
+          btn.setAttribute('aria-pressed', String(active));
+          btn.className = 'cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition ' + (
+            active
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400'
+          );
+        });
+        panels.forEach((p) => {
+          const show = key === 'all' || p.getAttribute('data-cs-panel') === key;
+          p.classList.toggle('hidden', !show);
+        });
+      }
+
+      tabs.forEach((btn) => {
+        btn.addEventListener('click', () => setCsTab(btn.getAttribute('data-cs-tab') || 'all'));
+      });
+
+      window.openCheatsheetModal = function (initialTab) {
+        if (initialTab) setCsTab(initialTab);
+        modal.classList.remove('hidden');
+      };
+
+      if (openBtn) {
+        openBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.openCheatsheetModal();
+        });
+      }
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+      }
     })();
   </script>
 </body>
