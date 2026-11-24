@@ -641,6 +641,10 @@
       background-color: rgba(11, 17, 32, 0.84) !important;
     }
     article.searchable-block,
+    #records-tbody tr {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 46px;
+    }
     #section-tracker .rounded-2xl.bg-white,
     #section-plan .rounded-2xl.bg-white,
     #section-schedule .rounded-2xl.bg-white {
@@ -4164,19 +4168,24 @@
           const shouldShow = !isDeleted && ((tabId === 'all') ? (secId !== 'tracker' && secId !== 'plan' && secId !== 'schedule') : (secId === tabId));
           if (shouldShow) {
             sec.classList.remove('hidden');
-            sec.classList.add('fade-in-scale');
+            if (secId !== 'tracker') {
+              sec.classList.add('fade-in-scale');
+            } else {
+              sec.classList.remove('fade-in-scale');
+            }
           } else {
             sec.classList.add('hidden');
             sec.classList.remove('fade-in-scale');
           }
         });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo(0, 0);
 
+        const isDashboardTab = (tabId === 'tracker' || tabId === 'plan' || tabId === 'schedule');
         // Smart Workspace Layout: Hide script sidebar on Tracker and Plan tabs so dashboard has full width!
         const sidebarEl = document.getElementById('left-sidebar');
         const mainColEl = document.getElementById('main-content-col');
         if (sidebarEl && mainColEl) {
-          if (tabId === 'tracker' || tabId === 'plan' || tabId === 'schedule') {
+          if (isDashboardTab) {
             sidebarEl.classList.add('hidden');
             mainColEl.className = 'lg:col-span-12 space-y-4';
           } else {
@@ -4190,9 +4199,12 @@
           renderScheduleCalendar();
         }
 
-        applySearchFilter();
-        rebuildStageNavigation();
-        updateProgress();
+        if (!isDashboardTab) {
+          applySearchFilter();
+          updateProgress();
+        } else if (searchEmptyBlock) {
+          searchEmptyBlock.classList.add('hidden');
+        }
       }
 
       const mainTabsNav = document.getElementById('main-tabs-nav');
@@ -4276,16 +4288,17 @@
 
         sections.forEach((sec) => {
           const secId = sec.getAttribute('data-script-section');
-          // 'all' strictly opens the scripts (shp, it, lectarium)
-          const shouldShowSec = currentTab === 'all' ? (secId !== 'tracker' && secId !== 'plan') : (secId === currentTab);
+          const isDeleted = sec.getAttribute('data-deleted-script') === 'true';
+          // 'all' strictly opens active script sections (never tracker, plan, schedule, or deleted)
+          const shouldShowSec = !isDeleted && (currentTab === 'all' ? (secId !== 'tracker' && secId !== 'plan' && secId !== 'schedule') : (secId === currentTab));
           if (!shouldShowSec) {
             sec.classList.add('hidden');
             return;
           }
           sec.classList.remove('hidden');
 
-          // If on plan or tracker tab, don't filter internal script blocks
-          if (secId === 'tracker' || secId === 'plan') {
+          // If on dashboard tab, don't filter internal blocks
+          if (secId === 'tracker' || secId === 'plan' || secId === 'schedule') {
             visibleCount++;
             return;
           }
