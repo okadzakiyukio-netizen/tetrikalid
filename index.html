@@ -963,7 +963,7 @@
     <!-- Timezone Calculator Modal Dialog (Вызывается по 🕔) -->
   <!-- Modal: Шпаргалки по школьным предметам (1–4, 5–9, 10–11 классы) -->
   <div id="cheatsheet-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-3xl max-h-[88vh] flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-3xl h-[min(680px,86vh)] flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
       <!-- Header -->
       <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
         <div class="flex items-center gap-2.5 min-w-0">
@@ -978,17 +978,17 @@
 
       <!-- Grade filter tabs -->
       <div class="flex flex-wrap items-center gap-1.5 px-5 py-2.5 bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800 shrink-0">
-        <button type="button" data-cs-tab="all" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-sm">Все классы</button>
-        <button type="button" data-cs-tab="1-4" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400">1–4 класс</button>
-        <button type="button" data-cs-tab="5-9" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400">5–9 класс</button>
-        <button type="button" data-cs-tab="10-11" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400">10–11 класс</button>
+        <button type="button" data-cs-tab="all" aria-pressed="true" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-sm">Все классы</button>
+        <button type="button" data-cs-tab="1-4" aria-pressed="false" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400">1–4 класс</button>
+        <button type="button" data-cs-tab="5-9" aria-pressed="false" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400">5–9 класс</button>
+        <button type="button" data-cs-tab="10-11" aria-pressed="false" class="cs-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400">10–11 класс</button>
       </div>
 
       <!-- Body -->
-      <div class="p-4 sm:p-5 overflow-y-auto space-y-5">
+      <div id="cheatsheet-modal-body" class="flex-1 min-h-0 p-4 sm:p-5 overflow-y-auto flex flex-col gap-5" style="scrollbar-gutter: stable;">
 
         <!-- 1–4 класс -->
-        <div data-cs-panel="1-4" class="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+        <div data-cs-panel="1-4" class="shrink-0 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
           <div class="px-4 py-2.5 bg-indigo-50/70 dark:bg-indigo-950/40 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <span class="text-sm font-extrabold text-indigo-900 dark:text-indigo-200">1–4 класс</span>
             <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-300">ПК / Ноут / Планшет</span>
@@ -1029,7 +1029,7 @@
         </div>
 
         <!-- 5–9 класс -->
-        <div data-cs-panel="5-9" class="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+        <div data-cs-panel="5-9" class="shrink-0 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
           <div class="px-4 py-2.5 bg-indigo-50/70 dark:bg-indigo-950/40 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <span class="text-sm font-extrabold text-indigo-900 dark:text-indigo-200">5–9 класс</span>
             <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-300">ПК / Ноут / Планшет</span>
@@ -1080,7 +1080,7 @@
         </div>
 
         <!-- 10–11 класс -->
-        <div data-cs-panel="10-11" class="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+        <div data-cs-panel="10-11" class="shrink-0 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
           <div class="px-4 py-2.5 bg-indigo-50/70 dark:bg-indigo-950/40 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <span class="text-sm font-extrabold text-indigo-900 dark:text-indigo-200">10–11 класс</span>
             <span class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">ПК / Ноут / Планшет / Телефон</span>
@@ -13457,6 +13457,8 @@
           const show = key === 'all' || p.getAttribute('data-cs-panel') === key;
           p.classList.toggle('hidden', !show);
         });
+        const bodyEl = document.getElementById('cheatsheet-modal-body');
+        if (bodyEl) bodyEl.scrollTop = 0;
       }
 
       tabs.forEach((btn) => {
