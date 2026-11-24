@@ -5240,7 +5240,7 @@
           const parts = dateStr.split('-');
           const dt = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
           const dayRecs = (records || []).filter(r => r.date === dateStr);
-          const recCount = dayRecs.length;
+          const recCount = dayRecs.filter(r => !isExcludedLeadRecord(r)).length;
           const subjCount = dayRecs.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
           return {
             label: dayNamesShort[dt.getDay()],
@@ -5471,43 +5471,54 @@
       })();
 
 
+      function isExcludedLeadRecord(r) {
+        const c = String((r && r.comment) || '').trim();
+        return c === '-' || c === '−';
+      }
+
       function renderTrackerAll() {
         if (typeof renderWeeklyRecordsChart === 'function') renderWeeklyRecordsChart();
         const todayStr = getTodayDateStr();
         const todayRecs = records.filter((r) => r.date === todayStr);
+        const todayLeadsCount = todayRecs.filter((r) => !isExcludedLeadRecord(r)).length;
         const todaySubjects = todayRecs.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
 
         const uniqueDates = Array.from(new Set(records.map((r) => r.date))).sort().reverse();
         const lastActiveDate = uniqueDates.find((d) => d < todayStr) || uniqueDates.find((d) => d !== todayStr) || uniqueDates[0] || todayStr;
         const lastDayRecs = records.filter((r) => r.date === lastActiveDate);
+        const lastDayLeadsCount = lastDayRecs.filter((r) => !isExcludedLeadRecord(r)).length;
         const lastDaySubjects = lastDayRecs.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
 
         const weekStartStr = getRelativeDateStr(-6);
         const weekRecs = records.filter((r) => r.date >= weekStartStr && r.date <= todayStr);
+        const weekLeadsCount = weekRecs.filter((r) => !isExcludedLeadRecord(r)).length;
         const weekSubjects = weekRecs.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
 
+        const allLeadsCount = records.filter((r) => !isExcludedLeadRecord(r)).length;
         const totalSubjectsAll = records.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
 
         const filtered = filterRecordsList();
+        const filteredLeadsCount = filtered.filter((r) => !isExcludedLeadRecord(r)).length;
         const filteredDates = Array.from(new Set(filtered.map((r) => r.date)));
         const activeDaysCount = filteredDates.length || 1;
         const filteredSubjectsSum = filtered.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
 
-        // Расчет среднего количества предметов на запись БЕЗ учета ЛЕКТЫ
+        // Расчет среднего количества предметов на запись БЕЗ учета ЛЕКТЫ (строки с "-" добавляют предметы, но не увеличивают число лидов)
         const nonLektaFiltered = filtered.filter((r) => !r.lekta);
+        const nonLektaLeadsCount = nonLektaFiltered.filter((r) => !isExcludedLeadRecord(r)).length;
         const nonLektaSubjectsSum = nonLektaFiltered.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
 
         const avgSubjectsPerDay = filtered.length > 0 ? (filteredSubjectsSum / activeDaysCount) : 0;
-        const avgRecordsPerDay = filtered.length > 0 ? (filtered.length / activeDaysCount) : 0;
-        const avgSubjectsPerClient = nonLektaFiltered.length > 0 ? (nonLektaSubjectsSum / nonLektaFiltered.length) : 0;
+        const avgRecordsPerDay = filteredLeadsCount > 0 ? (filteredLeadsCount / activeDaysCount) : 0;
+        const avgSubjectsPerClient = nonLektaLeadsCount > 0 ? (nonLektaSubjectsSum / nonLektaLeadsCount) : 0;
 
-        document.getElementById('kpi-today').textContent = todayRecs.length;
+        document.getElementById('kpi-today').textContent = todayLeadsCount;
         document.getElementById('kpi-today-sub').textContent = todaySubjects + ' предм.';
 
-        document.getElementById('kpi-last-day').textContent = lastDayRecs.length;
+        document.getElementById('kpi-last-day').textContent = lastDayLeadsCount;
         document.getElementById('kpi-last-day-sub').textContent = formatRuDate(lastActiveDate) + ' (' + lastDaySubjects + ' предм.)';
 
-        document.getElementById('kpi-week').textContent = weekRecs.length;
+        document.getElementById('kpi-week').textContent = weekLeadsCount;
         document.getElementById('kpi-week-sub').textContent = weekSubjects + ' предметов';
 
         const hasActiveFilter = (activePeriod !== 'all') || Boolean(filterDateFromEl && filterDateFromEl.value) || Boolean(filterDateToEl && filterDateToEl.value) || Boolean(trackerSearchEl && trackerSearchEl.value.trim());
@@ -5515,16 +5526,16 @@
         if (kpiMonthLabelEl) {
           kpiMonthLabelEl.textContent = hasActiveFilter ? 'За период' : 'Всего в базе';
         }
-        document.getElementById('kpi-month').textContent = hasActiveFilter ? filtered.length : records.length;
+        document.getElementById('kpi-month').textContent = hasActiveFilter ? filteredLeadsCount : allLeadsCount;
         document.getElementById('kpi-month-sub').textContent = hasActiveFilter
-          ? (filteredSubjectsSum + ' предм. • всего ' + records.length)
+          ? (filteredSubjectsSum + ' предм. • всего ' + allLeadsCount)
           : (totalSubjectsAll + ' предметов');
 
         document.getElementById('kpi-avg-per-day').textContent = avgSubjectsPerDay.toFixed(1);
         document.getElementById('kpi-avg-per-day-sub').textContent = 'Ср. записей/день: ' + avgRecordsPerDay.toFixed(1) + ' (' + (filtered.length > 0 ? activeDaysCount : 0) + ' смен)';
 
         document.getElementById('kpi-avg-per-client').textContent = avgSubjectsPerClient.toFixed(2);
-        document.getElementById('kpi-avg-per-client-sub').textContent = nonLektaSubjectsSum + ' предм. / ' + nonLektaFiltered.length + ' зап. (без Лекты)';
+        document.getElementById('kpi-avg-per-client-sub').textContent = nonLektaSubjectsSum + ' предм. / ' + nonLektaLeadsCount + ' зап. (без Лекты)';
 
         const normDirs = (r) => (Array.isArray(r.dirs) ? r.dirs : (typeof r.dirs === 'string' ? r.dirs.split('+') : [])).map((d) => String(d).trim().toLowerCase());
         const itCount = filtered.filter((r) => normDirs(r).some((d) => d === 'it' || d === 'ит' || d.includes('прогр') || d.includes('roblox') || d.includes('python') || d.includes('scratch'))).length;
@@ -5533,7 +5544,7 @@
         const refCount = filtered.filter((r) => r.ref === 'Да').length;
         const pillsContainer = document.getElementById('subject-avg-pills');
         pillsContainer.innerHTML = [
-          '<span class="px-2 py-0.5 rounded-md bg-slate-200/70 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-bold">Записей: ' + filtered.length + ' • Предм.: ' + filteredSubjectsSum + '</span>',
+          '<span class="px-2 py-0.5 rounded-md bg-slate-200/70 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-bold">Записей: ' + filteredLeadsCount + ' • Предм.: ' + filteredSubjectsSum + '</span>',
           '<span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold">Ср. предм./день: ' + avgSubjectsPerDay.toFixed(1) + '</span>',
           '<span class="px-2 py-0.5 rounded-md bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300 border border-violet-200 dark:border-violet-800 font-semibold">Ср. зап./день: ' + avgRecordsPerDay.toFixed(1) + '</span>',
           '<span class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">IT: ' + (itCount / activeDaysCount).toFixed(1) + '/д (' + itCount + ')</span>',
@@ -5544,7 +5555,7 @@
 
         document.getElementById('tracker-found-count').textContent = 'Найдено: ' + filtered.length;
         document.getElementById('tracker-total-summary').textContent =
-          'Записей: ' + filtered.length + ' • Сумма предметов: ' + filteredSubjectsSum + ' • Ср. предметов за день: ' + avgSubjectsPerDay.toFixed(1);
+          'Записей: ' + filteredLeadsCount + ' • Сумма предметов: ' + filteredSubjectsSum + ' • Ср. предметов за день: ' + avgSubjectsPerDay.toFixed(1);
 
         const tbody = document.getElementById('records-tbody');
         tbody.innerHTML = '';
@@ -5588,10 +5599,12 @@
 
         groupedDates.forEach((dateKey) => {
           const dayItems = byDateMap.get(dateKey) || [];
+          const dayLeadsCount = dayItems.filter((r) => !isExcludedLeadRecord(r)).length;
           const daySubjectsTotal = dayItems.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
           const dayNonLektaItems = dayItems.filter((r) => !r.lekta);
+          const dayNonLektaLeadsCount = dayNonLektaItems.filter((r) => !isExcludedLeadRecord(r)).length;
           const dayNonLektaSubjects = dayNonLektaItems.reduce((acc, r) => acc + (Number(r.qty) || 1), 0);
-          const dayAvgPerClient = dayNonLektaItems.length > 0 ? (dayNonLektaSubjects / dayNonLektaItems.length).toFixed(2) : '0.00';
+          const dayAvgPerClient = dayNonLektaLeadsCount > 0 ? (dayNonLektaSubjects / dayNonLektaLeadsCount).toFixed(2) : '0.00';
 
           const groupHeaderTr = document.createElement('tr');
           groupHeaderTr.className = 'bg-indigo-50/80 dark:bg-indigo-950/40 border-y border-indigo-100 dark:border-indigo-900/60';
@@ -5600,7 +5613,7 @@
               '<div class="flex flex-wrap items-center justify-between gap-1.5">' +
                 '<div class="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white text-xs">' +
                   '<span>📅 ' + qaEscapeHtml(formatRuDateLong(dateKey)) + '</span>' +
-                  '<span class="text-slate-500 dark:text-slate-400 font-medium text-[11px]">(' + dayItems.length + ' зап.)</span>' +
+                  '<span class="text-slate-500 dark:text-slate-400 font-medium text-[11px]">(' + dayLeadsCount + ' зап.)</span>' +
                 '</div>' +
                 '<div class="flex flex-wrap items-center gap-1.5 text-[11px]">' +
                   '<span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/70 dark:text-indigo-200 font-semibold">Предм.: ' + daySubjectsTotal + '</span>' +
@@ -5888,7 +5901,7 @@
       document.getElementById('btn-tracker-export')?.addEventListener('click', () => {
         const csvCell = (val) => {
           let s = String(val == null ? '' : val).replace(/\r?\n/g, ' ');
-          if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+          if (/^[=+@\t\r]/.test(s) || /^-(?=.+)/.test(s)) s = "'" + s;
           return '"' + s.replace(/"/g, '""') + '"';
         };
         const headers = ['№', 'Дата', 'Номер клиента', 'Комментарий', 'Кол-во предметов', 'Лекта', 'МВУ', 'Направления', 'Реферал'];
@@ -7559,8 +7572,8 @@
           } else if (itemId === 'plan-ref') {
             if (isRef) count += 1;
           } else if (itemId === 'plan-mvu') {
-            // МВУ учитывает и РЕФ, если нет исключающего комментария (дош/взр/то)
-            if (isMvu) count += 1;
+            // МВУ учитывает и РЕФ, исключая строки-дозаписи с "-"
+            if (isMvu && !isExcludedLeadRecord(r)) count += 1;
           }
         });
         return count;
@@ -7575,7 +7588,7 @@
         let totalCurrent = 0;
 
         const targetRecs = getFilteredRecordsForPlan();
-        const currentPeopleTotal = targetRecs.length;
+        const currentPeopleTotal = targetRecs.filter((r) => !isExcludedLeadRecord(r)).length;
 
         const escPlanHtml = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         planItems.forEach((item) => {
@@ -7768,7 +7781,7 @@
 
         // Update Main KPI: People Count, Avg Subjects, MVU %
         const filteredRecs = getFilteredRecordsForPlan();
-        const peopleCount = filteredRecs.length;
+        const peopleCount = filteredRecs.filter((r) => !isExcludedLeadRecord(r)).length;
 
         let totalSubjectsCount = 0;
         let nonLektaPeopleCount = 0;
@@ -7780,11 +7793,12 @@
 
         filteredRecs.forEach(r => {
           const qty = Number(r.qty) || 1;
+          const isExclLead = isExcludedLeadRecord(r);
           totalSubjectsCount += qty;
 
-          // Ср. предм. / запись рассчитываем СТРОГО БЕЗ УЧЁТА ЛЕКТА:
+          // Ср. предм. / запись рассчитываем СТРОГО БЕЗ УЧЁТА ЛЕКТА (строки с "-" добавляют предметы в числитель, но не увеличивают число людей):
           if (!r.lekta) {
-            nonLektaPeopleCount++;
+            if (!isExclLead) nonLektaPeopleCount++;
             nonLektaSubjectsCount += qty;
           }
 
@@ -7796,8 +7810,8 @@
           if (isRef) {
             refCount++;
           }
-          if (isMvu || !isVzrComment) {
-            // РЕФ учитываются в МВУ; исключаются только "НЕ МВУ" с комментарием взр/взрослый/дош/то
+          if (!isExclLead && (isMvu || !isVzrComment)) {
+            // РЕФ учитываются в МВУ; исключаются строки с "-" и "НЕ МВУ" с комментарием взр/взрослый/дош/то
             baseNonRefPeopleCount++;
             if (isMvu) {
               mvuCount++;
