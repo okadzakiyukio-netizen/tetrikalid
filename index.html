@@ -8269,7 +8269,7 @@
           badge.title = 'Смена сегодня с ' + startStr + ' до ' + endStr + ' МСК (через ' + fmtDur(startMins - nowMins) + ')';
         } else if (nowMins < endMins) {
           badge.className = baseCls + 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/70 hover:border-emerald-400';
-          badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>До ' + endStr + ' • ост. ' + fmtDur(endMins - nowMins) + '</span>';
+          const nextHtml = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><span>До ' + endStr + ' • ост. ' + fmtDur(endMins - nowMins) + '</span>'; if (badge.innerHTML !== nextHtml) badge.innerHTML = nextHtml;
           badge.title = 'Идёт смена ' + startStr + '–' + endStr + ' МСК • осталось ' + fmtDur(endMins - nowMins);
         } else {
           badge.className = baseCls + 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 hover:border-indigo-300';
