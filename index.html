@@ -514,6 +514,12 @@
       #btn-pin-drawer {
         display: none !important;
       }
+      body {
+        padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px)) !important;
+      }
+      #mobile-bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
     }
     @media (max-width: 639px) {
       .stage-card > .p-5, .stage-card .stage-header-row {
@@ -523,6 +529,20 @@
       .stage-card h3 {
         font-size: 0.95rem;
         line-height: 1.3;
+      }
+      section[data-script-section] > div.bg-gradient-to-r {
+        padding: 0.9rem 5.8rem 0.9rem 1rem !important;
+      }
+      section[data-script-section] > div.bg-gradient-to-r.script-banner-compact {
+        padding: 0.65rem 5.8rem 0.65rem 1rem !important;
+      }
+      section[data-script-section] > div.bg-gradient-to-r h2 {
+        font-size: 1rem !important;
+        line-height: 1.3 !important;
+      }
+      #call-notes {
+        resize: vertical !important;
+        width: 100% !important;
       }
     }
 
@@ -1484,7 +1504,7 @@
   </div>
 
     <!-- Toast Notification -->
-  <div id="toast" role="status" aria-live="polite" class="fixed bottom-5 right-5 z-[10000] hidden items-center gap-2.5 bg-slate-900 dark:bg-indigo-600 text-white px-4 py-3 rounded-xl shadow-xl text-sm font-medium transition-all duration-200">
+  <div id="toast" role="status" aria-live="polite" class="fixed bottom-20 lg:bottom-5 right-3 sm:right-5 z-[10000] hidden items-center gap-2.5 bg-slate-900 dark:bg-indigo-600 text-white px-4 py-3 rounded-xl shadow-xl text-sm font-medium transition-all duration-200">
     <svg class="w-4 h-4 text-emerald-400 dark:text-white shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
     </svg>
@@ -1721,8 +1741,8 @@
       <!-- Floating / Hover / Click Drawer: Панель данных звонка -->
       <div id="call-drawer" class="mt-2.5 pt-1.5 border-t border-slate-200/70 dark:border-slate-800/70">
         <!-- Drawer Header Strip: наведение + клик -->
-        <div id="call-drawer-trigger" class="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-100/80 hover:bg-slate-200/70 dark:bg-slate-800/60 dark:hover:bg-slate-800/90 cursor-pointer select-none transition-colors">
-          <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
+        <div id="call-drawer-trigger" class="flex items-center justify-between gap-2 py-1.5 px-2.5 sm:px-3 rounded-xl bg-slate-100/80 hover:bg-slate-200/70 dark:bg-slate-800/60 dark:hover:bg-slate-800/90 cursor-pointer select-none transition-colors">
+          <div class="flex items-center gap-2 min-w-0 text-xs font-semibold text-slate-700 dark:text-slate-300">
             <span class="inline-flex items-center justify-center w-5 h-5 rounded-lg bg-indigo-600 text-white text-[11px] font-bold">👤</span>
             <span class="font-bold text-slate-900 dark:text-white">Панель звонка:</span>
             <span id="call-drawer-summary" class="text-xs font-medium text-indigo-700 dark:text-indigo-300">Не указано</span>
@@ -1784,28 +1804,28 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-2.5 pb-6 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
     <!-- Left Sidebar: Quick Navigation & Call Memo -->
-    <aside id="left-sidebar" class="lg:col-span-3 lg:sticky lg:top-44 lg:overflow-y-auto lg:pr-1 space-y-4 hidden">
+    <aside id="left-sidebar" class="lg:col-span-3 lg:sticky lg:top-44 lg:overflow-y-auto lg:pr-1 space-y-2.5 hidden">
       <!-- Stage Outline Card -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm">
-        <div class="flex items-center justify-between mb-3">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Навигация по этапам</h2>
           <span id="progress-badge" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400">0%</span>
         </div>
-        <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-3">
+        <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-2">
           <div id="progress-bar" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
         </div>
-        <ul id="stage-nav-list" class="space-y-1 text-xs sm:text-sm max-h-80 overflow-y-auto pr-1">
+        <ul id="stage-nav-list" class="space-y-0.5 text-xs sm:text-[13px] max-h-52 overflow-y-auto pr-1">
           <!-- Populated dynamically via JS -->
         </ul>
       </div>
 
       <!-- Quick Call Notes / Qualification Pad -->
-      <div id="quick-notes-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm">
-        <div class="flex items-center justify-between mb-2">
+      <div id="quick-notes-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 shadow-sm">
+        <div class="flex items-center justify-between mb-1.5">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 whitespace-nowrap">Заметки звонка</h2>
           <button id="btn-copy-notes" type="button" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium">Копировать</button>
         </div>
-        <div class="grid grid-cols-2 gap-1.5 mb-2">
+        <div class="grid grid-cols-2 gap-1.5 mb-1.5">
           <select id="note-grade" class="px-2 py-1 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
             <option value="">Класс / Возраст</option>
             <option value="Дошкольник (4.5+)">Дошкольник (4.5+)</option>
@@ -1823,19 +1843,19 @@
             <option value="Нет оборудования">Нет оборудования</option>
           </select>
         </div>
-        <textarea id="call-notes" rows="4" placeholder="Фиксируйте ответы клиента: оценки, интересы (Roblox/Scratch/Python), часовой пояс, наличие MAX..." class="w-full min-w-full p-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize relative z-20" style="min-height: 88px; max-width: 85vw;"></textarea>
+        <textarea id="call-notes" rows="3" placeholder="Фиксируйте ответы клиента: оценки, интересы (Roblox/Scratch/Python), часовой пояс, наличие MAX..." class="w-full min-w-full p-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize relative z-20" style="min-height: 68px; max-height: 150px; max-width: 100%;"></textarea>
       </div>
 
       <!-- Карточка «Сегодня на смене» с GPU-кольцом прогресса + сворачиваемая легенда (i) -->
-      <div id="sidebar-today-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm text-xs space-y-3">
+      <div id="sidebar-today-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 shadow-sm text-xs space-y-2">
         <div class="flex items-center justify-between gap-2">
           <div class="font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Сегодня на смене</div>
           <button id="btn-toggle-script-legend" type="button" aria-label="Обозначения цветов в скрипте" title="Обозначения цветов в скрипте" class="w-5 h-5 rounded-full border border-slate-200 dark:border-slate-700 text-[10px] font-black text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 flex items-center justify-center transition">i</button>
         </div>
 
-        <div class="flex items-center gap-3.5">
-          <div class="relative w-14 h-14 shrink-0">
-            <svg class="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
+        <div class="flex items-center gap-3">
+          <div class="relative w-12 h-12 shrink-0">
+            <svg class="w-12 h-12 -rotate-90" viewBox="0 0 56 56">
               <circle cx="28" cy="28" r="22" fill="none" stroke="currentColor" stroke-width="5" class="text-slate-100 dark:text-slate-800" />
               <circle id="sidebar-today-ring" cx="28" cy="28" r="22" fill="none" stroke="#6366f1" stroke-width="5" stroke-linecap="round" stroke-dasharray="138.23" stroke-dashoffset="138.23" style="transition: stroke-dashoffset 450ms cubic-bezier(0.22, 1, 0.36, 1), stroke 220ms ease;" />
             </svg>
@@ -3561,7 +3581,7 @@
 
 
   <!-- Кнопка «Наверх» -->
-  <button id="btn-scroll-top" type="button" title="Наверх" aria-label="Наверх" class="fixed bottom-6 right-6 z-40 w-10 h-10 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-600 shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-200 opacity-0 translate-y-3 pointer-events-none">
+  <button id="btn-scroll-top" type="button" title="Наверх" aria-label="Наверх" class="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-40 w-10 h-10 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 dark:hover:border-indigo-600 shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-200 opacity-0 translate-y-3 pointer-events-none">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
     </svg>
@@ -4255,7 +4275,7 @@
 
           const btn = document.createElement('button');
           btn.type = 'button';
-          btn.className = 'w-full text-left px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-2 ' +
+          btn.className = 'w-full text-left px-2.5 py-1 rounded-lg transition-colors flex items-center gap-2 ' +
             (isChecked
               ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-medium'
               : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300');
