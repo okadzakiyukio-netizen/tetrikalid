@@ -4774,6 +4774,7 @@
       function importDatabaseFromComputer(file) {
         if (!file) return;
         const reader = new FileReader();
+        reader.onerror = function () { showToast('Ошибка чтения файла'); };
         reader.onload = function (e) {
           try {
             const parsed = JSON.parse(e.target.result, (k, v) => (k === '__proto__' || k === 'constructor' || k === 'prototype') ? undefined : v);
@@ -5820,6 +5821,7 @@
           const file = ev.target.files && ev.target.files[0];
           if (!file) return;
           const reader = new FileReader();
+          reader.onerror = () => { showToast('Ошибка чтения CSV-файла'); trackerImportCsvInput.value = ''; };
           reader.onload = (e) => {
             try {
               let text = String(e.target.result || '').replace(/^\uFEFF/, '');
@@ -8634,7 +8636,6 @@
           'tetrika_onb_confetti_milestone_v1',
           'tetrika_onb_banner_compact_v1',
           'tetrika_onb_daily_goal_v1',
-          'tetrika_onb_accent_v1',
           'tetrika_theme',
           'tetrika_onb_lock_unlocked_session_v1',
           'tetrika_onb_cloud_last_uid_v1'
@@ -8717,7 +8718,7 @@
 
         function updateHeaderUI() {
           if (currentUser) {
-            if (statusDot) statusDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
+            if (statusDot) statusDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
             if (btnLabel) btnLabel.textContent = (currentUser.email || 'В сети').split('@')[0];
             if (authSection) authSection.classList.add('hidden');
             if (accountSection) accountSection.classList.remove('hidden');
@@ -8880,7 +8881,7 @@
               const nowStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
               safeOrigSet(LAST_SYNC_KEY, 'Синхр. в ' + nowStr);
               if (syncTimeEl) syncTimeEl.textContent = 'Синхр. в ' + nowStr;
-              if (statusDot) statusDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
+              if (statusDot) statusDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
 
               if (changed) {
                 if (reloadOnUpdate) {
@@ -12819,7 +12820,6 @@
       })();
 
       // === 3. GPU CANVAS КОНФЕТТИ ПРИ 100% ПЛАНА ===
-      let confettiFiredForPlan = false;
       let confettiRafId = null;
       window.fireGpuConfetti = function () {
         const canvas = document.getElementById('gpu-confetti-canvas');
