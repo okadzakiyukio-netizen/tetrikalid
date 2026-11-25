@@ -1846,33 +1846,37 @@
         <textarea id="call-notes" rows="3" placeholder="Фиксируйте ответы клиента: оценки, интересы (Roblox/Scratch/Python), часовой пояс, наличие MAX..." class="w-full min-w-full p-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize relative z-20" style="min-height: 68px; max-height: 150px; max-width: 100%;"></textarea>
       </div>
 
-      <!-- Карточка «Сегодня на смене» с GPU-кольцом прогресса + сворачиваемая легенда (i) -->
-      <div id="sidebar-today-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 shadow-sm text-xs space-y-2">
+      <!-- Карточка «Сегодня на смене» (чистый стиль Linear, ровная сетка на всю ширину) -->
+      <div id="sidebar-today-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 shadow-sm text-xs space-y-2.5">
         <div class="flex items-center justify-between gap-2">
-          <div class="font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Сегодня на смене</div>
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Сегодня на смене</div>
           <button id="btn-toggle-script-legend" type="button" aria-label="Обозначения цветов в скрипте" title="Обозначения цветов в скрипте" class="w-5 h-5 rounded-full border border-slate-200 dark:border-slate-700 text-[10px] font-black text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-300 flex items-center justify-center transition">i</button>
         </div>
 
-        <div class="flex items-center gap-3">
-          <div class="relative w-12 h-12 shrink-0">
-            <svg class="w-12 h-12 -rotate-90" viewBox="0 0 56 56">
-              <circle cx="28" cy="28" r="23.5" fill="none" stroke="currentColor" stroke-width="4" class="text-slate-100 dark:text-slate-800" />
-              <circle id="sidebar-today-ring" cx="28" cy="28" r="23.5" fill="none" stroke="#6366f1" stroke-width="4" stroke-linecap="round" stroke-dasharray="147.65" stroke-dashoffset="147.65" style="transition: stroke-dashoffset 450ms cubic-bezier(0.22, 1, 0.36, 1), stroke 220ms ease;" />
-            </svg>
-            <div id="sidebar-today-pct" class="absolute inset-0 flex items-center justify-center text-[9.5px] font-extrabold tracking-tight text-slate-800 dark:text-white tabular-nums">0%</div>
-          </div>
-          <div class="min-w-0 flex-1 space-y-1">
-            <div class="flex items-baseline gap-1.5">
-              <span id="sidebar-today-recs" class="text-xl font-black text-slate-900 dark:text-white tabular-nums">0</span>
-              <span class="text-slate-400 font-medium">зап.</span>
-              <span class="text-slate-300 dark:text-slate-600">•</span>
-              <span id="sidebar-today-subjs" class="font-bold text-indigo-600 dark:text-indigo-400 tabular-nums">0 предм.</span>
+        <div class="flex items-center justify-between gap-2.5">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="relative w-12 h-12 shrink-0">
+              <svg class="w-12 h-12 -rotate-90" viewBox="0 0 56 56">
+                <circle cx="28" cy="28" r="23.5" fill="none" stroke="currentColor" stroke-width="4" class="text-slate-100 dark:text-slate-800" />
+                <circle id="sidebar-today-ring" cx="28" cy="28" r="23.5" fill="none" stroke="#6366f1" stroke-width="4" stroke-linecap="round" stroke-dasharray="147.65" stroke-dashoffset="147.65" style="transition: stroke-dashoffset 450ms cubic-bezier(0.22, 1, 0.36, 1), stroke 220ms ease;" />
+              </svg>
+              <div id="sidebar-today-pct" class="absolute inset-0 flex items-center justify-center text-[9.5px] font-extrabold tracking-tight text-slate-800 dark:text-white tabular-nums">0%</div>
             </div>
-            <div class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
-              <span>Цель дня (лиды):</span>
-              <input id="sidebar-daily-goal-input" type="number" min="1" max="199" value="10" class="w-10 px-1.5 py-0.5 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center font-bold text-slate-800 dark:text-white text-[11px] focus:outline-none focus:ring-1 focus:ring-indigo-500" title="Дневная цель по записям (лидам)" />
+            <div class="min-w-0 leading-tight">
+              <div class="flex items-baseline gap-1">
+                <span id="sidebar-today-recs" class="text-2xl font-black tracking-tight text-slate-900 dark:text-white tabular-nums">0</span>
+                <span class="text-[11px] text-slate-400 font-medium">зап.</span>
+              </div>
+              <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">за сегодня</div>
             </div>
           </div>
+
+          <span id="sidebar-today-subjs" class="px-2.5 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold text-[11px] tabular-nums whitespace-nowrap shrink-0">0 предм.</span>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-[11px]">
+          <label for="sidebar-daily-goal-input" class="text-slate-500 dark:text-slate-400 font-medium select-none">Цель дня (лиды)</label>
+          <input id="sidebar-daily-goal-input" type="number" min="1" max="199" value="10" class="w-12 px-1.5 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-center font-extrabold text-slate-900 dark:text-white text-xs tabular-nums focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition" title="Дневная цель по записям (лидам)" />
         </div>
 
         <div id="sidebar-script-legend" class="hidden pt-2.5 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-[11px]">
